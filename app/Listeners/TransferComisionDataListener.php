@@ -124,42 +124,80 @@ class TransferComisionDataListener
 
     public function handle(EvaluationCompleted $event)
     {
-        Log::info('Evento EvaluationCompleted recibido para user_id: ' . $event->user_id);
+        // Log::info('Evento EvaluationCompleted recibido para user_id: ' . $event->user_id);
 
-        // Include dynamic model mappings
-        $this->modelMappings = array_merge($this->modelMappings, $this->getDynamicModelMappings());
+        // // Include dynamic model mappings
+        // $this->modelMappings = array_merge($this->modelMappings, $this->getDynamicModelMappings());
 
-        foreach ($this->modelMappings as $sourceModel => $mapping) {
-            $sourceModelInstance = new $sourceModel;
-            $tableName = $sourceModelInstance->getTable();
-            Log::info('Verificando en la tabla ' . $tableName . ' para user_id: ' . $event->user_id);
+        // foreach ($this->modelMappings as $sourceModel => $mapping) {
+        //     $sourceModelInstance = new $sourceModel;
+        //     $tableName = $sourceModelInstance->getTable();
+        //     Log::info('Verificando en la tabla ' . $tableName . ' para user_id: ' . $event->user_id);
 
-            $dictaminator = DB::table($tableName)
-                ->where('user_id', $event->user_id)
-                ->first();
+        //     $dictaminator = DB::table($tableName)
+        //         ->where('user_id', $event->user_id)
+        //         ->first();
 
-            if ($dictaminator) {
-                $destinationModel = $mapping['destinationModel'];
-                $destinationModelInstance = new $destinationModel;
-                $destinationTableName = $destinationModelInstance->getTable();
-                $sourceField = $mapping['sourceField'];
-                $destinationField = $mapping['destinationField'];
+        //     if ($dictaminator) {
+        //         $destinationModel = $mapping['destinationModel'];
+        //         $destinationModelInstance = new $destinationModel;
+        //         $destinationTableName = $destinationModelInstance->getTable();
+        //         $sourceField = $mapping['sourceField'];
+        //         $destinationField = $mapping['destinationField'];
 
-                Log::info('Transfiriendo datos de ' . $tableName . ' a ' . $destinationTableName . ' para user_id: ' . $event->user_id);
+        //         Log::info('Transfiriendo datos de ' . $tableName . ' a ' . $destinationTableName . ' para user_id: ' . $event->user_id);
 
-                $updateResult = DB::table($destinationTableName)
-                    ->where('user_id', $dictaminator->user_id)
-                    ->update([$destinationField => $dictaminator->$sourceField]);
+        //         $updateResult = DB::table($destinationTableName)
+        //             ->where('user_id', $dictaminator->user_id)
+        //             ->update([$destinationField => $dictaminator->$sourceField]);
 
-                if ($updateResult) {
-                    Log::info('Datos transferidos con éxito para user_id: ' . $event->user_id);
-                } else {
-                    Log::warning('No se pudieron actualizar los datos en ' . $destinationTableName . ' para user_id: ' . $event->user_id);
-                }
-            } else {
-                Log::warning('No se encontraron datos en ' . $tableName . ' para user_id: ' . $event->user_id);
-            }
-        }
+        //         if ($updateResult) {
+        //             Log::info('Datos transferidos con éxito para user_id: ' . $event->user_id);
+        //         } else {
+        //             Log::warning('No se pudieron actualizar los datos en ' . $destinationTableName . ' para user_id: ' . $event->user_id);
+        //         }
+        //     } else {
+        //         Log::warning('No se encontraron datos en ' . $tableName . ' para user_id: ' . $event->user_id);
+        //     }
+        // }
+    // Consolidate all commission data into consolidated_responses
+
+        Log::info('Evento EvaluationCompleted recibido para user_id cuando los formualrios ya existen: ' . $event->user_id);
+    $userId = $event->user_id;
+
+    // Aggregate all commission fields for this user
+    $data = [
+        'user_id' => $userId,
+        'user_email' => DB::table('users')->where('id', $userId)->value('email'),
+        'user_type' => 'docente', // or fetch from users table
+        'comision1' => DB::table('dictaminators_response_form2')->where('user_id', $userId)->value('comision1') ?? 0,
+        'actv2Comision' => DB::table('dictaminators_response_form2_2')->where('user_id', $userId)->value('actv2Comision') ?? 0,
+        'actv3Comision' => DB::table('dictaminators_response_form3_1')->where('user_id', $userId)->value('actv3Comision') ?? 0,
+        'comision3_2' => DB::table('dictaminators_response_form3_2')->where('user_id', $userId)->value('comision3_2') ?? 0,
+        'comision3_3' => DB::table('dictaminators_response_form3_3')->where('user_id', $userId)->value('comision3_3') ?? 0,
+        'comision3_4' => DB::table('dictaminators_response_form3_4')->where('user_id', $userId)->value('comision3_4') ?? 0,
+        'comision3_5' => DB::table('dictaminators_response_form3_5')->where('user_id', $userId)->value('comision3_5') ?? 0,
+        'comision3_6' => DB::table('dictaminators_response_form3_6')->where('user_id', $userId)->value('comision3_6') ?? 0,
+        'comision3_7' => DB::table('dictaminators_response_form3_7')->where('user_id', $userId)->value('comision3_7') ?? 0,
+        'comision3_8' => DB::table('dictaminators_response_form3_8')->where('user_id', $userId)->value('comision3_8') ?? 0,
+        'comision3_8_1' => DB::table('dictaminators_response_form3_8_1')->where('user_id', $userId)->value('comision3_8_1') ?? 0,
+        'comision3_9' => DB::table('dictaminators_response_form3_9')->where('user_id', $userId)->value('comision3_9') ?? 0,
+        'comision3_10' => DB::table('dictaminators_response_form3_10')->where('user_id', $userId)->value('comision3_10') ?? 0,
+        'comision3_11' => DB::table('dictaminators_response_form3_11')->where('user_id', $userId)->value('comision3_11') ?? 0,
+        'comision3_12' => DB::table('dictaminators_response_form3_12')->where('user_id', $userId)->value('comision3_12') ?? 0,
+        'comision3_13' => DB::table('dictaminators_response_form3_13')->where('user_id', $userId)->value('comision3_13') ?? 0,
+        'comision3_14' => DB::table('dictaminators_response_form3_14')->where('user_id', $userId)->value('comision3_14') ?? 0,
+        'comision3_15' => DB::table('dictaminators_response_form3_15')->where('user_id', $userId)->value('comision3_15') ?? 0,
+        'comision3_16' => DB::table('dictaminators_response_form3_16')->where('user_id', $userId)->value('comision3_16') ?? 0,
+        'comision3_17' => DB::table('dictaminators_response_form3_17')->where('user_id', $userId)->value('comision3_17') ?? 0,
+        'comision3_18' => DB::table('dictaminators_response_form3_18')->where('user_id', $userId)->value('comision3_18') ?? 0,
+        'comision3_19' => DB::table('dictaminators_response_form3_19')->where('user_id', $userId)->value('comision3_19') ?? 0,
+        // ...etc...
+    ];
+
+    // Upsert into consolidated_responses
+    DB::table('consolidated_responses')->upsert($data, ['user_id'], array_keys($data));
+
     }
 
     protected function getDynamicModelMappings()
