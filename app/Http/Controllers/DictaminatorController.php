@@ -235,9 +235,16 @@ class DictaminatorController extends Controller
 */
         // Variables para la vista PDF
 
-        $signature_path = storage_path('/formato-evaluacion/app/public/signatures/' . basename($evaluatorSignature->signature_path));
-        $signature_path_2 = storage_path('/formato-evaluacion/app/public/signatures/' . basename($evaluatorSignature->signature_path_2));
-        $signature_path_3 = storage_path('/formato-evaluacion/app/public/signatures/' . basename($evaluatorSignature->signature_path_3));
+$signature_path = $evaluatorSignature->signature_path
+    ? asset('storage/signatures/' . basename($evaluatorSignature->signature_path))
+    : null;
+$signature_path_2 = $evaluatorSignature->signature_path_2
+    ? asset('storage/signatures/' . basename($evaluatorSignature->signature_path_2))
+    : null;
+$signature_path_3 = $evaluatorSignature->signature_path_3
+    ? asset('storage/signatures/' . basename($evaluatorSignature->signature_path_3))
+    : null;
+    
         $data = [
             'logoBase64' => $logoBase64,
             'convocatoria' => $convocatoria,
