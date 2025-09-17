@@ -1,0 +1,203 @@
+#convocatoria2 {
+    font-weight: bold;
+
+}
+
+@media print {
+    .print-footer {
+        /* Estilos comunes para ambos footers en la impresión */
+        display: table-footer-group !important;
+        /* Asegura que se muestre como footer */
+        position: fixed;
+        /* Para que se pegue al final de la página */
+        bottom: 0;
+        width: 100%;
+    }
+
+
+    /* Oculta el footer que no corresponde a la página actual */
+    .first-page-footer {
+        display: table-footer-group;
+    }
+
+    .second-page-footer {
+        display: none;
+    }
+
+    table:nth-of-type(2)~table .second-page-footer {
+        /* Selecciona el segundo footer solo cuando hay dos tablas antes */
+        display: table-footer-group;
+    }
+
+    table:nth-of-type(2)~table .first-page-footer {
+        /* Oculta el primer footer cuando hay dos tablas antes */
+        display: none;
+    }
+
+}
+
+@media print {
+    .page-footer {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 12px;
+        background-color: white;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+        page-break-after: always;
+        /* Asegura el salto de página después del footer */
+    }
+
+    body {
+
+        margin-left: 200px;
+        margin-top: -10px;
+        padding: 0;
+        font-size: .7rem;
+        padding-bottom: 50px;
+
+    }
+
+    .prevent-overlap {
+        page-break-before: always;
+        page-break-inside: avoid;
+    }
+
+    #convocatoria,
+    #convocatoria2,
+    #piedepagina1,
+    #piedepagina2 {
+        margin: 0;
+        font-size: .7rem;
+    }
+
+    #piedepagina {
+        margin: 0;
+    }
+
+    @page {
+        size: landscape;
+        margin: 20mm;
+        /* Ajusta según sea necesario */
+        counter-increment: page;
+
+    }
+
+    @page: first {
+        counter-reset: page 2;
+        /* Initialize the counter to 2 for the first page */
+        counter-increment: page;
+    }
+
+
+    .page-number-display {
+        display: block;
+        text-align: center;
+        font-size: 12px;
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+
+}
+
+.page-footer.hidden-footer {
+    display: none !important;
+}
+
+@media print {
+    hidden-footer {
+        display: none !important;
+    }
+
+    /* Prevent page breaks within table rows */
+    table tr {
+        page-break-inside: avoid;
+    }
+
+    .table-wrap {
+        height: 100px;
+        page-break-inside: avoid;
+    }
+
+
+
+    .secretaria-style {
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: left;
+
+    }
+
+    .secretaria-style #piedepagina1 {
+        display: flex;
+        justify-content: flex-end;
+        margin-left: 5px;
+        font-weight: normal;
+        /* Opcional, si quieres menos énfasis */
+        color: #000;
+    }
+
+    .dictaminador-style {
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .dictaminador-style#piedepagina2 {
+        margin-left: 800px;
+        margin-top: 10px;
+        font-weight: normal !important;
+    }
+
+    /* Estilo para secretaria o userType vacío */
+    .secretaria-style#piedepagina2 {
+        margin-left: 600px;
+        margin-top: 0;
+        font-weight: normal !important;
+        display: inline-block;
+    }
+}
+
+@media print {
+    .datosConvocatoria {
+        display: grid;
+        grid-template-columns: 220px auto;
+        gap: 4px 0;
+    }
+
+    .datosConvocatoria .row {
+        display: contents;
+    }
+
+    .datosConvocatoria label {
+        text-align: left;
+        align-self: start;
+        margin-bottom: 3px;
+    }
+
+    .datosConvocatoria .valor {
+        /* Hace que el contenido solo ocupe el espacio del texto */
+        display: flex;
+        align-items: center;
+    }
+
+        .datosConvocatoria .input-header {
+            background-color: #ced4da;
+            margin-bottom: 3px;
+            margin-left: 0;
+            display: block;
+            /* Cambia a block */
+            width: 100%;
+            /* Ocupa todo el ancho de la columna */
+            min-width: 0;
+            max-width: 100%;   }
+}

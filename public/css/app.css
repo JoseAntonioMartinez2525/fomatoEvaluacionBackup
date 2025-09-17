@@ -1,0 +1,1043 @@
+body {
+    margin-left: 200px;
+    margin-bottom: 600px;
+    font-size: 1rem;
+
+}
+.pmax{
+    background-color: rgba(86, 148, 210, 1);
+    border: 1px solid transparent; /* Borde inicial */
+    outline: none; /* Elimina el borde predeterminado del navegador */
+}
+
+.pmax:focus {
+    border: 2px solid rgba(86, 148, 210, 0.8); /* Cambia el color y grosor del borde */
+}
+
+
+
+@media (min-width: 768px) {
+    body {
+        font-size: .8rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    body {
+        font-size: .8rem;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        font-size: 0.875rem;
+    }
+}
+
+
+.enlaceSN {
+    color: #4281a4;
+    /* Elige el color que prefieras */
+}
+
+.enlaceSN:hover {
+    color: #086375;
+    /* Puedes cambiar el color en el hover también */
+}
+
+
+#convocatoriaPeriodoLabel {
+    margin-top: 200px;
+    margin-left: 900px;
+}
+
+#convocatoria input {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: left;
+    
+}
+
+/* Diseño móvil pequeño */
+@media (max-width: 480px) {
+    #convocatoria input {
+        font-size: 12px;
+        margin-top: 5px;
+        padding: 5px;
+    }
+}
+
+#convocatoria footer {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Diseño móvil pequeño */
+@media (max-width: 480px) {
+    #convocatoria footer {
+        font-size: 12px;
+        margin-top: 5px;
+        padding: 5px;
+    }
+}
+
+/* Diseño tablet */
+@media (min-width: 481px) and (max-width: 1024px) {
+
+    #convocatoria input,
+    #convocatoria footer {
+        font-size: 14px;
+        margin-top: 7px;
+        padding: 7px;
+    }
+}
+
+
+#iconoSesion {
+    text-decoration: none;
+    outline: none !important;
+    color: inherit;
+    /* Mantener el color del texto */
+    -webkit-tap-highlight-color: transparent;
+    /* Eliminar el resaltado en dispositivos táctiles */
+}
+
+#iconoSesion i {
+    pointer-events: none;
+    /* Asegurar que el ícono no interfiera */
+}
+
+#iconoSesion:focus,
+#iconoSesion:active,
+#iconoSesion:hover,
+#iconoSesion:visited {
+    text-decoration: none;
+    outline: none !important;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#horasPosgrado,
+#horasSemestre {
+    background-color: #c1cfd3;
+    text-align: right;
+    border: none;
+}
+
+#horasPosgrado:focus,
+#horasPosgrado:active,
+#horasSemestre:focus,
+#horasSemestre:active {
+    background-color: #c1cfd3;
+    outline: none;
+}
+
+.nav-header,
+.nav-item,
+.nav-link {
+    outline: none !important;
+    border-style: none;
+}
+
+
+
+.nav-item:focus,
+.nav-item:active,
+.nav-link:focus,
+.nav-link:active {
+
+    outline: none !important;
+}
+
+.navbar-nav, .nav-link:hover {
+    color: #086375;
+}
+
+.navbar-nav, .nav-link {
+    color: white;
+    font-size: 1rem;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+}
+.horasActv2 input:focus,
+.horasActv2 input:active {
+    background-color: #c1cfd3;
+
+    outline: none;
+}
+
+.horasActv2 input {
+
+    text-align: right;
+    border: none;
+    background-color: #c1cfd3;
+
+
+}
+
+@media (min-width: 768px) {
+    body {
+        font-size: 1.125rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    body {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        font-size: 0.875rem;
+    }
+}
+
+nav {
+    position: fixed;
+    top: 20px;
+    left: 200px;
+    width: 200px;
+    /* ancho del menú */
+    margin-left: -180px;
+    /* ajusta la posición horizontal */
+    padding-top: 50px;
+    background-color: #fff;
+    /* agrega un fondo blanco para que se vea bien */
+    z-index: 1;
+    /* asegura que el menú esté encima de otros elementos */
+    
+}
+
+nav::after{
+    border: none;
+    outline: none;
+}
+
+nav.fixed {
+  /*position: fixed;*/
+  top: 20px;
+  left: 200px;
+}
+
+nav.show-nav {
+    display: none;
+}
+header{
+    margin-left: 80px;
+}
+
+#form1, #form2, #form2_2, #pMax60, #form4, #form6{
+   margin-top: 70px;
+}
+
+#form4{
+    margin-bottom: 100px;
+}
+
+#form6{
+    margin-left: 50px;
+}
+
+#form3{
+    margin-top: 50px;
+}
+
+#btn1{
+    padding-left: 100px;
+    padding-right: 100px;
+    border-radius: 90px 90px 90px 90px;
+
+}
+[id^="btn3_"] {
+    padding-left: 80px;
+    padding-right: 70px;
+    border-radius: 90px 90px 90px 90px;
+
+}
+
+body.dark-mode [id^="btn3_"], body.dark-mode .dynamicBtn{
+        background-color: #456483 !important;
+        color: floralwhite;
+}
+
+body.dark-mode [id^="btn3_"]:hover , body.dark-mode .dynamicBtn:hover{
+    background-color: #6a5b9f !important;
+    
+}
+
+#btn3_8{
+    margin-left: 1000px;
+    border-radius: 90px 90px 90px 90px;
+
+    
+}
+
+#btn3_15, #btn3_19{
+    margin-left: 950px;
+}
+
+
+#btn3_10{
+margin-left: 900px;
+}
+
+
+#btn3_2{
+    margin-left: -230px;
+    border-radius: 90px 90px 90px 90px;
+
+}
+
+#obs3_2_2, #obs3_2_3{
+    background-color: #d6fff7;
+}
+
+.custom-btn{
+        background-color: #9ccbdd;
+        color: #0b3b67;
+}
+
+.custom-btn:hover {
+
+    background-color: #afc7ce;
+    color: floralwhite;
+    font-weight: 500;
+}
+
+
+
+
+.input-header {
+    background-color: #ced4da;
+    margin-bottom: 3px;
+    width: 100%;
+    /* Make the input fields 100% width */
+}
+
+/* Target the options within the select element with class 'input-header' */
+.input-header option {
+    background-color: white;
+}
+
+.input-header option:checked {
+    background-color: #e2e2e2;
+    /* Change this color to your preference for hover effect */
+    cursor: pointer;
+}
+
+.form-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    /* Define the columns */
+    grid-gap: 10px;
+    /* Add some space between the elements */
+    align-items: center;
+    /* Center the elements vertically */
+    padding: 20px;
+    /* Add padding to the container */
+    margin-top: 50px;
+}
+
+
+.label {
+    font-weight: bold;
+    /* Make the labels bold */
+}
+
+@media (max-width: 768px) {
+
+    /* Styles for screens smaller than 768px */
+    .form-container {
+        grid-template-columns: 1fr;
+        /* Make the labels and inputs stack on top of each other for smaller screens */
+    }
+}
+
+.table-header, #prom90_100, #prom80_90, #prom70_80, #comIncisoA,#comIncisoB,#comIncisoC,#comIncisoD,
+#comInternacional,#comNacional,#comRegional,#comPreparacion, .comIncisoA, .comIncisoB, .comIncisoC, .comIncisoD{
+    background-color: #d6fff7;
+    border: none;
+    text-align: right;
+    padding: 0 40px;
+
+}
+
+#cant1, #cant2, #cant3 {
+    text-align: right;
+}
+
+
+.table-header input {
+    border-color: transparent;
+    text-align: left;
+
+}
+
+.table-ajust {
+    width: auto;
+}
+
+.table-ajust2 {
+    padding-right: 0 !important;
+}
+
+.table td.puntajeEvaluar {
+    background-color: #002b4e;
+    color: white;
+    text-align: right;
+    border: none;
+    font-weight: bold;
+    
+}
+
+.table td.puntajeEvaluar2 {
+    background-color: white;
+    color: black;
+    text-align: right;
+
+}
+
+.table td.comision {
+
+    text-align: center;
+}
+
+
+.table input.puntajeEvaluar {
+    background-color: rgba(0, 0, 0, 0.0);
+    /* Fully transparent background */
+    text-align: right;
+    color: white;
+    /* Ensure text color is white for visibility */
+    border: none;
+    /* Remove border for a cleaner look */
+
+}
+
+.actv input {
+    text-align: right;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.comEstilos{
+    background-color: #d6fff7;
+}
+.horasActv2 input {
+
+    text-align: right;
+    border: none;
+    background-color: #e2e2e2;
+
+}
+
+#DSE,
+#DSE2 {
+    color: black;
+}
+
+#hours, .hours {
+    background-color: #002b4e;
+    color: white;
+    text-align: center;
+    border: none;
+    font-weight: bold;
+}
+
+.actv2Comision, #actv2Comision, #actv3Comision, #comision3_2, #comision3_3, #comision3_4,#comision3_5, #comision3_6, 
+#comision3_7, #comision3_8, #comision3_8_1, #comision3_9, #comision3_9_0, #comision3_9_1, #comision3_10, #comision3_11, #comision3_12, #comision3_13, 
+#comision3_14, #comision3_15, #comision3_16, #comision3_17, #comision3_18, #comision3_19, #comision3_19_0,
+#comision3_19_1, #comision3_19_2, #comision3_12_0, #comision3_12_1, #comision3_16_0, #comision3_16_1, #comision3_18_0,
+#comision3_18_1, #comision3_18_2{
+    background-color: #ffcc6d;
+    text-align: center;
+    border: none;
+    font-weight: bold;
+}
+
+.table td.actv3{
+    background-color: #ffcc6d;
+    text-align: center;
+    border: none;
+}
+
+#horasPosgrado,
+#horasSemestre {
+    text-align: center;
+    background-color: #e2e2e2;
+    border: none;
+}
+
+
+
+#comisionPosgrado, #comisionLic, #comisionIncisoA, #comisionIncisoB, #comisionIncisoC,
+#comisionIncisoD, #comisionIncisoE  {
+    background-color: #d6fff7;
+}
+
+#comisionIncisoB{
+margin-left: 40px;
+}
+
+#docencia ,#docencia2 {
+    background-color: #002b4e;
+    color: white;
+    text-align: center;
+    border: none;
+    font-weight: bold;
+}
+
+#docencia3-1{
+    background-color: #0b5967;
+    color: white;
+    text-align: right;
+    border: none;
+    font-weight: bold;
+}
+
+.send1{
+    padding-left: 200px;
+    padding-right: 200px;
+    margin-top: 20px;
+}
+
+.score3_1, #score3_1, #score3_2, #score3_3, #score3_3_copy, #score3_4, #score3_5, #score3_6, #score3_7, #score3_8, #score3_8_1, #score3_9, #score3_9_0, #score3_9_1, #score3_10, 
+#score3_11, #score3_12, #score3_12_0, #score3_12_1, #score3_13, #score3_14, #score3_15, #score3_16,#score3_17, #score3_18, #score3_18_0, #score3_18_1, #score3_18_2, #score3_19, #score3_19_0,
+#score3_19_1, #score3_19_2, #score3_12_0, #score3_12_1, #score3_16_0, #score3_16_1, #score3_18_0, #score3_18_1{
+    white-space: nowrap;
+    background-color: #0b5967;
+    color: white;
+    text-align: center;
+    border: none;
+    font-weight: bold;
+}
+
+
+
+.actividades{border-right: black;}
+
+#cantidadForm3_1{
+    text-align: center;
+}
+.label-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Align items to the end of the container */
+}
+
+.label-container span {
+    margin-left: auto;
+    /* Push the labels to the right side */
+    margin-bottom: 5px;
+    /* Add some space between the labels */
+}
+
+#elaboracion, #elaboracion2, #elaboracion3, #elaboracion4, #elaboracion5, #rCant1, 
+#cantInternacional, #cantNacional, #cantidadRegional, #cantPreparacion, #rc1,
+#rc2, #rc3, #rc4{
+text-align: right;
+background-color: #c1cfd3;
+border: none;
+padding: 0 30px;
+
+
+}
+
+#elaboracion, #elaboracion2{
+padding-left: 20px; 
+}
+
+#elaboracion3, #elaboracion4, #elaboracion5{
+    padding-left: 30px;
+}
+
+
+
+#elaboracionSubTotal1 label, #elaboracionSubTotal3 label, #elaboracionSubTotal4 label, #elaboracionSubTotal5 label{
+border: none;
+text-align: right;
+padding-left: 100px;
+
+}
+
+.ranges td{
+    text-align: center;
+   
+}
+
+#puntaje60 label, #puntaje20 label, #puntaje40 label,
+#puntaje10 label,#p10 label{
+text-align: center;
+
+}
+
+.elabInput input{
+    width: 100px;
+    background-color: #c1cfd3;
+    text-align: right;
+    
+}
+
+.scoreRight td{
+text-align: right;
+}
+
+/*Puntaje de la Comision Dictaminadora*/
+.cd{
+   width: 100px; 
+   
+}
+
+
+.obra {
+    width: 300px;
+    /* Ancho deseado para la columna 'Obra' */
+}
+.incisos, .punto3_4, .punto3_5, .punto3_6, .punto3_7, .p3_9{
+    white-space: nowrap;
+    width: 1%;
+    height: 20px;
+    font-weight: normal;
+}
+
+.punto3_8{
+    white-space: pre;
+    width: 1%;
+    height: 20px;
+    font-weight: normal;
+}
+
+.acreditacion{
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.acreditacionObsv {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.descripcion, .descripcionCAAC{
+    font-weight: normal;
+    padding-left: 100px;
+    padding-right: 560px;
+}
+
+
+.descripcionDDIE{
+    font-weight: normal;
+        padding-left: 100px;
+        padding-right: 880px;
+}
+
+#convocatoriaPeriodoLabel{
+   margin-top: 200px;
+   margin-left: 900px;
+}
+
+
+
+#resumen h2{
+margin-bottom: 20px;
+}
+
+#evaluator_name_1, #evaluator_name_2, #evaluator_name_3, #signature_path_1,
+#signature_path_2,
+#signature_path_3{
+    margin-left: 30px;
+}
+
+#signature_path_1, #signature_path_2, #signature_path_3{
+    margin-top: 50px;
+}
+
+.d-none {
+    display: none;
+}
+
+#userReports{
+    margin-top: 20px;
+    margin-left: 100px;
+}
+
+.footer-number {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: white;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}
+
+/* Print-specific styles */
+@media print {
+    .footer-number {
+        position: absolute;
+        /* Make sure it stays at the bottom-right corner of the printed page */
+        bottom: 0;
+        right: 0;
+        background-color: white;
+        padding: 10px;
+        margin: 0;
+        border: none;
+        /* Remove border for print, if desired */
+    }
+
+        body {
+            margin: 0;
+            /* Elimina márgenes adicionales */
+            padding: 0;
+            font-size: 10px;
+            /* Tamaño de letra base para impresión */
+        }
+    
+        #form2 {
+            margin-bottom: 0;
+            /* Elimina margen inferior del formulario */
+        }
+    
+        footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            /* Ajusta el tamaño de letra del footer */
+        }
+    
+        main {
+            font-size: 10px;
+            /* Tamaño de letra reducido para el contenido principal */
+        }
+
+}
+
+form[id^="form3_"] {
+    margin-bottom: 400px;
+}
+
+#form2, #form2_2{
+    margin-bottom: 200px;
+}
+
+#form2_2Button{
+    margin-left: 260px;
+    width: 200px;
+    border-radius: 90px 90px 90px 90px;
+    
+}
+
+#form2_1Button{
+    margin-left: 950px;
+    width: 200px;
+    border-radius: 90px 90px 90px 90px;
+}
+body.dark-mode #btn1, body.dark-mode #form2_1Button, body.dark-mode #form2_2Button{
+    background-color: #456483;
+    color: floralwhite;
+}
+
+body.dark-mode #btn1:hover, body.dark-mode #form2_1Button:hover,
+body.dark-mode #form2_2Button:hover{
+    background-color: #6a5b9f;
+}
+.menu{padding-top: 50px; height: 800px;}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 750px;
+        padding: 0 1.25rem;
+    }
+
+    .nav-link {
+        display: inline-block;
+        width: auto;
+        margin-bottom: 0;
+        list-style: none;
+        font-size: larger;
+       
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1200px;
+        padding: 0 1.875rem;
+    }
+
+    .nav-link {
+        margin-right: 1.25rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .container {
+        padding: 0 0.625rem;
+    }
+
+    .nav-link {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.625rem;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 767px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    .nav-link {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.75rem;
+    }
+}
+
+[id^="obs3_1_"]{
+    width: 140px;
+    text-align: right;
+    border-color: transparent;
+    background-color: #d6fff7;
+}
+
+#comisionDict3_6, #comisionDict3_7, #obs3_6_1, #obs3_7_1, #comisionDict3_8, #comisionDict3_8_1, #obs3_8_1, #obs3_8_1_1{
+    background-color: #d6fff7;
+    border-color: transparent;
+    
+
+}
+#comisionDict3_6, #comisionDict3_7, #comisionDict3_8, #comisionDict3_8_1, .rightSelect{
+    text-align: right;
+}
+
+#obs3_6_1{
+    text-align: center;
+}
+
+.fas.fa-power-off {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+[id^="comisionInciso"] {
+    text-align: right;
+    border-color: transparent;
+}
+
+td[id^="puntaje3_9_"]{
+    background-color: #c1cfd3;
+    text-align: right;
+}
+
+.nombreLabel{
+    text-align: left;
+}
+
+@media (min-width: 1024px){
+#puntaje60{
+    margin-left: 70px;
+    
+}
+
+#puntaje40, #puntaje10, #puntaje20, #p10{
+    margin-left: 5px;
+}
+#cantidadActv, #cantidadform3_3{
+    margin-left: 350px;
+    text-align: right;
+}
+
+
+#elaboracion2,
+#elaboracion3,
+#elaboracion4,
+#elaboracion5{
+    margin-left: -250px;
+}
+input[id^="rc"]{
+    margin-left: -250px;
+}
+
+#seccion3_8{
+    font-size: 1.2rem;
+}
+
+}
+
+#puntajeArbitrajeInt,
+#puntajeArbitrajeNac,
+#puntajeSinInt,
+#puntajeSinNac,
+#puntajeAutor,
+#puntajeEditor,
+#puntajeWeb,
+#puntajeTraduccion,
+#puntajeDivulgacion,
+#puntajeCientificos{
+    font-weight: bold;
+}
+
+
+#convocatoria2, #nombre2, #periodo2,
+#area2,
+#departamento2{
+    margin-left: 30px;
+}
+
+
+.form3_1LabelActv{
+    height:84px; width: 170px;
+}
+.form3_1LabelDoc{
+height:94px; width: 180px;
+}
+
+body.dark {
+    background-color: #353e4e;
+    color: #fff;
+    /* Otros estilos para el modo oscuro */
+}
+
+body.dark .navbar, body.dark .footer {
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+body.dark .form-control {
+    background-color: #444;
+    color: #fff;
+}
+
+body.dark-mode  [id^="puntaje3_"],
+body.dark-mode [id^="comisionDict3_"],
+body.dark-mode [id^="obs3_"]{
+    color: black;
+}
+
+body.dark-mode [id^="tutoriasComision"]{
+    background-color: transparent;
+}
+
+body.dark-mode #grupalesCant, body.dark-mode #comisionGrupal, body.dark-mode #obsGrupal, 
+body.dark-mode #individualCant, body.dark-mode #comisionIndividual, body.dark-mode #obsIndividual,
+body.dark-mode #cantAsesoria, body.dark-mode #cantServicio, body.dark-mode #cantPracticas, body.dark-mode #comisionAsesoria, body.dark-mode #comisionServicio, 
+body.dark-mode #comisionPracticas, body.dark-mode #obsAsesoria, body.dark-mode #obsServicio, body.dark-mode #obsPracticas{
+    color:black
+}
+
+body.dark-mode #cantCientifico, body.dark-mode #cantDivulgacion, body.dark-mode #cantTraduccion, body.dark-mode #cantArbitrajeInt, body.dark-mode #cantArbitrajeNac, 
+body.dark-mode #cantSinInt, body.dark-mode #cantSinNac, body.dark-mode #cantAutor, body.dark-mode #cantEditor, body.dark-mode #cantWeb, body.dark-mode #comisionCientifico, 
+body.dark-mode #comisionDivulgacion, body.dark-mode #comisionTraduccion, body.dark-mode #comisionArbitrajeInt, body.dark-mode #comisionArbitrajeNac, body.dark-mode #comisionSinInt, 
+body.dark-mode #comisionSinNac, body.dark-mode #comisionAutor, body.dark-mode #comisionEditor, body.dark-mode #comisionWeb, body.dark-mode #obsCientifico, body.dark-mode #obsDivulgacion, 
+body.dark-mode #obsTraduccion, body.dark-mode #obsArbitrajeInt, body.dark-mode #obsArbitrajeNac, body.dark-mode #obsSinInt, body.dark-mode #obsSinNac, body.dark-mode #obsAutor, body.dark-mode #obsEditor, body.dark-mode #obsWeb,
+body.dark-mode #comisionCientificos, body.dark-mode #obsCientificos{
+    color:black
+}
+
+body.dark-mode td.cantidad, body.dark-mode #cantCongresoInt, body.dark-mode #cantCongresoNac, body.dark-mode #cantCongresoLoc, body.dark-mode #comisionCongresoLoc, body.dark-mode #comisionCongresoInt, body.dark-mode #comisionCongresoNac,
+body.dark-mode #comisionCongresoReg, body.dark-mode #obsCongresoLoc, body.dark-mode #obsCongresoInt, body.dark-mode #obsCongresoNac, body.dark-mode #cantPatentes, body.dark-mode #comisionPatententes, body.dark-mode #obsPatentes, 
+body.dark-mode #cantPrototipos, body.dark-mode #comisionPrototipos, body.dark-mode #obsPrototipos{
+    color:black
+}
+
+body.dark-mode #comisionInicioFinancimientoExt, body.dark-mode #comisionInicioInvInterno, body.dark-mode #comisionReporteFinanciamExt, body.dark-mode #comisionReporteInvInt,
+body.dark-mode #obsInicioFinancimientoExt,
+body.dark-mode #obsInicioInvInterno,
+body.dark-mode #obsReporteFinanciamExt,
+body.dark-mode #obsReporteInvInt{
+    background-color: transparent;
+    color:white;
+}
+
+body.dark-mode #cantArbInt, body.dark-mode #cantArbNac, body.dark-mode #cantArbInt, body.dark-mode #cantPubInt, body.dark-mode #cantPubNac, body.dark-mode #cantRevInt, body.dark-mode #cantRevNac, body.dark-mode #cantRevista, body.dark-mode #comisionArbInt, 
+body.dark-mode #comisionArbNac, body.dark-mode #comisionPubInt, body.dark-mode #comisionPubNac, body.dark-mode #comisionRevInt, body.dark-mode #comisionRevNac, body.dark-mode #comisionRevista, body.dark-mode #obsArbInt,
+body.dark-mode #obsArbNac, body.dark-mode #obsPubInt, body.dark-mode #obsPubNac, body.dark-mode #obsRevInt, body.dark-mode #obsRevNac, body.dark-mode #obsRevista{
+    color:black;
+}
+
+body.dark-mode #cantDifusionExt, body.dark-mode #cantDifusionInt, body.dark-mode #cantRepDifusionExt, body.dark-mode #cantRepDifusionInt, body.dark-mode #comisionDifusionExt, body.dark-mode #comisionDifusionInt, body.dark-mode #obsDifusionExt,
+body.dark-mode #obsDifusionInt, body.dark-mode #comisionRepDifusionExt, body.dark-mode #obsRepDifusionExt, body.dark-mode #comisionRepDifusionInt, body.dark-mode #obsRepDifusionInt{
+    color:black;
+}
+
+/* cantComOrgInt, cantComOrgNac, cantComOrgReg */
+body.dark-mode td.cantidad_form_3_18, body.dark-mode .form3_18_dark, body.dark-mode .form3_19_dark{
+    color: black;
+}
+
+body.dark-mode nav.nav.flex-column {
+    background: linear-gradient(90deg, rgb(14, 34, 69), rgb(13, 31, 63)) !important;
+}
+
+body.dark-mode nav.nav.flex-column a:hover {
+    color: rgb(122, 164, 237);
+}
+
+.dynamicBtn {
+    margin-left: calc(100vw - 740px);
+    padding: 0 100px  0 100px; 
+    text-align: center;
+    border-radius: 90px 90px 90px 90px;
+}
+
+.logo-icon {
+    width: 32px;
+    /* Tamaño pequeño como un emoji */
+    height: 32px;
+    margin-right: 10px;
+    /* Espacio entre el logo y el texto */
+}
+
+.datosConvocatoria {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    /* Ajusta el ancho de la columna de los labels */
+    gap: 2px 0;
+}
+
+.datosConvocatoria .row {
+    display: contents;
+    /* Permite que los hijos usen el grid del padre */
+}
+
+.datosConvocatoria label {
+    text-align: left;
+    align-self: start;
+    margin-bottom: 2px;
+}.datosConvocatoria .valor {
+    display: flex;
+    align-items: center;
+}
+
+.datosConvocatoria .input-header {
+    background-color: #ced4da;
+    margin-bottom: 2px;
+    margin-left: 0;
+    display: inline;
+    /* Solo el texto tiene fondo */
+    width: auto;
+    /* El fondo solo abarca el texto */
+    min-width: 0;
+    max-width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+

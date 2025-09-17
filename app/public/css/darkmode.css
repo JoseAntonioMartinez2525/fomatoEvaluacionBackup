@@ -1,0 +1,29 @@
+body.dark-mode {
+    background-color: #282828;
+    color: #ffffff;
+}
+
+body.dark-mode .table {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+body.dark-mode .nav {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+body.dark-mode .btn {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+body.light-mode .btn {
+    background-color: #f8f9fa;
+    color: #000000;
+}
+
+#toggle-dark-mode{
+    margin-left: 75rem !important;
+}
+

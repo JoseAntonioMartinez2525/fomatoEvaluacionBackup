@@ -1,0 +1,73 @@
+
+
+#piedepagina { display: none; }
+
+    @media print {
+        #piedepagina{
+            display: block !important;
+        }
+        body {
+            margin-left: 200px;
+            margin-top: -10px;
+            padding: 0;
+            font-size: .8rem;
+
+        }
+
+       footer {
+    position: absolute; /* Usar absolute en lugar de fixed */
+    font-size: .8rem;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    z-index: 10;
+    padding: 5px 0;
+    border-top: 1px solid #ccc;
+}
+
+    footer::after {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            
+            background: white;
+            padding: 5px;
+            z-index: 10;
+        }
+
+
+    .prevent-overlap {
+        page-break-before: always;
+    }
+
+    #convocatoria {
+        margin: 0;
+        font-size: .8rem;
+    }
+
+    #piedepagina {
+        margin: 0;
+         page-break-inside: avoid; /* Evitar saltos dentro del pie de página */
+    }
+
+    div {
+        page-break-after: avoid;
+        page-break-before: avoid;
+    }
+    
+
+    @page {
+        size: landscape;
+        margin: 20mm; /* Ajusta según sea necesario */
+        
+    }
+
+
+    /*.page-number:after {
+        content: "Página " counter(page);
+    }*/
+
+}

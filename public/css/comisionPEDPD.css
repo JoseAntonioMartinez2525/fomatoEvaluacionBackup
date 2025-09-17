@@ -1,0 +1,83 @@
+.datosConvocatoria{
+    display: none;
+}
+
+@media print {
+    body {
+        margin-left: 200px ;
+        margin-top: -10px;
+        padding: 0;
+        font-size: .8rem;
+       
+    }
+
+    footer {
+        position: fixed;
+        font-size: .9rem;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        background-color: white; /* Para asegurar que el footer no interfiera visualmente */
+        z-index: 10;
+        padding: 5px 0;
+        border-top: 1px solid #ccc;
+    }
+
+    footer::after {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            background: white;
+            padding: 5px;
+            z-index: 10;
+        }
+
+
+    .prevent-overlap {
+        page-break-before: always;
+    }
+
+    .convocatoria {
+        margin: 0;
+    }
+
+
+
+    @page {
+        size: landscape;
+        margin: 20mm; /* Ajusta según sea necesario */
+        
+    }
+
+    @page:right {
+        content: "Página " counter(page);
+    }
+
+            /* Footer de la primera página */
+        .page:first-of-type #piedepagina {
+            content: "Página 29 de 32";
+        }
+
+        /* Footer de páginas pares */
+        .page:nth-of-type(even) #piedepagina {
+            content: "Página 30 de 32";
+        }
+
+        /* Footer de páginas impares */
+        .page:nth-of-type(odd) #piedepagina {
+            content: "Página 31 de 32";
+        }
+
+        .footerFormResumen{
+            margin-top: -20px;
+        }
+
+        .datosConvocatoria{
+            display: inline;
+        }
+        
+    }
