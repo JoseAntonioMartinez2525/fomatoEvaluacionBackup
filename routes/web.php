@@ -266,8 +266,8 @@ Route::get('/test-event/{user_id}', function ($user_id) {
     return 'Evento disparado para user_id: ' . $user_id;
 });
 
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::get('/formato-evaluacion/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/formato-evaluacion/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/formato-evaluacion/edit_delete_form/', [DynamicFormController::class, 'showDynamicForm'])->name('edit_delete_form');
 

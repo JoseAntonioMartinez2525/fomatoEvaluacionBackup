@@ -50,7 +50,7 @@ input:-webkit-autofill {
                                 aria-controls="pills-login" aria-selected="true">Login</a>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="tab-register" data-mdb-pill-init href="{{ route('/formato-evaluacion/register') }}" role="tab"
+                            <a class="nav-link" id="tab-register" data-mdb-pill-init href="{{ route('register') }}" role="tab"
                                 aria-controls="pills-register" aria-selected="false">Registro</a>
 
                         </li>
@@ -65,7 +65,7 @@ input:-webkit-autofill {
                             <center>
                                 <h3 class="mb-3">Login</h3>
 
-                                <form method="POST" action="{{ route('/formato-evaluacion_bk2/login.post') }}" id="formAuthentication"
+                                <form method="POST" action="{{ route('login.post') }}" id="formAuthentication"
                                     class="mb-3">
                                     @csrf
                                     <div class="mb-2">
