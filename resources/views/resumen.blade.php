@@ -342,8 +342,8 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             const formContainer = document.getElementById('formContainer');
 
             if (selectedForm) {
-                window.location.href = `/${selectedForm}`;
-                axios.get(`/get-form-content/${selectedForm}`)
+                window.location.href = `/formato-evaluacion/${selectedForm}`;
+                axios.get(`/formato-evaluacion/get-form-content/${selectedForm}`)
                     .then(response => {
                         formContainer.innerHTML = response.data;
                     })

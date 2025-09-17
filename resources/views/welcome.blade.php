@@ -42,7 +42,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         <nav class="-mx-3 flex flex-1 justify-end"></nav>
 
 
-        <form id="form1" method="POST" onsubmit="event.preventDefault(); submitForm('/store', 'form1');">
+        <form id="form1" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store', 'form1');">
 
         <label for="convocatoria" class="label">Convocatoria</label>
         <input name="convocatoria" type="text" class="input-header mb-3" id="convocatoria"></input>
@@ -92,7 +92,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         <main class="container">
         <!--Actividad 1: Permanencia en las actividades de la docencia	-->
 
-        <form id="form2" method="POST" onsubmit="event.preventDefault(); submitForm('/store2', 'form2');">
+        <form id="form2" method="POST" onsubmit="event.preventDefault(); submitForm('store2', 'form2');">
         <div>
         <h4>Puntaje máximo
         <label class="bg-black text-white px-4" for="">100</label>
@@ -149,7 +149,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         <button type="submit" class="btn custom-btn" id="form2_1Button">Enviar</button>
         </form>
 
-        <form id="form2_2" method="POST" onsubmit="event.preventDefault(); submitForm('/store3', 'form2_2');">
+        <form id="form2_2" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store3', 'form2_2');">
         @csrf
         <div>
         <!--Actividad 2: Dedicacion en el Desempeño docente	-->
@@ -460,6 +460,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
       document.getElementById('puntajeEvaluarInput').value = puntajeEvaluar.toFixed(2);
     });
     // Definir la función submitForm fuera de DOMContentLoaded
+    
       async function submitForm(url, formId) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -514,9 +515,10 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         }
 
         console.log('Form data:', formData);
-
+        
         // Enviar datos al servidor
         try {
+          // let appUrl = `/formato-evaluacion/`+url;
           let response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -548,11 +550,18 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
       // Cuando el DOM se ha cargado completamente, puedes agregar los controladores de eventos
       document.addEventListener('DOMContentLoaded', function () {
         // Asociar la función a los formularios
+        const form1 = document.getElementById('form1');
+        if (form1) {
+          form1.onsubmit = function (event) {
+            event.preventDefault(); // Previene el envío por defecto
+            submitForm('/formato-evaluacion/store', 'form1'); // Llama a la función submitForm
+          };
+        }
         const form2 = document.getElementById('form2');
         if (form2) {
           form2.onsubmit = function (event) {
             event.preventDefault(); // Previene el envío por defecto
-            submitForm('/store2', 'form2'); // Llama a la función submitForm
+            submitForm('/formato-evaluacion/store2', 'form2'); // Llama a la función submitForm
           };
         }
 
@@ -560,7 +569,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         if (form2_2) {
           form2_2.onsubmit = function (event) {
             event.preventDefault(); // Previene el envío por defecto
-            submitForm('/store3', 'form2_2'); // Llama a la función submitForm
+            submitForm('/formato-evaluacion/store3', 'form2_2'); // Llama a la función submitForm
           };
         }
       });

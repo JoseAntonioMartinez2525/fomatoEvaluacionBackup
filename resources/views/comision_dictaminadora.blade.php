@@ -261,13 +261,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (selectedForm && selectedDocente) {
             if (selectedForm.startsWith('form')) {
-                window.location.href = `/${selectedForm}?teacher=${selectedDocente}`;
+                window.location.href = `/formato-evaluacion/${selectedForm}?teacher=${selectedDocente}`;
             } else {
                 cargarFormularioConDatosDocente(selectedForm, selectedFormId, selectedDocente);
             }
         } else if (selectedForm) {
             if (selectedForm.startsWith('form')) {
-                window.location.href = `/${selectedForm}`;
+                window.location.href = `/formato-evaluacion/${selectedForm}`;
             } else {
                 cargarFormularioDinamico(selectedForm, selectedFormId);
             }

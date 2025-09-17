@@ -12,6 +12,7 @@ class ResponseForm2Controller extends Controller
 {
     public function store2(Request $request)
     {
+        \Log::info(['request' => '$request']);
         try {
             $validatedData = $request->validate([
                 'user_id' => 'required|exists:users,id',

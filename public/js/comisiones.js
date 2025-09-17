@@ -62,6 +62,7 @@ function onActv3Comision3(){
 
     const ms = minWithSumThree(comisionA,comisionB,comisionC,comisionD);
     document.getElementById("comision3_3") .innerHTML= ms;
+    document.getElementById("comision3_3_copy") .innerHTML= ms;
     console.log(ms);
 
 }
@@ -169,10 +170,14 @@ function onActv3Comision3_9() {
     return floatValue;
   });
 
-  const comisionDict3_9 = minTutorias(...comisionValues);
+  const comision3_9 = minTutorias(...comisionValues);
+   
+  // Actualizar todos los elementos con la clase "comision3_9"
+    document.querySelectorAll('.comision3_9').forEach(element => {
+        element.textContent = comision3_9.toFixed(2);
+    });
 
-  document.getElementById("comision3_9").innerHTML = comisionDict3_9;
-  console.log(comisionDict3_9);
+  console.log(comision3_9);
 
 
 }

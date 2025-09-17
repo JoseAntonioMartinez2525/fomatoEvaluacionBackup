@@ -753,8 +753,8 @@ body.dark-mode #form2_2Button:hover{
 
 @media (min-width: 768px) {
     .container {
-        max-width: 750px;
-        padding: 0 1.25rem;
+        max-width: 1200px;
+        padding: 0 4rem;
     }
 
     .nav-link {
@@ -765,12 +765,14 @@ body.dark-mode #form2_2Button:hover{
         font-size: larger;
        
     }
+
+
 }
 
 @media (min-width: 1024px) {
     .container {
         max-width: 1200px;
-        padding: 0 1.875rem;
+        padding: 0 4rem;
     }
 
     .nav-link {
@@ -778,7 +780,7 @@ body.dark-mode #form2_2Button:hover{
     }
 }
 
-@media (max-width: 767px) {
+/* @media (max-width: 768px) {
     .container {
         padding: 0 0.625rem;
     }
@@ -788,11 +790,11 @@ body.dark-mode #form2_2Button:hover{
         width: 100%;
         margin-bottom: 0.625rem;
     }
-}
+} */
 
-@media (min-width: 600px) and (max-width: 767px) {
+@media (min-width: 600px) and (max-width: 768px) {
     .container {
-        padding: 0 0.75rem;
+        padding: 0 4rem;
     }
 
     .nav-link {
@@ -800,6 +802,19 @@ body.dark-mode #form2_2Button:hover{
         width: 100%;
         margin-bottom: 0.75rem;
     }
+}
+
+@media (min-width: 1250px) {
+    .container {
+        padding: 0 0.80rem;
+    }
+
+    .nav-link {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.80rem;
+    }
+
 }
 
 [id^="obs3_1_"]{

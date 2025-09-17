@@ -8,7 +8,7 @@ body.dark-mode .nav {
 <section role="region" aria-label="Response form">
     <form class="printButtonClass" id="blackForm">
         @csrf
-        <nav class="nav flex-column {{ $navClass }}" style="padding-top: 50px; height: 900px; background: linear-gradient(90deg, #afc7ce, #4281a4);" id="navPrint">
+        <nav class="nav flex-column {{ $navClass }}" style="padding-top: 50px; height: 1000px; background: linear-gradient(90deg, #afc7ce, #4281a4);" id="navPrint">
             <div class="nav-header" style="display: flex; align-items: center; padding-top: 50px;">
                 <li class="nav-item">
                     <a class="nav-link disabled enlaceSN {{ $emailClass }}" style="font-size: medium; color: white;" href="#">

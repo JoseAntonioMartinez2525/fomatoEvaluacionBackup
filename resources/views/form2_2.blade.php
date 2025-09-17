@@ -62,7 +62,7 @@ $user_identity = $user->id;
 </div>
     <main class="container">
         <!-- Form for Part 2_2 -->
-        <form id="form2_2" method="POST" onsubmit="event.preventDefault(); submitForm('/store-form22', 'form2_2');">
+        <form id="form2_2" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-form22', 'form2_2');">
             @csrf
             <div>
                 <!-- Activity 2: Commitment in Teaching Performance -->
@@ -192,7 +192,7 @@ $user_identity = $user->id;
                 // Cuando el usuario es dictaminador
                 if (userType === 'dictaminador') {
                     try {
-                        const response = await fetch('/get-docentes');
+                       const response = await fetch('/formato-evaluacion/get-docentes');
                         const docentes = await response.json();
 
                         docentes.forEach(docente => {
@@ -206,7 +206,7 @@ $user_identity = $user->id;
                             const email = event.target.value;
 
                             if (email) {
-                                axios.get('/get-docente-data', { params: { email } })
+                                axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                                     .then(response => {
                                         const data = response.data;
                                         document.getElementById('hoursText').textContent = data.form2_2.hours || '0';
@@ -245,7 +245,7 @@ $user_identity = $user->id;
                 else if (userType === '') {
                     const formName = 'form2';
                     try {
-                        const response = await fetch('/get-docentes');
+                       const response = await fetch('/formato-evaluacion/get-docentes');
 
                         const docentes = await response.json();
 
@@ -260,7 +260,7 @@ $user_identity = $user->id;
                             const email = event.target.value;
 
                             if (email) {
-                                axios.get('/get-docente-data', { params: { email } })
+                                axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                                     .then(response => {
                                         const data = response.data;
 
@@ -282,7 +282,7 @@ $user_identity = $user->id;
                                     });
                                 // Lógica para obtener datos de DictaminatorsResponseForm2
                                 try {
-                                    const response = await fetch('/get-dictaminators-responses');
+                                    const response = await fetch('/formato-evaluacion/get-dictaminators-responses');
                                     const dictaminatorResponses = await response.json();
                                     // Filtrar la entrada correspondiente al email seleccionado
                                     const selectedResponseForm2_2 = dictaminatorResponses.form2_2.find(res => res.email === email);

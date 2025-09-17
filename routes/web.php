@@ -119,7 +119,7 @@ Route::get('form4', function () {return view('form4'); })->name('form4');
 Route::get('form5', function () {return view('form5'); })->name('form5');
 Route::get('resumen_comision', function () {return view('resumen_comision'); })->name('resumen_comision');
 
-Route::get('reporte_pdf', [App\Http\Controllers\DictaminatorController::class, 'generarPDF'])->name('reporte_pdf');
+Route::get('/reporte_pdf', [App\Http\Controllers\DictaminatorController::class, 'generarPDF'])->name('reporte_pdf');
 Route::get('comision_dictaminadora', function () {return view('comision_dictaminadora'); })->name('comision_dictaminadora');
 Route::get('dynamic_forms', function () {return view('dynamic_forms'); })->name('dynamic_forms');
 
@@ -252,15 +252,15 @@ Route::get('/show-profile', [ReportsController::class, 'showProfile'])->name('sh
 
 Route::get('/forms', [FormsController::class, 'showForms']);
 
-Route::get('/generate-json', [ResponseController::class, 'generateJson'])->name('generate-json');
+Route::get('/formato-evaluacion/generate-json', [ResponseController::class, 'generateJson'])->name('generate-json');
 Route::get('/json-generator', [ResponseJson::class, 'jsonGenerator'])->name('json-generator');
 
 Route::post('/update-puntaje-maximo', [PuntajeMaximosController::class, 'updatePuntajeMaximo']);
 
 Route::get('/form3_8_1', [PuntajeMaximosController::class, 'showForm3_8_1']);
-Route::get('/get-puntaje-maximo', [ResponseForm3_8_1Controller::class, 'getPuntajeMaximo']);
+Route::get('/formato-evaluacion/get-puntaje-maximo', [ResponseForm3_8_1Controller::class, 'getPuntajeMaximo']);
 Route::get('/docencia', [ResponseForm3_8_1Controller::class, 'showForm3_8_1'])->name('showForm3_8_1');
-Route::get('/get-total-docencia', [DictaminatorForm3_1Controller::class, 'getTotalDocencia']);
+Route::get('/formato-evaluacion/get-total-docencia', [DictaminatorForm3_1Controller::class, 'getTotalDocencia']);
 Route::get('/test-event/{user_id}', function ($user_id) {
     event(new \App\Events\EvaluationCompleted($user_id));
     return 'Evento disparado para user_id: ' . $user_id;
@@ -269,18 +269,18 @@ Route::get('/test-event/{user_id}', function ($user_id) {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
 
-Route::get('/edit_delete_form/', [DynamicFormController::class, 'showDynamicForm'])->name('edit_delete_form');
+Route::get('/formato-evaluacion/edit_delete_form/', [DynamicFormController::class, 'showDynamicForm'])->name('edit_delete_form');
 
 // Ruta para cambiar el modo oscuro
 Route::post('/toggle-dark-mode', [ThemeController::class, 'toggleDarkMode']);
 //Route::resource('dynamic-forms', DynamicFormController::class);
 Route::post('/dynamic-form/store', [DynamicFormController::class, 'store'])->name('dynamic-form.store');
 
-Route::get('/dynamic-form/{formName}', [DynamicFormController::class, 'getFormByName']);
+Route::get('/formato-evaluacion/dynamic-form/{formName}', [DynamicFormController::class, 'getFormByName']);
     // Add this route with your other routes
 //Route::get('/get-form-content/{selectedForm}', [DynamicFormController::class, 'getFormContent']);
 
-Route::post('/update-page-counter', function (Request $request) {
+Route::post('/formato-evaluacion/update-page-counter', function (Request $request) {
     try {
         $page = $request->input('page');
         \Log::info('Page counter received:', ['page' => $page]);
@@ -293,22 +293,22 @@ Route::post('/update-page-counter', function (Request $request) {
 });
 
 
-Route::get('/dynamic-form/columns/{formId}', [DynamicFormController::class, 'getColumns'])->name('dynamic-form.columns');
-Route::get('/form/edit/{form_name}', [DynamicFormController::class, 'edit'])->name('form.edit');
+Route::get('/formato-evaluacion//dynamic-form/columns/{formId}', [DynamicFormController::class, 'getColumns'])->name('dynamic-form.columns');
+Route::get('/formato-evaluacion//form/edit/{form_name}', [DynamicFormController::class, 'edit'])->name('form.edit');
     Route::put('/forms/{id}', [DynamicFormController::class, 'update'])->name('forms.update');
 
     Route::delete('/forms/{id}', [DynamicFormController::class, 'destroy'])->name('forms.destroy');
 
 
-    Route::get('/get-form-content/{formId}', [DynamicFormController::class, 'showDynamicForm'])->name('get-form-content');
+    Route::get('/formato-evaluacion//get-form-content/{formId}', [DynamicFormController::class, 'showDynamicForm'])->name('get-form-content');
 
 //Route::get('/get-form-data/{formType}', [DynamicFormController::class, 'getFormData']);
-    Route::get('/get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
+    Route::get('/formato-evaluacion//get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
 
 });
 Route::post('/logout', action: [SessionsController::class, 'logout'])->name('logout');
 
-Route::get('/test-dompdf', function () {
+Route::get('/formato-evaluacion//test-dompdf', function () {
     try {
         $dompdf = new Dompdf();
         return 'Dompdf está disponible y funcionando.';

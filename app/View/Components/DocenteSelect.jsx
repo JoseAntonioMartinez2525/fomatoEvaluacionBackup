@@ -9,7 +9,7 @@ const DocenteSelect = () => {
     useEffect(() => {
         const fetchDocentes = async () => {
             try {
-                const response = await fetch('/get-docentes');
+               const response = await fetch('/formato-evaluacion/get-docentes');
                 const data = await response.json();
                 setDocentes(data);
             } catch (error) {
@@ -37,7 +37,7 @@ const DocenteSelect = () => {
             }
 
             try {
-                const response = await fetch('/get-dictaminators-responses');
+                const response = await fetch('/formato-evaluacion/get-dictaminators-responses');
                 const dictaminatorResponses = await response.json();
                 const selectedResponseForm3_19 = dictaminatorResponses.form3_19.find(res => res.email === email);
 

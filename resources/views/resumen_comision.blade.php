@@ -146,7 +146,7 @@ body.dark-mode img.imgFirma{
             </div>
             <main class="container" id="formContainer" style="display: none;">
             <form id="form4" method="POST" enctype="multipart/form-data"
-            onsubmit="event.preventDefault(); submitForm('/store-resume', 'form4');">
+            onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');">
             @csrf
             <div>
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
@@ -191,7 +191,7 @@ body.dark-mode img.imgFirma{
 
             </form>
 
-        <form id="form5" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/store-evaluator-signature', 'form5');">
+        <form id="form5" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-evaluator-signature', 'form5');">
         @csrf
         <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
         <input type="hidden" name="email" id="email" value="{{ auth()->user()->email }}">
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (docenteSelect) {
         
         try {
-            const response = await fetch('/get-docentes');
+           const response = await fetch('/formato-evaluacion/get-docentes');
             const docentes = await response.json();
             
             docentes.forEach(docente => {
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (email) {
                     // Mantenemos la solicitud a /get-docente-data para obtener los datos del docente
 
-                    const response = await axios.get('/get-docente-data', { params: { email } });
+                    const response = await axios.get('/formato-evaluacion/get-docente-data', { params: { email } });
                     const data = response.data;
                     if(data){
                                     formContainer.style.display = 'block';
@@ -657,12 +657,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                    
                     try {
-                        const userIdResponse = await fetch(`/get-user-id?email=${email}`);
+                        const userIdResponse = await fetch(`/formato-evaluacion/get-user-id?email=${email}`);
                         const userIdData = await userIdResponse.json();
 
                         if (userIdData.user_id) {
                             const userId = userIdData.user_id;
-                            const dictaminatorResponse = await fetch(`/get-dictaminators-responses?user_id=${userId}`);
+                            const dictaminatorResponse = await fetch(`/formato-evaluacion/get-dictaminators-responses?user_id=${userId}`);
                             const dictaminatorData = await dictaminatorResponse.json();
 
                             if (dictaminatorResponse.ok) {
@@ -1002,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                         messageContainer.style.display = 'block';
 
                                         try {
-                                            await submitForm('store-evaluator-signature', 'form5', userId, email);
+                                            await submitForm('/formato-evaluacion/store-evaluator-signature', 'form5', userId, email);
                                             messageContainer.textContent = 'Formulario enviado exitosamente.';
                                             messageContainer.style.backgroundColor = '#d4edda'; // Cambiar color de fondo a verde claro
                                             messageContainer.style.color = '#155724'; // Cambiar color de texto a verde oscuro
@@ -1023,7 +1023,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             }
                             
                             if (userType === '') { // Only proceed if user type is empty (presumably for evaluators)
-                                axios.get('/get-evaluator-signature', {
+                                axios.get('/formato-evaluacion/get-evaluator-signature', {
                                     params: {
                                         user_id: userId,
                                         email: email,
@@ -1080,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                             // Justo después de cargar y mostrar los datos del docente y las firmas
                                             const pdfButtonContainer = document.getElementById('pdfButtonContainer');
                                             pdfButtonContainer.innerHTML = `
-                                            <a href="/reporte_pdf?email=${encodeURIComponent(email)}" target="_blank" class="btn custom-btn">
+                                            <a href="/formato-evaluacion/reporte_pdf?email=${encodeURIComponent(email)}" target="_blank" class="btn custom-btn">
                                                 Ver PDF de Resumen de Comisión
                                             </a>
                                         `;
@@ -1221,7 +1221,7 @@ window.submitForm = submitForm;
         const email = document.getElementById('app').getAttribute('data-user-email');
         const userType = document.getElementById('app').getAttribute('data-user-type');
 
-        let data = await fetchData('/get-evaluator-signature', {
+        let data = await fetchData('/formato-evaluacion/get-evaluator-signature', {
             user_id: userId,
             email: email,
             user_type: userType

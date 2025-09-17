@@ -40,7 +40,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 @endphp
 
     <main class="container">
-        <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/store-resume', 'form4');" >
+        <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
             @csrf
             <div>
             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
@@ -296,7 +296,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         }
 
         async function loadAllData() {
-            let data = await fetchData('/get-form-data', { dictaminador_id: userId });
+            let data = await fetchData('/formato-evaluacion/get-form-data', { dictaminador_id: userId });
 
             if (data && data.dictaminador.dictaminador_id) {
                 // Asignar los valores de las comisiones automáticamente
@@ -364,7 +364,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             // Fetch dictaminador options if user type is null or empty
             if (userType != 'docente') {
                 try {
-                    const response = await fetch('/get-dictaminadores');
+                    const response = await fetch('/formato-evaluacion/get-dictaminadores');
                     const dictaminadores = await response.json();
 
                         const dictaminadorId = event.target.value;
@@ -373,7 +373,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                         if (dictaminadorId) {
                             try {
 
-                                const response = await axios.get('/get-dictaminador-data', {
+                                const response = await axios.get('/formato-evaluacion/get-dictaminador-data', {
                                     params: { email: email, dictaminador_id: dictaminadorId }  // Send both ID and email
                                 });
                                 const data = response.data;

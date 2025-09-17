@@ -36,7 +36,7 @@ $dictaminadorId = Auth::user()->dictaminador_id;
                     
                     <br><br><br><br>               
                   <main class="container">
-                        <form id="form5" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/store-evaluator-signature', 'form5');">
+                        <form id="form5" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-evaluator-signature', 'form5');">
                             @csrf
 <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
 <input type="hidden" name="email" id="email" value="{{ auth()->user()->email }}">

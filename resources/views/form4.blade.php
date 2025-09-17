@@ -94,7 +94,7 @@ $subtotalAdded = false;
         @endif
     </div>
                     <main class="container">
-                        <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/store-resume', 'form4');" >
+                        <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
                             @csrf
                             <div>
                             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
@@ -212,7 +212,7 @@ $subtotalAdded = false;
                         </form>
 
                         <br>
-                        <form id="form5" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/store-evaluator-signature', 'form5');">
+                        <form id="form5" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-evaluator-signature', 'form5');">
                             @csrf
                             <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
                             <input type="hidden" name="email" id="email" value="{{ auth()->user()->email }}">
@@ -526,7 +526,7 @@ $subtotalAdded = false;
         }
  //
      async function loadSignatures() {
-        let data = await fetchData('/get-evaluator-signature', { 
+        let data = await fetchData('/formato-evaluacion/get-evaluator-signature', { 
             user_id: userId, 
             email: email, 
             user_type: userType 
@@ -560,7 +560,7 @@ $subtotalAdded = false;
 
         //form4
         async function loadAllData() {
-            let data = await fetchData('/get-form-data', { dictaminador_id: userId });
+            let data = await fetchData('/formato-evaluacion/get-form-data', { dictaminador_id: userId });
 
             if (data && data.dictaminador.dictaminador_id) {
                 // Asignar los valores de las comisiones automáticamente
@@ -636,7 +636,7 @@ $subtotalAdded = false;
                 try {
                     const email = document.querySelector('input[name="email"]').value;
 
-                    const response = await axios.get('/get-dictaminador-data', {
+                    const response = await axios.get('/formato-evaluacion/get-dictaminador-data', {
                         params: { email: email, dictaminador_id: dictaminadorId }  // Send both ID and email
                     });
                     const data = response.data;

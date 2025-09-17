@@ -226,7 +226,7 @@ $page_counter = 28;
 
     <main class="container">
         <!-- Form for Part 3_19 -->
-        <form id="form3_19" method="POST" onsubmit="event.preventDefault(); submitForm('/store-form319', 'form3_19');">
+        <form id="form3_19" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-form319', 'form3_19');">
             @csrf
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
@@ -898,7 +898,7 @@ $page_counter = 28;
                 // Cuando el usuario es dictaminador
                 if (userType === 'dictaminador') {
                     try {
-                        const response = await fetch('/get-docentes');
+                       const response = await fetch('/formato-evaluacion/get-docentes');
                         const docentes = await response.json();
 
                         docentes.forEach(docente => {
@@ -912,7 +912,7 @@ $page_counter = 28;
                             const email = event.target.value;
 
                             if (email) {
-                                axios.get('/get-docente-data', { params: { email } })
+                                axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                                     .then(response => {
                                         const data = response.data;
 
@@ -1008,7 +1008,7 @@ $page_counter = 28;
                 else if (userType === '') {
 
                     try {
-                        const response = await fetch('/get-docentes');
+                       const response = await fetch('/formato-evaluacion/get-docentes');
 
                         const docentes = await response.json();
 
@@ -1023,7 +1023,7 @@ $page_counter = 28;
                             const email = event.target.value;
 
                             if (email) {
-                                axios.get('/get-docente-data', { params: { email } })
+                                axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                                     .then(response => {
                                         const data = response.data;
 
@@ -1053,7 +1053,7 @@ $page_counter = 28;
                                     });
                                 // Lógica para obtener datos de DictaminatorsResponseForm2
                                 try {
-                                    const response = await fetch('/get-dictaminators-responses');
+                                    const response = await fetch('/formato-evaluacion/get-dictaminators-responses');
                                     const dictaminatorResponses = await response.json();
                                     // Filtrar la entrada correspondiente al email seleccionado
                                     const selectedResponseForm3_19 = dictaminatorResponses.form3_19.find(res => res.email === email);
@@ -1440,7 +1440,7 @@ $page_counter = 28;
                     console.log('Page counter updated:', data);
                 })
                 .catch(error => {
-                    console.error('Error updating page counter:', error);
+                    console.log('Error updating page counter:', error);
                 });
         }
 

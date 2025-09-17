@@ -288,7 +288,7 @@ $user_identity = $user->id;
 
     <main class="container">
         <!--Form for Part 3_3 -->
-        <form id="form3_3" method="POST" onsubmit="event.preventDefault(); submitForm('/store-form33', 'form3_3');">
+        <form id="form3_3" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-form33', 'form3_3');">
             @csrf
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
@@ -307,7 +307,7 @@ $user_identity = $user->id;
         <tr>
             <td class="seccion3_3" colspan="5">3.3 Publicaciones relacionadas con la docencia</td>
             <td id="score3_3">0</td>
-            <td class="comision3_3" style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;">0</td>
+            <td class="comision3_3" id="comision3_3"style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;">0</td>
         </tr>
         <tr>
             <td colspan="6"></td>
@@ -332,7 +332,7 @@ $user_identity = $user->id;
             <td class="stotal1" id="stotal1"></td>
             <td class="comision actv">
                 @if($userType == 'dictaminador')
-                    <input type="number" step="0.01" class="comIncisoA" name="comIncisoA" oninput="onActv3Comision3()"
+                    <input type="number" step="0.01" class="comIncisoA" id="comIncisoA" name="comIncisoA" oninput="onActv3Comision3()"
                         value="{{ oldValueOrDefault('comIncisoA') }}">
                 @else
                     <span name="comIncisoA" class="comIncisoA"></span>
@@ -357,7 +357,7 @@ $user_identity = $user->id;
             <td class="stotal2" id="stotal2"></td>
             <td class="comision actv">
                 @if($userType == 'dictaminador')
-                    <input class="comIncisoB" type="number" step="0.01" oninput="onActv3Comision3()"
+                    <input class="comIncisoB" id="comIncisoB" type="number" step="0.01" oninput="onActv3Comision3()"
                         value="{{ oldValueOrDefault('comIncisoB') }}">
                 @else
                     <span class="comIncisoB"></span>
@@ -404,7 +404,7 @@ $user_identity = $user->id;
         <tr>
             <td class="seccion3_3" colspan="5">3.3 Publicaciones relacionadas con la docencia</td>
             <td id="score3_3_copy">0</td>
-            <td class="comision3_3_copy" style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;">0</td>
+            <td class="comision3_3_copy" id="comision3_3_copy" style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;">0</td>
         </tr>
         <tr>
             <td colspan="6"></td>
@@ -429,7 +429,7 @@ $user_identity = $user->id;
             <td class="stotal3" id="stotal3"></td>
             <td class="comision actv">
                 @if($userType == 'dictaminador')
-                    <input class="comIncisoC" type="number" step="0.01" oninput="onActv3Comision3()"
+                    <input class="comIncisoC" id="comIncisoC" type="number" step="0.01" oninput="onActv3Comision3()"
                         value="{{ oldValueOrDefault('comIncisoC') }}">
                 @else
                     <span class="comIncisoC"></span>
@@ -454,7 +454,7 @@ $user_identity = $user->id;
             <td class="stotal4" id="stotal4"></td>
             <td class="comision actv">
                 @if($userType == 'dictaminador')
-                    <input class="comIncisoD" type="number" step="0.01" oninput="onActv3Comision3()"
+                    <input class="comIncisoD" id="comIncisoD" type="number" step="0.01" oninput="onActv3Comision3()"
                         value="{{ oldValueOrDefault('comIncisoD') }}">
                 @else
                     <span class="comIncisoD"></span>
@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Cuando el usuario es dictaminador
         if (userType === 'dictaminador') {
             try {
-                const response = await fetch('/get-docentes');
+               const response = await fetch('/formato-evaluacion/get-docentes');
                 const docentes = await response.json();
 
                 docentes.forEach(docente => {
@@ -550,7 +550,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const email = event.target.value;
 
                     if (email) {
-                        axios.get('/get-docente-data', { params: { email } })
+                        axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                             .then(response => {
                                 const data = response.data; 
                                 console.log("Valor de score3_3:", data.form3_3?.score3_3);
@@ -599,7 +599,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         else if (userType === '') {
             
             try {
-                const response = await fetch('/get-docentes');
+               const response = await fetch('/formato-evaluacion/get-docentes');
 
                 const docentes = await response.json();
 
@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const email = event.target.value;
 
                     if (email) {
-                        axios.get('/get-docente-data', { params: { email } })
+                        axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                             .then(response => {
                                 const data = response.data;
 
@@ -649,7 +649,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             });
                         // Lógica para obtener datos de DictaminatorsResponseForm2
                         try {
-                            const response = await fetch('/get-dictaminators-responses');
+                            const response = await fetch('/formato-evaluacion/get-dictaminators-responses');
                             const dictaminatorResponses = await response.json();
                             // Filtrar la entrada correspondiente al email seleccionado
                             const selectedResponseForm3_3 = dictaminatorResponses.form3_3.find(res => res.email === email);
@@ -818,10 +818,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             formData['comision3_3'] = document.querySelector('.comision3_3').textContent;
 
             // Observations
-            formData['obs3_3_1'] = form.querySelector('input[name="obs3_3_1"]').value;
-            formData['obs3_3_2'] = form.querySelector('input[name="obs3_3_2"]').value;
-            formData['obs3_3_3'] = form.querySelector('input[name="obs3_3_3"]').value;
-            formData['obs3_3_4'] = form.querySelector('input[name="obs3_3_4"]').value;
+            formData['obs3_3_1'] = form.querySelector('input[class="obs3_3_1"]').textContent;
+            formData['obs3_3_2'] = form.querySelector('input[class="obs3_3_2"]').textContent;
+            formData['obs3_3_3'] = form.querySelector('input[class="obs3_3_3"]').textContent;
+            formData['obs3_3_4'] = form.querySelector('input[class="obs3_3_4"]').textContent;
 
             console.log('Form data:', formData);
 

@@ -120,7 +120,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
                             <nav class="-mx-3 flex flex-1 justify-end"></nav>
                             <form id="form3_1" method="POST"
-                                onsubmit="event.preventDefault(); submitForm('/store31', 'form3_1');">
+                                onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store31', 'form3_1');">
                                 @csrf
                                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
@@ -260,7 +260,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                             </form>
 
                             <form id="form3_2" method="POST"
-                                onsubmit="event.preventDefault(); submitForm('/store32', 'form3_2');">
+                                onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store32', 'form3_2');">
                                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                 <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -350,7 +350,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </table>
                             </form>
 
-                            <form id="form3_3" method="POST" onsubmit="event.preventDefault(); submitForm('/store33', 'form3_3');">
+                            <form id="form3_3" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store33', 'form3_3');">
                                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                 <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -487,7 +487,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </thead>
                                 </table>
                                 </form>
-    <form id="form3_4" method="POST" onsubmit="event.preventDefault(); submitForm('/store34', 'form3_4');">
+    <form id="form3_4" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store34', 'form3_4');">
         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
         <input type="hidden" name="email" value="{{ auth()->user()->email }}">
         <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -570,7 +570,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     </form>
 
                                 <form id="form3_5" method="POST"
-                                    onsubmit="event.preventDefault(); submitForm('/store35', 'form3_5');">
+                                    onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store35', 'form3_5');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -649,7 +649,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </table>
                                 </form>
                                 <form id="form3_6" method="POST"
-                                    onsubmit="event.preventDefault(); submitForm('/store36', 'form3_6');">
+                                    onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store36', 'form3_6');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -718,7 +718,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </table>
                                 </form>
                                 <form id="form3_7" method="POST"
-                                    onsubmit="event.preventDefault(); submitForm('/store37', 'form3_7');">
+                                    onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store37', 'form3_7');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -784,7 +784,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </table>
                                 </form>
                                 <form id="form3_8" method="POST"
-                                    onsubmit="event.preventDefault(); submitForm('/store38', 'form3_8');">
+                                    onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store38', 'form3_8');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -857,7 +857,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </table>
                                     <button id="btn3_8" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
                                 </form>
-                                <form id="form3_8_1" method="POST" onsubmit="event.preventDefault(); submitForm('/store381', 'form3_8_1');">
+                                <form id="form3_8_1" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store381', 'form3_8_1');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -866,7 +866,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                         <!--3.8.1 RSU -->
                                         <h4>Puntaje máximo 
                                         @if($userType != '') <!-- fetch puntajeMaximo form3_8_1 -->
-                                            <span class="bg-black text-white px-4 mt-3" id="puntajeMaximo" for="">{{ $puntajeMaximo }}</span>
+                                            <span class="bg-black text-white px-4 mt-3" id="puntajeMaximo" for="">40</span>
                                         @endif
                                         </h4>
                                     </div>
@@ -921,7 +921,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                         </tbody>
                                     </table>
                                 </form>
-                                <form id="form3_9" method="POST"onsubmit="event.preventDefault(); submitForm('/store39', 'form3_9');">
+                                <form id="form3_9" method="POST"onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store39', 'form3_9');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -1254,7 +1254,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                         </tbody>
                                     </table>
                                 </form>
-                                <form id="form3_10" method="POST" onsubmit="event.preventDefault(); submitForm('/store310', 'form3_10');">
+                                <form id="form3_10" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store310', 'form3_10');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -1346,7 +1346,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
                                         </table>
                                 </form>
-                                <form id="form3_11" method="POST" onsubmit="event.preventDefault(); submitForm('/store311', 'form3_11');">
+                                <form id="form3_11" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store311', 'form3_11');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -1460,7 +1460,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </form>
                                 </tbody>
                                 </table>
-                        <form id="form3_12" method="POST" onsubmit="event.preventDefault(); submitForm('/store312', 'form3_12');">
+                        <form id="form3_12" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store312', 'form3_12');">
                             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                             <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                             <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -1681,7 +1681,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </thead>
                                 </table>
                                 </form>
-                                <form id="form3_13" method="POST" onsubmit="event.preventDefault(); submitForm('/store313', 'form3_13');">
+                                <form id="form3_13" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store313', 'form3_13');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -1779,7 +1779,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                             <td>Reporte cumplido del periodo anual del proyecto de investigación interno,
                                                 aprobado por CAAC
                                             </td>
-                                            <td id="puntajeReporteInvInt">100</td>
+                                            <td id="puntajeReporteInvInt">50</td>
                                             <td><input type="number" id="cantReporteInvInt"
                                                     oninput="onActv3SubTotal3_13()" value="{{ oldValueOrDefault('cantReporteInvInt') }}">
                                             </td>
@@ -1807,7 +1807,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </thead>
                                 </table>
                                 </form>
-                                <form id="form3_14" method="POST" onsubmit="event.preventDefault(); submitForm('/store314', 'form3_14');">
+                                <form id="form3_14" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store314', 'form3_14');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -1913,7 +1913,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     </thead>
                                 </table>
                                 </form>
-                                <form id="form3_15" method="POST" onsubmit="event.preventDefault(); submitForm('/store315', 'form3_15');">
+                                <form id="form3_15" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store315', 'form3_15');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -2002,7 +2002,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </table> 
                                 </form>
                                 <br>
-                                <form id="form3_16" method="POST" onsubmit="event.preventDefault(); submitForm('/store316', 'form3_16');">
+                                <form id="form3_16" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store316', 'form3_16');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -2176,7 +2176,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </table> 
                                 </form>
                                 <br>
-                                <form id="form3_17" method="POST" onsubmit="event.preventDefault(); submitForm('/store317', 'form3_17');">
+                                <form id="form3_17" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store317', 'form3_17');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -2305,7 +2305,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </form>
                                 <br>
 
-                                <form id="form3_18" method="POST" onsubmit="event.preventDefault(); submitForm('/store318', 'form3_18');">
+                                <form id="form3_18" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/formato-evaluacion/store318', 'form3_18');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -2561,7 +2561,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </table>
                                 </form>
                                 <br>
-                                <form id="form3_19" method="POST" onsubmit="event.preventDefault(); submitForm('/store319', 'form3_19');">
+                                <form id="form3_19" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store319', 'form3_19');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                     <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
@@ -3699,7 +3699,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             if (form3_1) {
                 form3_1.onsubmit = function (event) {
                     event.preventDefault(); // Previene el envío por defecto
-                    submitForm('/store31', 'form3_1'); // Llama a la función submitForm
+                    submitForm('/formato-evaluacion/store31', 'form3_1'); // Llama a la función submitForm
                 };
             }
 

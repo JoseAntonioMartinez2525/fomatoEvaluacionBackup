@@ -100,7 +100,7 @@ table {
     }
 
 .nav-max-content {
-  min-width: 300px;
+  min-width: 313px;
   z-index: 2;
 }
 .content-area {

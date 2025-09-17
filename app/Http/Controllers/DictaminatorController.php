@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\EvaluatorSignature;
 use App\Models\UsersResponseForm1;
 use App\Models\UsersResponseForm2;
@@ -133,6 +134,7 @@ class DictaminatorController extends Controller
 
     public function generarPDF(Request $request)
     {
+        Log::info(['GENERAR PDF']);
         $email = $request->query('email');
         $user = User::where('email', $email)->first();
         $logoPath = public_path('logo_uabcs.png');
@@ -187,9 +189,9 @@ class DictaminatorController extends Controller
         $evaluatorSignature = EvaluatorSignature::where('user_id', $user->id)->first() ?? new EvaluatorSignature();
 
         $signaturePaths = [
-            'signature_path' => storage_path('app/public/' . $evaluatorSignature->signature_path),
-            'signature_path_2' => storage_path('app/public/' . $evaluatorSignature->signature_path_2),
-            'signature_path_3' => storage_path('app/public/' . $evaluatorSignature->signature_path_3)
+            'signature_path' => storage_path('/formato-evaluacion/app/public/' . $evaluatorSignature->signature_path),
+            'signature_path_2' => storage_path('/formato-evaluacion/app/public/' . $evaluatorSignature->signature_path_2),
+            'signature_path_3' => storage_path('/formato-evaluacion/app/public/' . $evaluatorSignature->signature_path_3)
         ];
 
         // Validación básica para evitar errores si la firma no existe
@@ -233,9 +235,9 @@ class DictaminatorController extends Controller
 */
         // Variables para la vista PDF
 
-        $signature_path = storage_path('app/public/signatures/' . basename($evaluatorSignature->signature_path));
-        $signature_path_2 = storage_path('app/public/signatures/' . basename($evaluatorSignature->signature_path_2));
-        $signature_path_3 = storage_path('app/public/signatures/' . basename($evaluatorSignature->signature_path_3));
+        $signature_path = storage_path('/formato-evaluacion/app/public/signatures/' . basename($evaluatorSignature->signature_path));
+        $signature_path_2 = storage_path('/formato-evaluacion/app/public/signatures/' . basename($evaluatorSignature->signature_path_2));
+        $signature_path_3 = storage_path('/formato-evaluacion/app/public/signatures/' . basename($evaluatorSignature->signature_path_3));
         $data = [
             'logoBase64' => $logoBase64,
             'convocatoria' => $convocatoria,

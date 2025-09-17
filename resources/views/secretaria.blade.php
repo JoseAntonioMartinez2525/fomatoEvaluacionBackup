@@ -242,10 +242,10 @@ $existingFormNames = [];
                 if (selectedForm) {
                     if (selectedForm.startsWith('form')) {
                         // Manejar formularios estáticos
-                        window.location.href = `/${selectedForm}`;
+                        window.location.href = `/formato-evaluacion/${selectedForm}`;
                     } else {
                         // Formularios dinámicos
-                        fetch(`/get-form-data/${selectedForm}`)
+                        fetch(`/formato-evaluacion/get-form-data/${selectedForm}`)
                             .then(response => response.json())
                             .then(data => {
                                 console.log('Returned Data:', data);
@@ -339,7 +339,7 @@ $existingFormNames = [];
                                     
                                     // Segunda fila - Si no tenemos una segunda actividad o valor no numérico, lo buscamos
                                     if (activityValues.length < 2) {
-                                        fetch(`/get-first-non-numeric-value/${selectedFormId}`)
+                                        fetch(`/formato-evaluacion/get-first-non-numeric-value/${selectedFormId}`)
                                             .then(response => response.json())
                                             .then(secondData => {
                                                 if (secondData.success && secondData.value) {

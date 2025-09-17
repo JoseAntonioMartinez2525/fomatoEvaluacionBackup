@@ -55,6 +55,12 @@ class DictaminatorForm2_2Controller extends TransferController
 
                 $this->checkAndTransfer('DictaminatorsResponseForm2_2');
 
+                // DB::table('consolidated_responses')->insert([
+                // 'user_id'=>$validatedData['user_id'], 
+                // 'user_email'=>$validatedData['user_email'],
+                // 'user_type'=>$validatedData['user_type'],
+                // 'actv2Comision'=> $validatedData['actv2Comision'],]); 
+                
                 event(new EvaluationCompleted($validatedData['user_id']));
                 
         } catch (QueryException $e) {

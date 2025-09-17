@@ -29,6 +29,7 @@ use App\Models\DictaminatorsResponseForm3_9;
 use App\Models\UsersResponseForm1;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class TransferResponses extends Command
 {
@@ -44,7 +45,7 @@ class TransferResponses extends Command
     {
         // Transfer dictaminador responses
         $this->transferDictaminadorResponses();
-
+        // Artisan::call('transfer:comision1');
         $this->info('Data transfer and consolidation completed.');
     }
 
@@ -78,7 +79,8 @@ class TransferResponses extends Command
 
         $consolidatedData = [];
         
-
+        try {
+            
         foreach ($models as $model) {
             $responses = $model::with('user')->get();
             foreach ($responses as $response) {
@@ -86,7 +88,8 @@ class TransferResponses extends Command
                     $consolidatedData[$response->user_id] = [
                         'user_id' => $response->user_id,
 
-                        'user_email' => $response->user ? $response->user->email : 'N/A',
+                        // 'user_email' => $response->user ? $response->user->email : 'N/A',
+                        'user_email' => 'N/A',
                         'user_type' => 'docente',
                         'comision1' => 0,
                         'actv2Comision' => 0,
@@ -113,7 +116,6 @@ class TransferResponses extends Command
                         'comision3_19' => 0,
                     ];
                 }
-
 
                 // Acumula los valores de las comisiones
                 $consolidatedData[$response->user_id]['comision1'] += $response->comision1 ?? 0;
@@ -166,6 +168,10 @@ class TransferResponses extends Command
                 'comision3_18',
                 'comision3_19',
             ]);
+        }
+
+        } catch (\Exception $e) {
+            \Log::error($e->getMessage());
         }
     }
 }

@@ -23,3 +23,7 @@ body.light-mode .btn {
     color: #000000;
 }
 
+#toggle-dark-mode{
+    margin-left: 75rem !important;
+}
+

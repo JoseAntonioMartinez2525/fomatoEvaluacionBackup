@@ -62,7 +62,7 @@ $user_identity = $user->id;
     <main class="container">
         <!-- Form for Part 3_1 -->
         <form id="form3_8_1" method="POST"
-            onsubmit="event.preventDefault(); submitForm('/store-form381', 'form3_8_1');">
+            onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-form381', 'form3_8_1');">
             @csrf
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
@@ -75,15 +75,15 @@ $user_identity = $user->id;
                 <h4>Puntaje máximo
                     @if($userType == '') <!-- usuario secretaria -->
                         @if($mostrarSoloSpan)
-                            <span id="PuntajeMaximo">{{ $puntajeMaximo }}</span>
+                            <span id="PuntajeMaximo">40</span>
                         @else
-                            <input class="pmax text-white px-4 mt-3" id="puntajeMaximo" placeholder="{{ $puntajeMaximo }}" readonly
-                                oninput="actualizarPuntajeMaximo(this.value);"">
+                            <input class="pmax text-white px-4 mt-3" id="puntajeMaximo" placeholder="40" readonly
+                                oninput="actualizarPuntajeMaximo(this.value);">
                             <button class="btn custom-btn printButtonClass" onclick="habilitarEdicion('puntajeMaximo')">Editar</button>
                             <button class="btn custom-btn printButtonClass" onclick="guardarEdicion('puntajeMaximo')">Guardar</button>
                         @endif
                     @else
-                        <span id="PuntajeMaximo">{{ $puntajeMaximo }}</span>
+                        <span id="PuntajeMaximo">40</span>
 
                     @endif
                 </h4>
@@ -207,7 +207,7 @@ $user_identity = $user->id;
                 // Cuando el usuario es dictaminador
                 if (userType === 'dictaminador') {
                     try {
-                        const response = await fetch('/get-docentes');
+                       const response = await fetch('/formato-evaluacion/get-docentes');
                         const docentes = await response.json();
 
                         docentes.forEach(docente => {
@@ -221,11 +221,11 @@ $user_identity = $user->id;
                             const email = event.target.value;
 
                             if (email) {
-                                axios.get('/get-docente-data', { params: { email } })
+                                axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                                     .then(response => {
                                         const data = response.data;
                                         // Populate fields with fetched data
-                                        document.getElementById('score3_8_1').textContent = data.form3_8_1.score3_8_1 || '0';
+                                        document.getElementById('score3_8_1').textContent = data.form3_8_1.score3_8_1 || data.form3_8_1.puntajeHoras3_8_1;
                                         document.getElementById('puntaje3_8_1').textContent = data.form3_8_1.puntaje3_8_1 || '0';
                                         document.getElementById('puntajeHoras3_8_1').textContent = data.form3_8_1.puntajeHoras3_8_1 || '0';
 
@@ -262,7 +262,7 @@ $user_identity = $user->id;
                 else if (userType === '') {
 
                     try {
-                        const response = await fetch('/get-docentes');
+                       const response = await fetch('/formato-evaluacion/get-docentes');
 
                         const docentes = await response.json();
 
@@ -277,7 +277,7 @@ $user_identity = $user->id;
                             const email = event.target.value;
 
                             if (email) {
-                                axios.get('/get-docente-data', { params: { email } })
+                                axios.get('/formato-evaluacion/get-docente-data', { params: { email } })
                                     .then(response => {
                                         const data = response.data;
 
@@ -299,7 +299,7 @@ $user_identity = $user->id;
                                     });
                                 // Lógica para obtener datos de DictaminatorsResponseForm2
                                 try {
-                                    const response = await fetch('/get-dictaminators-responses');
+                                    const response = await fetch('/formato-evaluacion/get-dictaminators-responses');
                                     const dictaminatorResponses = await response.json();
                                     // Filtrar la entrada correspondiente al email seleccionado
                                     const selectedResponseForm3_8_1 = dictaminatorResponses.form3_8_1.find(res => res.email === email);
@@ -317,6 +317,8 @@ $user_identity = $user->id;
                                         document.getElementById('comision3_8_1').textContent = selectedResponseForm3_8_1.comision3_8_1 || '0';
                                         document.querySelector('span[name="comisionDict3_8_1"]').textContent = selectedResponseForm3_8_1.comisionDict3_8_1 || '0';
                                         document.querySelector('span[name="obs3_8_1_1"]').textContent = selectedResponseForm3_8_1.obs3_8_1_1 || '';
+
+                                    // console.log (data.form3_8_1.puntajeHoras3_8_1);
 
 
                                     } else {
