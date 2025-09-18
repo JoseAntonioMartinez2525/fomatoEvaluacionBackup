@@ -505,8 +505,9 @@ $user_identity = $user->id;
                     showMessage('Formulario no enviado', 'red');
                 }
             } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-            }
+                  showMessage('Error de red o servidor', 'red');
+                    console.error('There was a problem with the fetch operation:', error);
+        }
         }
         function minWithSum(value1, value2) {
             const sum = value1 + value2;

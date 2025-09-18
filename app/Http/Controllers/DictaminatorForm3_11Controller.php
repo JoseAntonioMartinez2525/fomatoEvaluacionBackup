@@ -66,7 +66,7 @@ class DictaminatorForm3_11Controller extends TransferController
                 'success' => true,
                 'message' => 'Data successfully saved',
                 'data' => $validatedData,
-            ], 1100);
+            ], 200);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
