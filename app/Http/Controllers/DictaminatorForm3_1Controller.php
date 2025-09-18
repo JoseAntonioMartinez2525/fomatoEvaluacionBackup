@@ -187,7 +187,7 @@ class DictaminatorForm3_1Controller extends TransferController
 
     public function getTotalDocencia(Request $request)
     {
-            $user_id = $request->query('user_id');
+        $user_id = $request->input('user_id');
         $consolidatedResponses = DB::table('consolidated_responses')->where('user_id', $user_id)->get();
 
         $subtotal3_1To3_8_1 = $consolidatedResponses->reduce(function ($carry, $response) {
@@ -231,9 +231,39 @@ class DictaminatorForm3_1Controller extends TransferController
             700
         );
 
-            return response()->json(['totalDocencia' => 60]);
-
+        return response()->json(['totalDocencia' => $total]);
     }
+
+    public function getTotalDocenciaEvaluar(Request $request)
+{
+    $user_id = $request->input('user_id');
+    $total = 0;
+
+    $total += (UsersResponseForm3_1::where('user_id', $user_id)->value('score3_1') ?? 0);
+    $total += (UsersResponseForm3_2::where('user_id', $user_id)->value('score3_2') ?? 0);
+    $total += (UsersResponseForm3_3::where('user_id', $user_id)->value('score3_3') ?? 0);
+    $total += (UsersResponseForm3_4::where('user_id', $user_id)->value('score3_4') ?? 0);
+    $total += (UsersResponseForm3_5::where('user_id', $user_id)->value('score3_5') ?? 0);
+    $total += (UsersResponseForm3_6::where('user_id', $user_id)->value('score3_6') ?? 0);
+    $total += (UsersResponseForm3_7::where('user_id', $user_id)->value('score3_7') ?? 0);
+    $total  += (UsersResponseForm3_8::where('user_id', $user_id)->value('score3_8') ?? 0);
+    $total += (UsersResponseForm3_8_1::where('user_id', $user_id)->value('score3_8_1') ?? 0);
+    $total += (UsersResponseForm3_9::where('user_id', $user_id)->value('score3_9') ?? 0);
+    $total += (UsersResponseForm3_10::where('user_id', $user_id)->value('score3_10') ?? 0);
+    $total += (UsersResponseForm3_11::where('user_id', $user_id)->value('score3_11') ?? 0);
+    $total += (UsersResponseForm3_12::where('user_id', $user_id)->value('score3_12') ?? 0);
+    $total += (UsersResponseForm3_13::where('user_id', $user_id)->value('score3_13') ?? 0);
+    $total += (UsersResponseForm3_14::where('user_id', $user_id)->value('score3_14') ?? 0);
+    $total += (UsersResponseForm3_15::where('user_id', $user_id)->value('score3_15') ?? 0);
+    $total += (UsersResponseForm3_16::where('user_id', $user_id)->value('score3_16') ?? 0);
+    $total += (UsersResponseForm3_17::where('user_id', $user_id)->value('score3_17') ?? 0);
+    $total += (UsersResponseForm3_18::where('user_id', $user_id)->value('score3_18') ?? 0);
+    $total += (UsersResponseForm3_19::where('user_id', $user_id)->value('score3_19') ?? 0);
+  
+    $total = min($total, 700);
+
+    return response()->json(['totalDocencia' => $total]);
+}
 }
 
 
