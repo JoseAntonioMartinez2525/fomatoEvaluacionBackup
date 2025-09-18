@@ -606,7 +606,7 @@ $user_identity = $user->id;
                                         }
 
                                         const user_id = data.form3_1.user_id; 
-                                        axios.get('/formato-evaluacion/get-total-docencia', { params: { user_id } })
+                                       axios.get('/formato-evaluacion/get-total-docencia-evaluar', { params: { user_id } })
                                             .then(response => {
                                                 const total = parseFloat(response.data.totalDocencia ?? '0');
                                                 document.querySelectorAll('#docencia, #docencia2').forEach(el => {
@@ -688,7 +688,7 @@ $user_identity = $user->id;
                                             }
                                         }
                                         // const user_id = data.form3_1.user_id; 
-                                        axios.get('/formato-evaluacion/get-total-docencia', { params: { user_id } })
+                                        axios.get('/formato-evaluacion/get-total-docencia-evaluar', { params: { user_id } })
                                             .then(response => {
                                                 const total = parseFloat(response.data.totalDocencia ?? '0');
                                                 // Actualiza el contenido de los elementos con ID 'docencia' y 'docencia2'
