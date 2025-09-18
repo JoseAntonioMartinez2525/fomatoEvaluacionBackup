@@ -445,7 +445,7 @@ $data = [
     </tbody>
 </table>
 
-<div style="margin-top: 200px; text-align: center;">
+<div style="margin-top: 100px; text-align: center;">
     <strong>Convocatoria:</strong> {{ $convocatoria }}
 </div>
 
