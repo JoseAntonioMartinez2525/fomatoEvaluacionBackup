@@ -197,54 +197,25 @@ class DictaminatorController extends Controller
         // Validación básica para evitar errores si la firma no existe
         foreach ($signaturePaths as $key => $path) {
             if (!file_exists($path)) {
-                $signaturePaths[$key] = null; // O podrías asignar una imagen por defecto si gustas
+                $signaturePaths[$key] = null; 
             }
         }
-    /*
-        $svgPaths = [];
 
-        if (!file_exists(public_path('storage/' . $evaluatorSignature->signature_path))) {
-            dd('Firma no encontrada:', public_path('storage/' . $evaluatorSignature->signature_path));
-        }
-        //dd($signaturePaths, $svgPaths);
-
-
-        foreach ($signaturePaths as $key => $inputImage) {
-            if (!file_exists($inputImage)) {
-                //dd("Archivo no encontrado en storage_path: {$inputImage}");
-            }
-
-            $outputSvg = storage_path('app/public/' . pathinfo($inputImage, PATHINFO_FILENAME) . '.svg');
-
-            $svgContent = '<?xml version="1.0" encoding="UTF-8"?>
-            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
-                <image href="' . asset('storage/' . basename($inputImage)) . '" x="0" y="0" width="200" height="100"/>
-            </svg>';
-
-            file_put_contents($outputSvg, $svgContent);
-
-            if (!file_exists($outputSvg)) {
-                dd("Error: El archivo {$outputSvg} no se ha creado correctamente.");
-            }
-
-            $svgPaths[$key] = 'storage/' . pathinfo($inputImage, PATHINFO_FILENAME) . '.svg';
+        $signatureBase64 = '';
+        if ($evaluatorSignature->signature_path && file_exists(public_path('storage/' . $evaluatorSignature->signature_path))) {
+            $signatureBase64 = $this->resizeAndEncodeBase64(public_path('storage/' . $evaluatorSignature->signature_path));
         }
 
+        $signatureBase64_2 = '';
+        if ($evaluatorSignature->signature_path_2 && file_exists(public_path('storage/' . $evaluatorSignature->signature_path_2))) {
+            $signatureBase64_2 = $this->resizeAndEncodeBase64(public_path('storage/' . $evaluatorSignature->signature_path_2));
+        }
 
-
-*/
-        // Variables para la vista PDF
-
-$signature_path = $evaluatorSignature->signature_path
-    ? asset('storage/signatures/' . basename($evaluatorSignature->signature_path))
-    : null;
-$signature_path_2 = $evaluatorSignature->signature_path_2
-    ? asset('storage/signatures/' . basename($evaluatorSignature->signature_path_2))
-    : null;
-$signature_path_3 = $evaluatorSignature->signature_path_3
-    ? asset('storage/signatures/' . basename($evaluatorSignature->signature_path_3))
-    : null;
-    
+        $signatureBase64_3 = '';
+        if ($evaluatorSignature->signature_path_3 && file_exists(public_path('storage/' . $evaluatorSignature->signature_path_3))) {
+            $signatureBase64_3 = $this->resizeAndEncodeBase64(public_path('storage/' . $evaluatorSignature->signature_path_3));
+        }
+        // Preparar los datos para la vista PDF
         $data = [
             'logoBase64' => $logoBase64,
             'convocatoria' => $convocatoria,
@@ -260,14 +231,13 @@ $signature_path_3 = $evaluatorSignature->signature_path_3
             'evaluator_name' => $evaluatorSignature->evaluator_name ?? '',
             'evaluator_name_2' => $evaluatorSignature->evaluator_name_2 ?? '',
             'evaluator_name_3' => $evaluatorSignature->evaluator_name_3 ?? '',
-            'signature_path' => $signature_path,
-            'signature_path_2' => $signature_path_2,
-            'signature_path_3' => $signature_path_3,
+            'signatureBase64' => $signatureBase64,
+            'signatureBase64_2' => $signatureBase64_2,
+            'signatureBase64_3' => $signatureBase64_3,
             'pagina_inicio' => 31,
             'pagina_total' => 33,
         ];
 
-        //dd($data);
 
         // Para asegurarte de que la ejecución no llegue al PDF
         //dd("SVGPaths generados correctamente:", $svgPaths);
@@ -275,9 +245,6 @@ $signature_path_3 = $evaluatorSignature->signature_path_3
         // 5. Pasar todo a la vista PDF
         $pdf = Pdf::loadView('reporte_pdf', $data);
         $pdf->setPaper('A4', 'landscape'); // <-- Esta línea establece la orientación horizontal
-
-           
-        
 
         //dd($evaluatorSignature->signature_path, $evaluatorSignature->signature_path_2, $evaluatorSignature->signature_path_3);
         $pdf->setOption('enable-local-file-access', true);
@@ -392,4 +359,3 @@ $signature_path_3 = $evaluatorSignature->signature_path_3
 
 
 }
-

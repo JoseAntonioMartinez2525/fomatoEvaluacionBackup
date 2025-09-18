@@ -148,9 +148,9 @@ $data = [
     'evaluator_name' => $evaluatorSignature->evaluator_name ?? '',
     'evaluator_name_2' => $evaluatorSignature->evaluator_name_2 ?? '',
     'evaluator_name_3' => $evaluatorSignature->evaluator_name_3 ?? '',
-    'signature_path' => $signature_path,
-    'signature_path_2' => $signature_path_2,
-    'signature_path_3' => $signature_path_3,
+    'signatureBase64' => $signatureBase64,
+    'signatureBase64_2' => $signatureBase64_2,
+    'signatureBase64_3' => $signatureBase64_3,
     'pagina_inicio' => 31,
     'pagina_total' => 32,
 ];
@@ -417,9 +417,9 @@ $data = [
             {{ $evaluator_name ?? '' }}
         </td>
         <td class="firma-evaluador">
-                @if(!empty($signature_path) && file_exists($signature_path))
-                    <img src="{{ $signature_path }}" alt="Firma" class="firma-img">
-                @endif
+            @if(!empty($signatureBase64))
+                <img src="{{ $signatureBase64 }}" alt="Firma" class="firma-img">
+            @endif
         </td>
     </tr>
     <tr>    
@@ -427,8 +427,8 @@ $data = [
         {{ $evaluator_name_2 ?? '' }}
     </td    >
         <td class="firma-evaluador">
-            @if(!empty($signature_path_2) && file_exists($signature_path_2))
-                <img src="{{ $signature_path_2 }}" alt="Firma 2" class="firma-img">
+            @if(!empty($signatureBase64_2))
+                <img src="{{ $signatureBase64_2 }}" alt="Firma" class="firma-img">
             @endif
         </td>
     </tr>
@@ -437,8 +437,8 @@ $data = [
         {{ $evaluator_name_3 ?? '' }}
         </td>
         <td class="firma-evaluador">
-            @if(!empty($signature_path_3) && file_exists($signature_path_3))
-                <img src="{{ $signature_path_3 }}" alt="Firma" class="firma-img">
+            @if(!empty($signatureBase64_3))
+                <img src="{{ $signatureBase64_3 }}" alt="Firma" class="firma-img">
             @endif
         </td>
     </tr>
