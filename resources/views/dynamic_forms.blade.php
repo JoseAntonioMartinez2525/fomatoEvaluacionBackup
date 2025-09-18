@@ -97,9 +97,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                                                                     @if (Auth::check() && Auth::user()->user_type === '')
                                                                                         <x-nav-menu :user="Auth::user()">
                                                                                             <div>
-                                                                                                <ul style="list-style: none;"">
+                                                                                                <ul style="list-style: none;">
                                                                                                     <li class="nav-item">
-                                                                                                        <a class="nav-link active enlaceSN" style="width: 300px;" href="{{route('edit_delete_form')}}"
+                                                                                                        <a class="nav-link active enlaceSN" style="width: 300px;" href="{{route('/formato-evaluacion/edit_delete_form')}}"
                                                                                                             title="Editar ó eliminar formulario"><i class="fa-solid fa-user-pen"></i>&nbspEditar/Eliminar</a>
                                                                                                     </li>
                                                                                                 </ul>
@@ -129,7 +129,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                                                                         aria-selected="true">Añadir nuevo Formulario</a>
                                                                                 </li>
                                                                                 <li class="nav-item " role="presentation">
-                                                                                    <a class="nav-link active" id="tab-edit" data-mdb-pill-init href="{{ route('edit_delete_form') }}" role="tab"
+                                                                                    <a class="nav-link active" id="tab-edit" data-mdb-pill-init href="{{ route('/formato-evaluacion/edit_delete_form') }}" role="tab"
                                                                                         aria-controls="pills-edit" aria-selected="false">Editar/Eliminar Formulario</a>
                                                                                 </li>
                                                                             </ul>
@@ -820,7 +820,7 @@ function updateSubheaderId(input, id) {
                 });
 
                 // Redirect or update UI as needed
-                window.location.href = `{{ route('secretaria') }}?formType=${formType}&formName=${encodeURIComponent(formName)}`;
+                window.location.href = `{{ route('/formato-evaluacion/secretaria') }}?formType=${formType}&formName=${encodeURIComponent(formName)}`;
             } else {
                 alert('Error al guardar el formulario: ' + (data.message || 'Error desconocido.'));
             }

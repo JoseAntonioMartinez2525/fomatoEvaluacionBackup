@@ -321,7 +321,7 @@ $user_identity = $user->id;
     <x-table-header />
     <tr>
         <td colspan="5"><b>3. Calidad en la docencia</b></td>
-        <td id="docencia2"></td>
+       <td id="docencia2">{{ $docencia ?? '0' }}</td>
         <td class="actv3Comision" style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;"></td>
         <td></td>
     </tr>
@@ -407,7 +407,7 @@ $user_identity = $user->id;
     
     <tr>
         <td colspan="5"><b>3. Calidad en la docencia</b></td>
-        <td id="docencia"></td>
+       <td id="docencia">{{ $docencia ?? '0' }}</td>
         <td class="actv3Comision" style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;"></td>
         <td></td>
     </tr>

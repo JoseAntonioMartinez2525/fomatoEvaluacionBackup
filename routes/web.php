@@ -75,7 +75,7 @@ Route::get('/', function () {
     return view('login');
 });
 
-Route::get('/', [SessionsController::class, 'index'])->name('login');
+Route::get('/formato-evaluacion/', [SessionsController::class, 'index'])->name('login');
 Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
  
 Route::middleware(['auth'])->group(function (){
@@ -88,7 +88,7 @@ Route::get('docencia', function () {return view('docencia'); })->name('docencia'
 Route::get('resumen', function () {return view('resumen'); })->name('resumen');
 Route::get('perfil', function () {return view('perfil'); })->name('perfil');
 Route::get('general', function () {return view('general');})->name('general');
-Route::get('edit_delete_form', [DynamicFormController::class, 'showSecretaria'])->name('edit_delete_form');
+Route::get('edit_delete_form', [DynamicFormController::class, 'showSecretaria'])->name('edit_delete_form_dynamic');
 
 Route::get('/get-first-non-numeric-value/{formId}', [DynamicFormController::class, 'getFirstNonNumericValue']);
 
@@ -260,14 +260,15 @@ Route::post('/update-puntaje-maximo', [PuntajeMaximosController::class, 'updateP
 Route::get('/form3_8_1', [PuntajeMaximosController::class, 'showForm3_8_1']);
 Route::get('/formato-evaluacion/get-puntaje-maximo', [ResponseForm3_8_1Controller::class, 'getPuntajeMaximo']);
 Route::get('/docencia', [ResponseForm3_8_1Controller::class, 'showForm3_8_1'])->name('showForm3_8_1');
-Route::get('/formato-evaluacion/get-total-docencia', [DictaminatorForm3_1Controller::class, 'getTotalDocencia']);
+Route::get('/formato-evaluacion/get-total-docencia', [DictaminatorForm3_1Controller::class, 'getTotalDocencia'])->name('get-total-docencia');
+Route::get('/formato-evaluacion/get-total-docencia-evaluar', [DictaminatorForm3_1Controller::class, 'getTotalDocenciaEvaluar'])->name('get-total-docencia-evaluar');
 Route::get('/test-event/{user_id}', function ($user_id) {
     event(new \App\Events\EvaluationCompleted($user_id));
     return 'Evento disparado para user_id: ' . $user_id;
 });
 
     Route::get('/formato-evaluacion/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/formato-evaluacion/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/formato-evaluacion/register', [AuthController::class, 'register'])->name('register.post');
 
 Route::get('/formato-evaluacion/edit_delete_form/', [DynamicFormController::class, 'showDynamicForm'])->name('edit_delete_form');
 

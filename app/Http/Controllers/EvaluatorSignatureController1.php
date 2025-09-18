@@ -82,7 +82,7 @@ class EvaluatorSignatureController1 extends Controller
                     'nombre de la persona evaluadora 3: ' => $evaluatorSignature->evaluator_name_3,
                 ],
                 'signature_urls' => [
-                    'firma' => asset('storage/' . $evaluatorSignature->signature_path),
+                    'firma' => asset('storage/' . $evaluatorSignature->signature_path), 
                     'firma2' => asset('storage/' . $evaluatorSignature->signature_path_2),
                     'firma3' => asset('storage/' . $evaluatorSignature->signature_path_3),
                 ]

@@ -187,7 +187,7 @@ class DictaminatorForm3_1Controller extends TransferController
 
     public function getTotalDocencia(Request $request)
     {
-        $user_id = $request->input('user_id');
+            $user_id = $request->query('user_id');
         $consolidatedResponses = DB::table('consolidated_responses')->where('user_id', $user_id)->get();
 
         $subtotal3_1To3_8_1 = $consolidatedResponses->reduce(function ($carry, $response) {
@@ -231,7 +231,8 @@ class DictaminatorForm3_1Controller extends TransferController
             700
         );
 
-        return response()->json(['totalDocencia' => $total]);
+            return response()->json(['totalDocencia' => 60]);
+
     }
 }
 
