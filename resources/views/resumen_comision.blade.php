@@ -137,7 +137,7 @@ body.dark-mode img.imgFirma{
             <div class="container mt-4" id="seleccionDocente">
             @if($userType !== 'docente')
             <!-- Select para dictaminador seleccionando docentes -->
-            <label for="docenteSelect">Seleccionar Docente:</label>
+            <label for="docenteSelect">Buscar Docente:</label>
             <select id="docenteSelect" class="form-select"> <!--name="docentes[]" multiple-->
             <option value="">Seleccionar un docente</option>
             <!-- Aquí se llenarán los docentes con JavaScript -->
@@ -208,11 +208,11 @@ body.dark-mode img.imgFirma{
                 @elseif($userType === 'dictaminador')
                     <!-- Implementación en caso que el usuario sea 'dictaminador' -->
                     @if(empty($personaEvaluadora))
-                        <input class="personaEvaluadora1" type="text" id="personaEvaluadora1" style="background:transparent;border: 15px rgba(0, 0, 0, 0);" name="evaluator_name" required>
+                        <input class="personaEvaluadora1" type="text" id="personaEvaluadora1" style="background:transparent;border: 15px rgba(0, 0, 0, 0);" name="evaluator_name" required placeholder="Nombre completo de la persona evaluadora">
                     @elseif(!empty($personaEvaluadora) && empty($personaEvaluadora2))
-                        <input class="personaEvaluadora2" type="text" id="personaEvaluadora2" style="background:transparent;border: 15px rgba(0, 0, 0, 0);" name="evaluator_name_2" required> 
+                        <input class="personaEvaluadora2" type="text" id="personaEvaluadora2" style="background:transparent;border: 15px rgba(0, 0, 0, 0);" name="evaluator_name_2" required placeholder="Nombre completo de la persona evaluadora"> 
                     @elseif((!empty($personaEvaluadora1)) && (!empty($personaEvaluadora2)))
-                            <input class="personaEvaluadora3" type="text" id="personaEvaluadora3" style="background:transparent;border: 15px rgba(0, 0, 0, 0);" name="evaluator_name_3" required>                                                                                                                              
+                            <input class="personaEvaluadora3" type="text" id="personaEvaluadora3" style="background:transparent;border: 15px rgba(0, 0, 0, 0);" name="evaluator_name_3" required placeholder="Nombre completo de la persona evaluadora">                                                                                                                              
                     @endif
                 @endif
             </th>
@@ -263,7 +263,7 @@ body.dark-mode img.imgFirma{
 
             </tr>
             <tr>
-                <td class="p-2 nombreLabel">Nombre de la persona evaluadora</td>
+                {{-- <td class="p-2 nombreLabel">Nombre de la persona evaluadora</td> --}}
 
                 <td class="p-2"><span id="firmaTexto">Firma</span>
                     @if($userType === 'dictaminador')

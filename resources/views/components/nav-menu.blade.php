@@ -26,11 +26,11 @@ body.dark-mode .nav {
                     <li class="nav-item">
                         <a class="nav-link active enlaceSN" aria-current="page" style="width: 200px;" href="{{ route('rules') }}" title="Reglamento deacuerdo al artículo 10 de PEDPD"><i class="fas fa-book"></i>&nbspReglamento</a>
                     </li>
-                    @if($user->user_type === 'dictaminador')
+                    {{-- @if($user->user_type === 'dictaminador')
                         <li class="nav-item">
                             <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('comision_dictaminadora') }}" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
                         </li>
-                    @endif
+                    @endif --}}
                     @if($user->user_type != 'docente')
                         @if($user->user_type === '')
                         <li class="nav-item">
