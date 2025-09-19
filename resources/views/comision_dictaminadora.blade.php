@@ -61,6 +61,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             top: 20px;
             right: 20px;
         }
+
     </style>
 
 </head>
@@ -75,81 +76,81 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
             <div class="container mt-4">
                 <!-- Selector para elegir el formulario -->
-                <label for="formSelect">Buscar Evaluación:</label>
+                <label for="formGrid">Buscar Evaluación:</label>
 
-                   <div id="formSelect" class="container">
-                        <div class="row">
+                   <div id="formGrid" class="container mt-4">
+                        <div class="row g-3">
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form2">1. Permanencia en las actividades de la docencia</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form2')"> 1. Permanencia en las actividades de la docencia</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form2_2">2. Dedicación en el desempeño docente</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form2_2')">2. Dedicación en el desempeño docente</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_1">3.1 Participación en actividades de diseño curricular</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_1')">3.1 Participación en actividades de diseño curricular</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_2">3.2 Calidad del desempeño docente evaluada por el alumnado</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_2')">3.2 Calidad del desempeño docente evaluada por el alumnado</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_3">3.3 Publicaciones relacionadas con la docencia</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_3')">3.3 Publicaciones relacionadas con la docencia</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_4">3.4 Distinciones académicas recibidas por el docente</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_4')">3.4 Distinciones académicas recibidas por el docente</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_5">3.5 Asistencia, puntualidad y permanencia en el desempeño docente</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_5')">3.5 Asistencia, puntualidad y permanencia en el desempeño docente</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_6">3.6 Capacitación y actualización pedagógica recibida</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_6')">3.6 Capacitación y actualización pedagógica recibida</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_7">3.7 Cursos de actualización disciplinaria</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_7')">3.7 Cursos de actualización disciplinaria</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_8">3.8 Impartición de cursos, diplomados, seminarios</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_8')">3.8 Impartición de cursos, diplomados, seminarios</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_8_1">3.8.1 RSU</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_8_1')">3.8.1 RSU</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_9">3.9 Trabajos dirigidos para la titulación</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_9')">3.9 Trabajos dirigidos para la titulación</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_10">3.10 Tutorías a estudiantes</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_10')">3.10 Tutorías a estudiantes</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_11">3.11 Asesoría a estudiantes</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_11')">3.11 Asesoría a estudiantes</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_12">3.12 Publicaciones de investigación</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_12')">3.12 Publicaciones de investigación</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_13">3.13 Proyectos académicos de investigación</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_13')">3.13 Proyectos académicos de investigación</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_14">3.14 Participación como ponente en congresos</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_14')">3.14 Participación como ponente en congresos</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_15">3.15 Registro de patentes y productos de investigación</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_15')">3.15 Registro de patentes y productos de investigación</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_16">3.16 Actividades de arbitraje y edición</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_16')">3.16 Actividades de arbitraje y edición</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_17">3.17 Proyectos académicos de extensión</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_17')">3.17 Proyectos académicos de extensión</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_18">3.18 Organización de congresos institucionales</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_18')">3.18 Organización de congresos institucionales</button>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
-                            <button class="btn btn-outline-primary w-100" value="form3_19">3.19 Participación en cuerpos colegiados</button>
+                            <button class="btn btn-outline-primary w-100 form-option" onclick="navigateToRoute('/formato-evaluacion/form3_19')">3.19 Participación en cuerpos colegiados</button>
                             </div>
                         </div>
-                        </div>
+                    </div>
 
 
-                {{-- <select id="formSelect" class="form-select">
+                {{-- <select id="formGrid" class="form-select">
                     <option value=""></option>
                     <option value="form2">1. Permanencia en las actividades de la docencia</option>
                     <option value="form2_2">2. Dedicación en el desempeño docente</option>
@@ -285,7 +286,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
     // Aquí agregaremos la función para seleccionar docentes
 document.addEventListener('DOMContentLoaded', () => {
-    const formSelect = document.getElementById('formSelect');
+    const formGrid = document.getElementById('formGrid');
     const formContainer = document.getElementById('formContainer');
     const docenteSelect = document.getElementById('teacherSelect');
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -312,8 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Evento al cambiar docente
     docenteSelect.addEventListener('change', function() {
         const selectedDocente = this.value;
-        const selectedForm = formSelect.value;
-        const selectedFormId = formSelect.options[formSelect.selectedIndex].getAttribute('data-id');
+        const selectedForm = null;
+        const selectedFormId = formGrid.options[formGrid.selectedIndex].getAttribute('data-id');
         
         if (selectedDocente && selectedForm) {
             if (selectedForm.startsWith('form')) {
@@ -327,27 +328,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Modificar el evento change del selector de formulario
-    formSelect.addEventListener('change', function() {
-        const selectedForm = this.value;
-        const selectedFormId = this.options[this.selectedIndex].getAttribute('data-id');
-        const selectedDocente = docenteSelect ? docenteSelect.value : null;
-        
-        if (selectedForm && selectedDocente) {
-            if (selectedForm.startsWith('form')) {
-                window.location.href = `/formato-evaluacion/${selectedForm}?teacher=${selectedDocente}`;
-            } else {
-                cargarFormularioConDatosDocente(selectedForm, selectedFormId, selectedDocente);
+    formGrid.addEventListener('click', function(event) {
+        if (event.target.classList.contains('form-option')) {
+            // Remover clase activo de todos los botones
+            document.querySelectorAll('.form-option').forEach(btn => btn.classList.remove('active'));
+
+            // Añadir clase activo al botón clickeado
+            event.target.classList.add('active');
+
+            // Guardar selección
+            selectedForm = event.target.getAttribute('data-value');
+            const selectedFormId = null; // Si usas data-id, agregalo en el botón
+
+            const selectedDocente = docenteSelect ? docenteSelect.value : null;
+
+                // Lógica igual que antes
+                if (selectedForm && selectedDocente) {
+                if (selectedForm.startsWith('form')) {
+                    window.location.href = `/formato-evaluacion/${selectedForm}?teacher=${selectedDocente}`;
+                } else {
+                    cargarFormularioConDatosDocente(selectedForm, selectedFormId, selectedDocente);
+                }
+                } else if (selectedForm) {
+                if (selectedForm.startsWith('form')) {
+                    window.location.href = `/formato-evaluacion/${selectedForm}`;
+                } else {
+                    cargarFormularioDinamico(selectedForm, selectedFormId);
+                }
+                } else {
+                formContainer.innerHTML = '';
+                }
             }
-        } else if (selectedForm) {
-            if (selectedForm.startsWith('form')) {
-                window.location.href = `/formato-evaluacion/${selectedForm}`;
-            } else {
-                cargarFormularioDinamico(selectedForm, selectedFormId);
-            }
-        } else {
-            formContainer.innerHTML = '';
-        }
-    });
+});
 
     // Función para cargar formulario dinámico (sin datos de docente)
     function cargarFormularioDinamico(formName, formId) {
@@ -636,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 alert('Datos guardados correctamente');
                 // Recargar los datos del formulario
-                const formName = document.getElementById('formSelect').value;
+                const formName = document.getElementById('formGrid').value;
                 cargarFormularioConDatosDocente(formName, formId, docenteEmail);
             } else {
                 alert(`Error: ${data.message || 'No se pudieron guardar los datos'}`);
@@ -792,7 +804,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Función para agregar un nuevo formulario al select, manteniendo el orden
             function addFormOption(newFormId, newFormLabel) {
-                const selectElement = document.getElementById('formSelect');
+                const selectElement = document.getElementById('formGrid');
                 const newOption = document.createElement('option');
                 newOption.value = newFormId;
                 newOption.textContent = newFormLabel;
@@ -968,6 +980,10 @@ function guardarDatosComision(formId, docenteEmail) {
         }
     });
 }
+
+ function navigateToRoute(route) {
+        window.location.href = route;
+      }
     
     </script>
 
