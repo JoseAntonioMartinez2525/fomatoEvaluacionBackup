@@ -96,6 +96,7 @@ body {
 }
 
 
+
 #iconoSesion {
     text-decoration: none;
     outline: none !important;
@@ -814,6 +815,10 @@ body.dark-mode #form2_2Button:hover{
         width: 100%;
         margin-bottom: 0.80rem;
     }
+
+      .table-container, .table-container2 {
+    margin-inline-start:  auto;
+  }
 
 }
 

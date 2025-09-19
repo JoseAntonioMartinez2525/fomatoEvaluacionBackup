@@ -75,8 +75,81 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
             <div class="container mt-4">
                 <!-- Selector para elegir el formulario -->
-                <label for="formSelect">Seleccionar Formulario:</label>
-                <select id="formSelect" class="form-select">
+                <label for="formSelect">Buscar Evaluación:</label>
+
+                   <div id="formSelect" class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form2">1. Permanencia en las actividades de la docencia</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form2_2">2. Dedicación en el desempeño docente</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_1">3.1 Participación en actividades de diseño curricular</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_2">3.2 Calidad del desempeño docente evaluada por el alumnado</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_3">3.3 Publicaciones relacionadas con la docencia</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_4">3.4 Distinciones académicas recibidas por el docente</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_5">3.5 Asistencia, puntualidad y permanencia en el desempeño docente</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_6">3.6 Capacitación y actualización pedagógica recibida</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_7">3.7 Cursos de actualización disciplinaria</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_8">3.8 Impartición de cursos, diplomados, seminarios</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_8_1">3.8.1 RSU</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_9">3.9 Trabajos dirigidos para la titulación</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_10">3.10 Tutorías a estudiantes</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_11">3.11 Asesoría a estudiantes</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_12">3.12 Publicaciones de investigación</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_13">3.13 Proyectos académicos de investigación</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_14">3.14 Participación como ponente en congresos</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_15">3.15 Registro de patentes y productos de investigación</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_16">3.16 Actividades de arbitraje y edición</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_17">3.17 Proyectos académicos de extensión</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_18">3.18 Organización de congresos institucionales</button>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4 mb-2">
+                            <button class="btn btn-outline-primary w-100" value="form3_19">3.19 Participación en cuerpos colegiados</button>
+                            </div>
+                        </div>
+                        </div>
+
+
+                {{-- <select id="formSelect" class="form-select">
                     <option value=""></option>
                     <option value="form2">1. Permanencia en las actividades de la docencia</option>
                     <option value="form2_2">2. Dedicación en el desempeño docente</option>
@@ -100,24 +173,24 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                     <option value="form3_16"> 3.16 Actividades de arbitraje, revisión, correción y edición</option>
                     <option value="form3_17"> 3.17 Proyectos académicos de extensión y difusión</option>
                     <option value="form3_18"> 3.18 Organización de congresos o eventos institucionales del área de conocimiento del Docente</option>
-                    <option value="form3_19"> 3.19 Participación en cuerpos colegiados</option>
+                    <option value="form3_19"> 3.19 Participación en cuerpos colegiados</option> --}}
 
                     <!-- Dynamic options -->
-                    @foreach($forms as $form)
+                    {{-- @foreach($forms as $form)
                         @if(!in_array($form->form_name, $existingFormNames)) <!-- Check for duplicates -->
                             <option value="{{ $form->form_name }}" data-id="{{ $form->id }}">{{ $form->form_name }}</option>
                             @php $existingFormNames[] = $form->form_name; @endphp <!-- Add to existing names -->
                         @endif
-                    @endforeach
+                    @endforeach --}}
 
-                </select>
+                {{-- </select> --}}
                 <!--Funcionalidad en caso de nuevos formularios-->
-                <div class="container mt-3" style="display: none;">
+                {{-- <div class="container mt-3" style="display: none;">
                     <label for="teacherSelect">Seleccionar Docente:</label>
                     <select id="teacherSelect" class="form-select">
                         <option value="">Seleccionar un docente</option>
                     </select>
-                </div>
+                </div> --}}
                 
             </div>
 

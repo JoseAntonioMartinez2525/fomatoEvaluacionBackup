@@ -43,6 +43,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
       margin-left: -180px;
       padding-top: 50px;
       width: 300px;
+      height: 2000px !important;
 
     }
 
@@ -86,9 +87,10 @@ table {
   justify-content: center;
   align-items: flex-start;
   gap: 60px;
-  width: 100%;
-  margin-top: 60px;
-  margin-left: -350px;
+  max-width:fit-content;
+  margin-top: 160px;
+  margin-inline-start:  -700px;
+
   
   
 }
@@ -96,7 +98,9 @@ table {
     .table-container2 {
       margin-bottom: 100px;
       justify-content: space-between;
-      margin-left: 0px;
+      max-width:fit-content;
+      margin-inline-start: -43.9rem;
+
     }
 
 .nav-max-content {
@@ -144,25 +148,28 @@ body.dark-mode nav.nav.flex-column a:hover {
       <div>
       <ul style="list-style: none;">
       <li class="nav-item">
-      @if(Auth::user()->user_type === 'dictaminador')
+      {{-- @if(Auth::user()->user_type === 'dictaminador')
       <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;"
       href="{{ route('comision_dictaminadora') }}" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
+      
       @elseif(Auth::user()->user_type === '')
       <a class="nav-link active enlaceSN" style="width: 250px;font-size: 20px;"  title="Formato de Evaluación docente"href="{{ route('secretaria') }}"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
-      @else
+      --}}
+      @if (Auth::user()->user_type === 'docente') 
       <a class="nav-link active enlaceSN" style="width: 250px;font-size: 20px;"  title="Formato de Evaluación docente"href="{{ route('welcome') }}"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
       @endif
       </li>
+       </ul>
     <!-- Fucntionalidad en caso de necesitar realizar un nuevo formulario 
-      @if(Auth::user()->user_type === '')
+ if(Auth::user()->user_type === '')
       <li class="nav-item">
       <a class="nav-link active enlaceSN" style="width: 300px;" href="{{route('dynamic_forms')}}"
       title="Ingresar nuevo formulario"><i class="fa-solid fa-folder-plus"></i>&nbspIngresar nuevo</a>
       </li>
-      @endif
+      endif
       -->
-      </ul>
-      <ul class="deptos"><h5><i class="fa-solid fa-brain"></i>&nbspÁreas de Conocimiento:</h5>
+     
+      {{-- <ul class="deptos"><h5><i class="fa-solid fa-brain"></i>&nbspÁreas de Conocimiento:</h5>
       <li><i class="fa-solid fa-seedling"></i>&nbspAgropecuarias</li>
       <li><i class="fa-solid fa-water"></i> Ciencias del Mar y de la Tierra</li>
       <li><i class="fa-solid fa-users"></i>&nbspCiencias Sociales y Humanidades</li>
@@ -178,8 +185,8 @@ body.dark-mode nav.nav.flex-column a:hover {
       <li><i class="fa-solid fa-anchor"></i>&nbspIngeniería en Pesquerías</li>
       <li><i class="fa-solid fa-laptop-code"></i>&nbspSistemas Computacionales</li>
       </ul>
-      </div>
-
+       --}}
+</div>
       <br><br><br><br><br><br><br>
 
       </x-nav-menu>
@@ -192,10 +199,10 @@ body.dark-mode nav.nav.flex-column a:hover {
   <div class="main-layout">
     
     <div class="content-area">
-    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"
-      style="margin-right: 100px; margin-top: 30px;">
+    {{-- <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"
+      style="margin-right: -100px; margin-top: 5rem;">
       <i class="fa-solid fa-moon"></i>&nbspModo Obscuro
-    </button>
+    </button> --}}
     <div class="table-container">
       <!-- Aquí van las tablas -->
       <table class="table table-bordered" style="margin-top: 40px;">
@@ -232,7 +239,8 @@ body.dark-mode nav.nav.flex-column a:hover {
             ?>
       </tbody>
       </table>
-      <table class="table table-bordered table-container2" style="margin-top: 40px;">
+    </div>
+          <table class="table table-bordered table-container2" style="margin-top: 40px;">
       <thead>
         <tr>
         <th>PUNTUACIÓN MÍNIMA DE CALIDAD</th>
@@ -254,7 +262,6 @@ body.dark-mode nav.nav.flex-column a:hover {
       </tbody>
       </table>
     </div>
-    </div>
   </div>
 
     <script>
@@ -273,7 +280,7 @@ body.dark-mode nav.nav.flex-column a:hover {
     const C56 = B56 * A40;
     const C57 = B57 * A40;
     console.log(variablesMultiplicadas);
-
+/*
     document.addEventListener('DOMContentLoaded', function () {
       const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
 
@@ -302,6 +309,7 @@ body.dark-mode nav.nav.flex-column a:hover {
       localStorage.setItem('theme', theme);
       });
       });
+    */
     </script>
     </body>
 @endif

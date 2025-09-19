@@ -22,7 +22,7 @@ body.dark-mode .nav {
                 </li>
             </div><br>
             <div>
-                <ul style="list-style: none;"">
+                <ul style="list-style: none;">
                     <li class="nav-item">
                         <a class="nav-link active enlaceSN" aria-current="page" style="width: 200px;" href="{{ route('rules') }}" title="Reglamento deacuerdo al artículo 10 de PEDPD"><i class="fas fa-book"></i>&nbspReglamento</a>
                     </li>
@@ -49,10 +49,9 @@ body.dark-mode .nav {
                     <li class="nav-item">
                         @if($user->user_type === 'dictaminador')
                             <a class="nav-link active enlaceSN" style="width: 200px;"
-                                href="{{ route('comision_dictaminadora') }}"><i class="fa-regular fa-folder-open"></i>&nbspSelección de Formatos</a>
+                                href="{{ route('comision_dictaminadora') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
                         @elseif($user->user_type === '')
-                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}"><i class="fa-regular fa-folder-open"></i>&nbspSelección de
-                                Formatos</a>
+                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
                         @endif
                     </li>
                 </ul>
