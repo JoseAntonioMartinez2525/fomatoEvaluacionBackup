@@ -208,6 +208,11 @@ button#edit-btn-form3_2{
     margin-left: 0rem;'
 }
 
+button#form3_2Button {
+    margin-top: 5rem !important;
+    margin-left: -7rem !important;
+}
+
 </style>
 <script>
     window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
