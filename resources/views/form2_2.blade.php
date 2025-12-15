@@ -154,6 +154,7 @@ $user_identity = $user->id;
     }
 
 $formId = $docenteConfigForm['formId'] ?? 'form2_2';
+
 @endphp
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 

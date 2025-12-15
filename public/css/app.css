@@ -814,7 +814,7 @@ form[id^="form3_"] {
     margin-bottom: 200px;
 }
 
-#form2_2Button{
+#form2_2Button, #form3_1Button{
     margin-left: 260px;
     width: 200px;
     border-radius: 90px 90px 90px 90px;
@@ -827,24 +827,24 @@ form[id^="form3_"] {
     border-radius: 90px 90px 90px 90px;
 }
 
-body.light-mode #form2_1Button, body.light-mode #form2_2Button, body.light-mode #btn1{
+body.light-mode #form2_1Button, body.light-mode #form2_2Button, body.light-mode #btn1, body.light-mode #form3_1Button{
         background-color: #72aaca;
         color: whitesmoke;
 }
 
-body.light-mode #form2_1Button:hover, body.light-mode #form2_2Button:hover, body.light-mode #btn1:hover{
+body.light-mode #form2_1Button:hover, body.light-mode #form2_2Button:hover, body.light-mode #btn1:hover, body.light-mode #form3_1Button:hover{
     background-color: #7ac1ca;
     color: floralwhite;
     font-weight: bold;
 
 }
-body.dark-mode #btn1, body.dark-mode #form2_1Button, body.dark-mode #form2_2Button, body.dark-mode #btn1{
+body.dark-mode #btn1, body.dark-mode #form2_1Button, body.dark-mode #form2_2Button, body.dark-mode #btn1, body.dark-mode #form3_1Button{
     background-color: #456483;
     color: floralwhite;
 }
 
 body.dark-mode #btn1:hover, body.dark-mode #form2_1Button:hover,
-body.dark-mode #form2_2Button:hover{
+body.dark-mode #form2_2Button:hover, body.dark-mode #form3_1Button:hover{
     background-color: #6a5b9f;
     font-weight: bold;
 }

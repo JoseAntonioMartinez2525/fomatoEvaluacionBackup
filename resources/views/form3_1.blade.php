@@ -353,11 +353,16 @@ body.dark-mode [id^="btn3_"]:hover {
     background-color: #6a5b9f;
 }
 
-.edit-button{
-    margin-top: 5rem!important;
-    margin-left: 65rem!important;
-    
+button#form3_1Button {
+    margin-top: 5rem !important;
+    margin-left: 61rem !important;
 }
+
+button.edit-button{
+    margin-left: 67rem !important;
+}
+
+
 </style>
 
 <script>
@@ -391,6 +396,7 @@ $user_identity = $user->id;
     }
 
 $formId = $docenteConfigForm['formId'] ?? 'form3_1';
+$formNumber = '31';
 @endphp
 
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -598,7 +604,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
                         </thead>
                                 </table>
                             {{-- Lógica de botones --}}
-                            <x-edit-button formId="{{ $formId }}" :has-data="$hasData" :user-type="$userType" />
+                            <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                             {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
                             @if(!$hasData && $userType != 'secretaria')
                                 <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>

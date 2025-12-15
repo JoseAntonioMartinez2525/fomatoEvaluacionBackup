@@ -1,7 +1,10 @@
-@props(['formId', 'hasData' => false, 'userType' => null])
+@props(['formId', 'formNumber' => null, 'hasData' => false, 'userType' => null])
 
 <button id="edit-btn-{{ $formId }}"
-        class="edit-button printButtonClass".
+        @if($formNumber !== null)
+            data-form-number="{{ $formNumber }}"
+        @endif
+        class="edit-button printButtonClass"
         style="{{ $hasData ? 'display:block;' : 'display:none;' }}"
         type="button">
     Editar
@@ -12,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const formId = @json($formId);
     const initialHasData = @json($hasData);
     const userType = @json($userType);
+    
     // Elementos
     const editBtn = document.getElementById(`edit-btn-${formId}`);
     let submitBtn = document.querySelector(`#${formId} button[type="submit"], #${formId} input[type="submit"]`);
@@ -20,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /**Verificar casos especiales form3_1, form3_2, form3_3,...,form3_19**/
 
     console.log('[edit-button] init', { formId, initialHasData, userType, foundEditBtn: !!editBtn, foundSubmitBtn: !!submitBtn, windowExisting: !!window.existingDictData });
-
+    console.log('[edit-button] submitBtn final:', submitBtn);
     if (!editBtn) {
         console.warn('[edit-button] No se encontró editBtn en el DOM:', `edit-btn-${formId}`);
         return;
@@ -39,11 +43,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function resolveFormNumber() {
+        return (
+            editBtn?.dataset?.formNumber ??
+            formId.replace('form', '').replace('_', '')
+        );
+    }
+
+
     // --------------------------------------------------
     // Función que trae datos existentes del servidor
     // --------------------------------------------------
     async function getExistingData() {
-        console.log('[edit-button] numericPart test:', formId, formId.replace('form','').replace('_',''));
+        const formNumber = resolveFormNumber();
+        console.log('[edit-button] getExistingData', { formId, formNumber });
 
         const form = document.getElementById(formId);
         if (!form) return null;
@@ -51,17 +64,18 @@ document.addEventListener('DOMContentLoaded', function () {
         let userId = form.querySelector('input[name="user_id"]')?.value;
         const email = form.querySelector('input[name="email"]')?.value || '';
 
-        const numericPart = formId.replace('form', '').replace('_', '');;
+        // const numericPart = formId.replace('form', '').replace('_', '');;
 
-        let url = `/formato-evaluacion/get-form${numericPart}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
+        let url = `/formato-evaluacion/get-form${formNumber}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
 
+        
         if (form.dataset.customUrl === "true") {
             // Para URLs custom, priorizamos el email si el user_id no está presente,
             // que es el caso cuando se selecciona un docente por primera vez.
             if (email && !userId) {
-                url = `/formato-evaluacion/get-form-data${numericPart}?dictaminador_id=${dictaminadorId}&email=${encodeURIComponent(email)}`;
+                url = `/formato-evaluacion/get-form-data${formNumber}?dictaminador_id=${dictaminadorId}&email=${encodeURIComponent(email)}`;
             } else {
-                url = `/formato-evaluacion/get-form-data${numericPart}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
+                url = `/formato-evaluacion/get-form-data${formNumber}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
             }
         }
 
@@ -69,6 +83,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const r = await fetch(url);
             const j = await r.json();
             return j.success ? j.data : null;
+
+            console.log("DICTAMINADOR ID:", dictaminadorId);
+            console.log("USER ID:", userId);
+            console.log("URL Construida:", url);
+
         } catch (err) {
             console.error('[edit-button] fetch error', err);
             return null;
@@ -99,9 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (window.existingDictData) {
             console.log('[edit-button] window.existingDictData detected -> showEdit');
             showEdit();
-            console.log("DICTAM ID:", dictaminadorId);
-            console.log("USER ID:", userId);
-            console.log("URL Construida:", url);
+
             return;
         }
 
@@ -121,6 +138,12 @@ document.addEventListener('DOMContentLoaded', function () {
     editBtn.addEventListener('click', async (e) => {
         e.preventDefault();    // ⛔ evita submit
         e.stopPropagation();   // ⛔ evita bubbling
+
+        const form = document.getElementById(formId);
+                if (!form) return;
+
+         form.dataset.editing = 'true';
+        const formNumber = editBtn.dataset.formNumber;
         console.log('[edit-button] click editar');
         const data = await getExistingData();
         console.log('[edit-button] getExistingData result', data);
@@ -157,13 +180,28 @@ document.addEventListener('DOMContentLoaded', function () {
         editBtn.style.display = 'none';
         if (submitBtn) {
             submitBtn.textContent = 'Actualizar';
-            submitBtn.style.display = '';
+            submitBtn.style.display = 'inline-block';
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('hidden');
+        } else {
+            console.warn('[edit-button] submitBtn NO encontrado para', formId);
         }
+
+
+
     });
 
     // Reaccionar al evento que indica si se encontraron datos de evaluación.
     // Este evento será despachado por docente-autocomplete.blade.php
     document.addEventListener('evaluationDataLoaded', (e) => {
+
+    const form = document.getElementById(formId);
+    if (!form) return;
+        if (form.dataset.editing === 'true') {
+            console.log('[edit-button] evaluationDataLoaded ignorado (editing)');
+            return;
+        }
+
         const hasData = e.detail.hasData;
         console.log('[edit-button] evaluationDataLoaded event received', { hasData });
         if (hasData) {
