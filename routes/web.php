@@ -395,9 +395,12 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::get('/formato-evaluacion/get-form31', 
-    [DictaminatorForm3_1Controller::class, 'getFormData31']
-)->name('formato-evaluacion.get-form31');
+
+// --- CORRECCIÓN DE RUTA ---
+// Se cambia el nombre de la ruta para que coincida con la URL que el cliente construye: /get-form-data31
+Route::get('/get-form-data31', [DictaminatorForm3_1Controller::class, 'getFormData31'])
+    ->name('formato-evaluacion.get-form-data31');
+
 
 
 // Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get');

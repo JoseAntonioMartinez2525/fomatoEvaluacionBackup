@@ -2,7 +2,8 @@
 
 <button id="edit-btn-{{ $formId }}"
         class="edit-button printButtonClass".
-        style="{{ $hasData ? 'display:block;' : 'display:none;' }}">
+        style="{{ $hasData ? 'display:block;' : 'display:none;' }}"
+        type="button">
     Editar
 </button>
 
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Elementos
     const editBtn = document.getElementById(`edit-btn-${formId}`);
     let submitBtn = document.querySelector(`#${formId} button[type="submit"], #${formId} input[type="submit"]`);
-    if (!submitBtn) submitBtn = document.getElementById(`${formId}_1Button`);
+    if (!submitBtn) submitBtn = document.getElementById(`${formId}Button`);
 
     /**Verificar casos especiales form3_1, form3_2, form3_3,...,form3_19**/
 
@@ -42,13 +43,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función que trae datos existentes del servidor
     // --------------------------------------------------
     async function getExistingData() {
+        console.log('[edit-button] numericPart test:', formId, formId.replace('form','').replace('_',''));
+
         const form = document.getElementById(formId);
         if (!form) return null;
         const dictaminadorId = form.querySelector('input[name="dictaminador_id"]')?.value;
         let userId = form.querySelector('input[name="user_id"]')?.value;
         const email = form.querySelector('input[name="email"]')?.value || '';
 
-        const numericPart = formId.replace('form', '');
+        const numericPart = formId.replace('form', '').replace('_', '');;
 
         let url = `/formato-evaluacion/get-form${numericPart}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
 
@@ -115,7 +118,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // --------------------------------------------------
     // Click editar (igual que antes)
     // --------------------------------------------------
-    editBtn.addEventListener('click', async () => {
+    editBtn.addEventListener('click', async (e) => {
+        e.preventDefault();    // ⛔ evita submit
+        e.stopPropagation();   // ⛔ evita bubbling
         console.log('[edit-button] click editar');
         const data = await getExistingData();
         console.log('[edit-button] getExistingData result', data);
