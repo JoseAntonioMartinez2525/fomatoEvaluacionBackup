@@ -10,6 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Traits\ValidatesDictaminatorPeriod;
+use Illuminate\Support\Facades\Auth;
 
 class DictaminatorForm3_2Controller extends TransferController
 {
@@ -126,30 +127,40 @@ class DictaminatorForm3_2Controller extends TransferController
         }
     }
 
-    public function getFormData32(Request $request)
-    {
-        try {
-            $data = DictaminatorsResponseForm3_2::where('user_id', $request->query('user_id'))->first();
-            if (!$data) {
+        public function getFormData32(Request $request)
+        {
+            try {
+                $query = DictaminatorsResponseForm3_2::query()
+                    ->where('dictaminador_id', $request->query('dictaminador_id'));
+
+                if ($request->has('user_id')) {
+                    $query->where('user_id', $request->query('user_id'));
+                } elseif ($request->has('email')) {
+                    $query->where('email', $request->query('email'));
+                }
+
+                $data = $query->first();
+
+                if (!$data) {
+                    return response()->json([
+                        'success' => false,
+                        'hasData' => false,
+                        'message' => 'Data not found',
+                    ], 404);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'hasData' => true,
+                    'data' => $data
+                ]);
+            } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data not found',
-                ], 404);
+                    'message' => $e->getMessage(),
+                ], 500);
             }
-
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
-            ], 500);
         }
-
-    }
 
     private function updateUserResponseComision($userId, $comisionValue)
     {
@@ -162,15 +173,26 @@ class DictaminatorForm3_2Controller extends TransferController
         }
     }
 
-                public function showForm32($teacherEmail = null)
+    public function showForm32($teacherEmail = null)
     {
         // Si se proporciona un email de docente en la URL, no necesitamos mostrar el buscador.
         // El script de autocompletado cargará los datos automáticamente.
         $showSearchComponent = is_null($teacherEmail);
 
+        $hasData = false;
+
+        if ($teacherEmail) {
+            $user = \App\Models\User::where('email', $teacherEmail)->first();
+            if ($user) {
+                $hasData = DictaminatorsResponseForm3_2::where('email', $teacherEmail)
+                    ->where('dictaminador_id', Auth::id())
+                    ->exists();
+            }
+        }
         return view('form3_2', [
             'teacherEmailFromUrl' => $teacherEmail,
-            'showSearch' => $showSearchComponent
+            'showSearch' => $showSearchComponent,
+            'hasData' => $hasData
         ]);
     }
 

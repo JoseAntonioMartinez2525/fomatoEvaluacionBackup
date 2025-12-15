@@ -401,6 +401,26 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/get-form-data31', [DictaminatorForm3_1Controller::class, 'getFormData31'])
     ->name('formato-evaluacion.get-form-data31');
 
+Route::get('/get-form-data32', [DictaminatorForm3_2Controller::class, 'getFormData32'])
+    ->name('formato-evaluacion.get-form-data32');
+
+Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFormData381'])
+    ->name('formato-evaluacion.get-form-data381');
+
+    // Route::prefix('formato-evaluacion')
+    // ->name('formato-evaluacion.')
+    // ->group(function () {
+
+    //     foreach ([2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] as $n) {
+
+    //         $controller = "App\\Http\\Controllers\\DictaminatorForm3_{$n}Controller";
+
+    //         Route::get("/get-form-data3{$n}", function (\Illuminate\Http\Request $request) use ($controller) {
+    //             $controller = app($controller);
+    //             return $controller->getForm3Data($request);
+    //         })->name("get-form-data3{$n}");
+    //     }
+    // });
 
 
 // Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get');

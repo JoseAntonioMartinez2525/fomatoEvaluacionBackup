@@ -59,7 +59,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     ],
         'printPagePairs' => [[3,4]],
     ],
-    (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) ? ['preselectedEmail' => $teacherEmailFromUrl] : []
+
 );
 
     if (!isset($docenteConfigForm)) {
@@ -84,6 +84,11 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         'selectedEmailInputId' => 'selectedDocenteEmail',
         'searchInputId' => 'docenteSearch',
     ];
+}
+
+// Si se recibe un email desde la URL, se lo pasamos a la configuración del autocompletado.
+if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
+    $docenteConfig['preselectedEmail'] = $teacherEmailFromUrl;
 }
 @endphp
 <!DOCTYPE html>
@@ -199,6 +204,10 @@ body.dark-mode [id^="btn3_"]:hover {
     
 }
 
+button#edit-btn-form3_2{
+    margin-left: 0rem;'
+}
+
 </style>
 <script>
     window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
@@ -219,6 +228,16 @@ body.dark-mode [id^="btn3_"]:hover {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+    $hasData = false;
+    $checkFields = ['actv3Comision'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_2';
+$formNumber = '32';
 @endphp
 
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -232,12 +251,12 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_1 -->
-        <form id="form3_2" action="/formato-evaluacion/store-form32" method="POST">
+        <form id="form3_2" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
             <!-- Actividad 3.2 Calidad del desempeño docente evaluada por el alumnado -->
@@ -364,8 +383,11 @@ $user_identity = $user->id;
 
                             <th class="descripcionDDIE"><b>DDIE</b>
                             <th> 
-                            @if($userType != 'secretaria')     
-                                <button id="btn3_2" type="submit" class="btn custom-btn printButtonClass">Enviar
+                            {{-- Lógica de botones --}}
+                            <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                            {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                            @if(!$hasData && $userType != 'secretaria')
+                                <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
                             @endif
                             </th>
                         </tr>
