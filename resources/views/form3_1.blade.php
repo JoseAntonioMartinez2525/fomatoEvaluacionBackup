@@ -52,6 +52,11 @@ $docenteConfig = array_merge([
         'user_type' => 'user_type',
     ],
 
+        'excludeTargets' => [
+        'score3_1',
+        'docencia',
+        'docencia2',
+    ],
     // --- Comportamiento al no encontrar datos ---
     'resetOnNotFound' => false,
     'resetValues' => (function() {
@@ -67,7 +72,6 @@ $docenteConfig = array_merge([
             'comisionIncisoD' => '0',
             'comisionIncisoE' => '0',
             'actv3Comision_hidden' => '0',
-            'score3_1' => '0',
             'obs3_1_1' => '',
             'obs3_1_2' => '',
             'obs3_1_3' => '',
@@ -300,7 +304,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 }
 
 .table2 {
-    margin-top: 300px;
+    margin-top: 30px;
 }
 
 body.dark-mode #elaboracion,
@@ -434,7 +438,7 @@ $formNumber = '31';
                             <td></td>
                         </tr>
                         <!-- Sub-encabezados -->
-                        <x-sub-headers-form3_1 />
+                        <x-sub-headers-form3_1 :canonical="true"/>
 
                         <!-- Contenido Incisos a) y b) -->
                         <tbody data-page="3">
@@ -632,6 +636,15 @@ $formNumber = '31';
     </main>
     <script>
 
+        document.addEventListener('evaluationDataLoaded', () => {
+    const visible = document.getElementById('score3_1');
+    const hidden = document.getElementById('score3_1_hidden');
+
+    if (visible && hidden) {
+        hidden.value = visible.textContent?.trim() || '0';
+    }
+});
+
     window.onload = function () {
 
                 function preventOverlap() {
@@ -672,6 +685,16 @@ $formNumber = '31';
 
                 toggleDarkMode();
             });
+
+            console.log('DOM score3_1 antes init:', document.getElementById('score3_1')?.value || document.getElementById('score3_1')?.textContent);
+
+        // initializeDataFromDOM();
+        document.addEventListener('form3_1:modelHydrated', () => {
+            console.log('Modelo listo:', window.data);
+        });
+
+        console.log('data.score3_1 despues init:', data.score3_1);
+        console.log('docencia despues init:', docencia);
     </script>
 
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])

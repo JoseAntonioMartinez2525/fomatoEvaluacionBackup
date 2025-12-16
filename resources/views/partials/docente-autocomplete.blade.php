@@ -168,6 +168,37 @@
 
             const email = docente.email;
             selectedEmail = email; // actualizar variable global
+
+             // --- NUEVO BLOQUE: hidratar scores desde endpoint backend ---
+                try {
+                    // Tomar user_id si existe en un input oculto
+                    const userIdInput = document.querySelector(`input[name="user_id"]`);
+                    const userId = userIdInput ? userIdInput.value : null;
+
+                    if (userId) {
+                        const resp = await fetch(`/docencia-scores?user_id=${userId}`);
+                        if (!resp.ok) throw new Error('Error al obtener docencia-scores');
+
+                        const scoresData = await resp.json();
+
+                        // Hidratar window.data con scores reales
+                        window.data = window.data || {};
+                        for (let i = 1; i <= 19; i++) {
+                            const key = `score3_${i}`;
+                            window.data[key] = Number(scoresData[key]) || 0;
+                        }
+
+                        // docencia total
+                        window.data['docencia'] = Number(scoresData.docencia) || 0;
+                        window.data.__mode = 'edit';
+
+                        // Proyectar scores en el DOM
+                        renderScoresFromData(window.data);
+                    }
+                } catch (err) {
+                    console.error('Error cargando docencia-scores:', err);
+                }
+                // --- FIN BLOQUE NUEVO (solo scores) ---
             try {
                 const docenteDataEndpoint = config.docenteDataEndpoint || '/formato-evaluacion/get-docente-data';
                 // se usa axios (por preferencia del proyecto)

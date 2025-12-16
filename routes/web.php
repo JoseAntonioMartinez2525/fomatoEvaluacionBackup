@@ -263,6 +263,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/update-form{formIdentifier}', [DictaminatorController::class, 'updateForm'])
         ->name('dictaminator.form.update')
         ->withoutMiddleware('auth');
+    
+    // Route::post('/update-form32', [DictaminatorForm3_2Controller::class, 'updateform32'])
+    //     ->name('dictaminator.form.update32')
+    //     ->withoutMiddleware('auth');
 
     Route::get('/formato-evaluacion/get-signatures', [FirmaDictaminadorController::class, 'getSignatures'])
      ->name('get.signatures');
@@ -422,6 +426,7 @@ Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFor
     //     }
     // });
 
+Route::get('/docencia-scores', [ResponseJson::class, 'getDocenciaScoresByUser']);
 
 // Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get');
 Route::post('/logout', action: [SessionsController::class, 'logout'])->name('logout');
