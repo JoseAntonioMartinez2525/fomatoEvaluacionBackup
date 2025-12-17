@@ -265,9 +265,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('dictaminator.form.update')
         ->withoutMiddleware('auth');
     
-    // Route::post('/update-form32', [DictaminatorForm3_2Controller::class, 'updateform32'])
-    //     ->name('dictaminator.form.update32')
-    //     ->withoutMiddleware('auth');
+    Route::post('/update-form32', [DictaminatorForm3_2Controller::class, 'updateform32'])
+        ->name('dictaminator.form.update32')
+        ->withoutMiddleware('auth');
 
     Route::get('/formato-evaluacion/get-signatures', [FirmaDictaminadorController::class, 'getSignatures'])
      ->name('get.signatures');

@@ -62,8 +62,6 @@ class DictaminatorForm3_2Controller extends TransferController
 
             $validatedData = $request->validate(self::getValidationRules());
 
-            $validatedData['form_type'] = 'form3_2';
-
 
             if (!isset($validatedData['score3_2'])) {
                 $validatedData['score3_2'] = 0;
@@ -168,7 +166,7 @@ class DictaminatorForm3_2Controller extends TransferController
         $userResponse = UsersResponseForm3_2::where('user_id', $userId)->first();
 
         if ($userResponse) {
-            $userResponse->comision3_2 = $comisionValue;
+            $userResponse->forceFill(['comision3_2' => $comisionValue]);
             $userResponse->save();
         }
     }
@@ -199,17 +197,41 @@ class DictaminatorForm3_2Controller extends TransferController
         public function updateform32(Request $request)
 {
     // Validar los datos de entrada
-    $validatedData = $request->validate(self::getValidationRules());
-
     try {
+        \Log::info('updateform32 called', $request->all());
+        $validatedData = $request->validate(self::getValidationRules());
+        \Log::info('Validation passed', $validatedData);
+
         // Buscar el registro existente por user_id y dictaminador_id
+        \Log::info('Before updateOrCreate');
         $response = DictaminatorsResponseForm3_2::updateOrCreate(
             [
                 'user_id' => $validatedData['user_id'],
                 'dictaminador_id' => $validatedData['dictaminador_id']
             ],
-            $validatedData // Los datos con los que se actualizará o creará
+            // Excluir 'user_type' para evitar MassAssignmentException
+            collect($validatedData)->except('user_type')->toArray()
         );
+        \Log::info('After updateOrCreate', ['response' => $response]);
+
+        // Replicar la lógica de actualización de 'store'
+        \Log::info('Before updateUserResponseComision');
+        $this->updateUserResponseComision($validatedData['user_id'], $validatedData['comision3_2']);
+        \Log::info('After updateUserResponseComision');
+
+        \Log::info('Before dictaminador_docente updateOrInsert');
+        DB::table('dictaminador_docente')->updateOrInsert(
+            [
+                'docente_id' => $validatedData['user_id'],
+                'dictaminador_id' => $response->dictaminador_id,
+                'form_type' => 'form3_2',
+            ],
+            [
+                'docente_email' => $response->email,
+                'updated_at' => now(),
+            ]
+        );
+        \Log::info('After dictaminador_docente updateOrInsert');
 
         return response()->json([
             'success' => true,
@@ -220,6 +242,7 @@ class DictaminatorForm3_2Controller extends TransferController
     } catch (\Exception $e) {
         // Log del error para depuración
         \Log::error('Error al actualizar el formulario 3.2: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
 
         return response()->json([
             'success' => false,
@@ -228,4 +251,3 @@ class DictaminatorForm3_2Controller extends TransferController
     }
 }
 }
-
