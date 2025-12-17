@@ -194,6 +194,12 @@
 
                         // Proyectar scores en el DOM
                         renderScoresFromData(window.data);
+
+                        const docenciaEl = document.getElementById('docencia');
+                        const docencia2El = document.getElementById('docencia2');
+                        if (docenciaEl) docenciaEl.textContent = window.data['docencia'] || '0';
+                        if (docencia2El) docencia2El.textContent = window.data['docencia'] || '0';
+
                     }
                 } catch (err) {
                     console.error('Error cargando docencia-scores:', err);
