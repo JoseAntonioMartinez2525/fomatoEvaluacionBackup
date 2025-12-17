@@ -565,8 +565,9 @@ public function adminResetTimer(Request $request)
         $i = $matches[1];
         if ($i >= 1 && $i <= 19) {
             return [
-                'controller' => "\\App\\Http\\Controllers\\DictaminatorForm3_{$i}Controller",
-                'model' => "\\App\\Models\\DictaminatorsResponseForm3_{$i}",
+                'controller' => "App\\Http\\Controllers\\DictaminatorForm3_{$i}Controller",
+                'model' => "App\\Models\\DictaminatorsResponseForm3_{$i}",
+                'form_type' => "form3_{$i}",
             ];
         }
     }
