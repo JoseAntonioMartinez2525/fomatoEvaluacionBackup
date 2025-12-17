@@ -205,7 +205,7 @@ body.dark-mode [id^="btn3_"]:hover {
 }
 
 button#edit-btn-form3_2{
-    margin-left: 0rem;'
+    margin-left: 0rem;
 }
 
 button#form3_2Button {

@@ -426,7 +426,7 @@ Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFor
     //     }
     // });
 
-Route::get('/docencia-scores', [ResponseJson::class, 'getDocenciaScoresByUser']);
+Route::get('/docencia-scores?user_id=${userId}', [ResponseJson::class, 'getDocenciaScoresByUser']);
 
 // Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get');
 Route::post('/logout', action: [SessionsController::class, 'logout'])->name('logout');

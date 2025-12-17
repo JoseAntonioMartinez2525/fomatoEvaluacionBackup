@@ -18,7 +18,7 @@ $commonFields = [
     'comisionIncisoD' => 'comisionIncisoD',
     'comisionIncisoE' => 'comisionIncisoE',
     'actv3Comision' => 'actv3Comision',
-    'score3_1' => 'score3_1',
+    // 'score3_1' => 'score3_1',
     'obs3_1_1' => 'obs3_1_1',
     'obs3_1_2' => 'obs3_1_2',
     'obs3_1_3' => 'obs3_1_3',
@@ -36,7 +36,11 @@ $docenteConfig = array_merge([
     'userTypeForDict' => 'dictaminador',
 
     // --- Mappings ---
-    'docenteMappings' => array_merge(['elaboracion' => 'elaboracion'], $elaboracionMappings, ['score3_1' => 'score3_1']),
+    'docenteMappings' => array_merge(
+        ['elaboracion' => 'elaboracion'], 
+        $elaboracionMappings, 
+        ['score3_1' => 'score3_1']
+    ),
     'dictMappings' => array_merge(['elaboracion' => 'elaboracion'], $elaboracionMappings, $commonFields),
 
     // --- Campos ocultos ---
@@ -52,11 +56,7 @@ $docenteConfig = array_merge([
         'user_type' => 'user_type',
     ],
 
-        'excludeTargets' => [
-        'score3_1',
-        'docencia',
-        'docencia2',
-    ],
+    'excludeTargets' => [],
     // --- Comportamiento al no encontrar datos ---
     'resetOnNotFound' => false,
     'resetValues' => (function() {
@@ -636,14 +636,14 @@ $formNumber = '31';
     </main>
     <script>
 
-        document.addEventListener('evaluationDataLoaded', () => {
-    const visible = document.getElementById('score3_1');
-    const hidden = document.getElementById('score3_1_hidden');
+//         document.addEventListener('evaluationDataLoaded', () => {
+//     const visible = document.getElementById('score3_1');
+//     const hidden = document.getElementById('score3_1_hidden');
 
-    if (visible && hidden) {
-        hidden.value = visible.textContent?.trim() || '0';
-    }
-});
+//     if (visible && hidden) {
+//         hidden.value = visible.textContent?.trim() || '0';
+//     }
+// });
 
     window.onload = function () {
 

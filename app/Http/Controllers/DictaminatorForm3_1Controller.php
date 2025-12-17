@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ResponseJson;
 use App\Events\EvaluationCompleted;
 use App\Models\DictaminatorsResponseForm3_1;
 use App\Models\UsersResponseForm3_1;
@@ -387,13 +388,15 @@ public function getFormData31(Request $request)
     return response()->json(['totalDocencia' => $total]);
 }
 
-    public function showForm31NoSearch($teacherEmail = null)
+    public function showForm31NoSearch(Request $request, $teacherEmail = null)
     {
         // Si se proporciona un email de docente en la URL, no necesitamos mostrar el buscador.
         // El script de autocompletado cargará los datos automáticamente.
         $showSearchComponent = is_null($teacherEmail);
 
         $hasData = false;
+        $docencia = 0;
+        $score3_1 = 0;
 
         if ($teacherEmail) {
             $user = \App\Models\User::where('email', $teacherEmail)->first();
@@ -401,12 +404,20 @@ public function getFormData31(Request $request)
                 $hasData = DictaminatorsResponseForm3_1::where('email', $teacherEmail)
                     ->where('dictaminador_id', Auth::id())
                     ->exists();
+
+                // Reutilizar la lógica para obtener los puntajes
+                $responseJsonController = new ResponseJson();
+                $scores = $responseJsonController->buildDocenciaScores($user->id);
+                $docencia = $scores['docencia'] ?? 0;
+                $score3_1 = $scores['score3_1'] ?? 0;
             }
         }
         return view('form3_1', [
             'teacherEmailFromUrl' => $teacherEmail,
             'showSearch' => $showSearchComponent,
-            'hasData' => $hasData
+            'hasData' => $hasData,
+            'docencia' => $docencia,
+            'score3_1' => $score3_1,
         ]);
     }
 
