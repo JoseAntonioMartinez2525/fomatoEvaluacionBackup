@@ -150,6 +150,14 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <x-head-resources />
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
+    <style>
+
+#edit-btn-form3_13{
+    margin-left: 17rem;
+}
+
+
+    </style>
 </head>
 
 <body class="bg-gray-50 text-black/50">
@@ -166,6 +174,17 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+    $hasData = false;
+    $checkFields = ['comision3_13'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_13';
+$formNumber = '313';
+
 @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -330,8 +349,13 @@ $user_identity = $user->id;
                     <th class="descripcion"><b>CAAC, DIIP</b> </th>
         
                     <th>
-                    @if ($userType != 'secretaria')
-                        <button id="btn3_13" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                         {{-- Lógica de botones --}}
+                    @if($userType != 'docente')
+                    <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                    @endif
+                    {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                    @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_13">Enviar</button>
                     @endif
                     </th>
                 </tr>
