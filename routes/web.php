@@ -141,7 +141,6 @@ Route::middleware(['auth'])->group(function (){
 Route::middleware(['auth'])->group(function () {
     Route::get('/form2/{teacher?}', [DictaminatorForm2_Controller::class, 'showForm2'])->name('form2');
     Route::get('/form2_2/{teacher?}', [DictaminatorForm2_2Controller::class, 'showForm2_2'])->name('form2_2');
-    Route::get('/form2_2/{teacher?}', [DictaminatorForm2_2Controller::class, 'showForm2_2'])->name('form2_2'); // This was a duplicate route name
     Route::get('/form3_1/{teacher?}', [DictaminatorForm3_1Controller::class, 'showForm31NoSearch'])->name('form3_1');
     Route::get('/form3_2/{teacher?}', [DictaminatorForm3_2Controller::class, 'showForm32'])->name('form3_2');
     Route::get('/form3_3/{teacher?}', [DictaminatorForm3_3Controller::class, 'showForm33'])->name('form3_3');
@@ -406,8 +405,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/get-form-data31', [DictaminatorForm3_1Controller::class, 'getFormData31'])
     ->name('formato-evaluacion.get-form-data31');
 
-Route::get('/get-form-data32', [DictaminatorForm3_2Controller::class, 'getFormData32'])
-    ->name('formato-evaluacion.get-form-data32');
+Route::get('/get-form-data32', [DictaminatorForm3_2Controller::class, 'getFormData32']);
 
 Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFormData381'])
     ->name('formato-evaluacion.get-form-data381');

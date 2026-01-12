@@ -14,7 +14,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const formId = @json($formId);
     const initialHasData = @json($hasData);
-    const userType = @json($userType);
+    const userType = @json($userType) || '';
     
     // Elementos
     const editBtn = document.getElementById(`edit-btn-${formId}`);
@@ -64,6 +64,15 @@ document.addEventListener('DOMContentLoaded', function () {
         let userId = form.querySelector('input[name="user_id"]')?.value;
         const email = form.querySelector('input[name="email"]')?.value || '';
 
+        if (!dictaminadorId && userType === 'dictaminador') {
+            return null;
+        }
+
+        // Guard clause: If we don't have a user to fetch for, don't fetch.
+        if (!userId && !email) {
+            return null;
+        }
+
         // const numericPart = formId.replace('form', '').replace('_', '');;
 
         let url = `/formato-evaluacion/get-form${formNumber}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
@@ -74,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // que es el caso cuando se selecciona un docente por primera vez.
             if (email && !userId) {
                 url = `/formato-evaluacion/get-form-data${formNumber}?dictaminador_id=${dictaminadorId}&email=${encodeURIComponent(email)}`;
+
             } else {
                 url = `/formato-evaluacion/get-form-data${formNumber}?dictaminador_id=${dictaminadorId}&user_id=${userId}`;
             }
@@ -111,6 +121,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (userType === 'secretaria') {
             console.log('[edit-button] userType secretaria -> showEdit');
             showEdit();
+            return;
+        }
+
+        if (userType === 'docente') {
+            console.log('[edit-button] userType docente -> skip fetch');
             return;
         }
 

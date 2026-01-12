@@ -258,8 +258,10 @@ $formNumber = '32';
         <!-- Form for Part 3_1 -->
         <form id="form3_2" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
             <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
@@ -312,7 +314,7 @@ $formNumber = '32';
                             <td id="cant1" name="cant1">0</td>
                             <td class="td_obs">
                             @if($userType == 'dictaminador')
-                                <input id="prom90_100" type="number" step="0.01"
+                                <input id="prom90_100" name="prom90_100" placeholder="0" type="number" step="0.01"
                                     oninput="onActv3_2Comision()" value="{{ oldValueOrDefault('prom90_100') }}">
                             @else
                             <span id="prom90_100" name="prom90_100"></span>
@@ -338,7 +340,7 @@ $formNumber = '32';
 
                             <td class="td_obs">
                              @if($userType == 'dictaminador')   
-                                <input id="prom80_90" type="number" step="0.01"
+                                <input id="prom80_90" name="prom80_90" placeholder="0" type="number" step="0.01"
                                     oninput="onActv3_2Comision()" value="{{ oldValueOrDefault('prom80_90') }}">
                             @else
                                 <span id="prom80_90" name="prom80_90"></span>
@@ -364,7 +366,7 @@ $formNumber = '32';
                             <td id="cant3">0</td>
                             <td class="td_obs">
                             @if($userType == 'dictaminador')  
-                                <input id="prom70_80" placeholder="0" type="number" step="0.01"
+                                <input id="prom70_80" name="prom70_80" placeholder="0" type="number" step="0.01"
                                         oninput="onActv3_2Comision()" value="{{ oldValueOrDefault('prom70_80') }}">
                             @else
                             <span id="prom70_80" name="prom70_80"></span>
@@ -389,9 +391,11 @@ $formNumber = '32';
                             <th class="descripcionDDIE"><b>DDIE</b>
                             <th> 
                             {{-- Lógica de botones --}}
+                            @if($userType != 'docente')
                             <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                            @endif
                             {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
-                            @if(!$hasData && $userType != 'secretaria')
+                            @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
                                 <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
                             @endif
                             </th>

@@ -58,7 +58,7 @@ class DictaminatorForm3_2Controller extends TransferController
             }
 
             //3. validad formulario unico
-             $this->validarFormularioUnico($request, 'dictaminators_response_form3_2');
+            // $this->validarFormularioUnico($request, 'dictaminators_response_form3_2');
 
             $validatedData = $request->validate(self::getValidationRules());
 
@@ -66,6 +66,12 @@ class DictaminatorForm3_2Controller extends TransferController
             if (!isset($validatedData['score3_2'])) {
                 $validatedData['score3_2'] = 0;
             }
+            
+            // Asignar 0 por defecto si vienen nulos, ya que la BD no acepta NULL
+            $validatedData['prom90_100'] = $validatedData['prom90_100'] ?? 0;
+            $validatedData['prom80_90'] = $validatedData['prom80_90'] ?? 0;
+            $validatedData['prom70_80'] = $validatedData['prom70_80'] ?? 0;
+
             $validatedData['obs3_2_1'] = $validatedData['obs3_2_1'] ?? 'sin comentarios';
             $validatedData['obs3_2_2'] = $validatedData['obs3_2_2'] ?? 'sin comentarios';
             $validatedData['obs3_2_3'] = $validatedData['obs3_2_3'] ?? 'sin comentarios';
@@ -114,7 +120,8 @@ class DictaminatorForm3_2Controller extends TransferController
         } catch (QueryException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al enviar, formulario ya existente',
+                // 'message' => 'Error al enviar, formulario ya existente',
+                'message' => 'Error de base de datos: ' . $e->getMessage(),
             ], 500);
 
         } catch (\Exception $e) {
@@ -144,7 +151,7 @@ class DictaminatorForm3_2Controller extends TransferController
                         'success' => false,
                         'hasData' => false,
                         'message' => 'Data not found',
-                    ], 404);
+                    ], 200);
                 }
 
                 return response()->json([
@@ -200,6 +207,12 @@ class DictaminatorForm3_2Controller extends TransferController
     try {
         \Log::info('updateform32 called', $request->all());
         $validatedData = $request->validate(self::getValidationRules());
+        
+        // Asignar 0 por defecto si vienen nulos
+        $validatedData['prom90_100'] = $validatedData['prom90_100'] ?? 0;
+        $validatedData['prom80_90'] = $validatedData['prom80_90'] ?? 0;
+        $validatedData['prom70_80'] = $validatedData['prom70_80'] ?? 0;
+
         \Log::info('Validation passed', $validatedData);
 
         // Buscar el registro existente por user_id y dictaminador_id
