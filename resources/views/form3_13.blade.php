@@ -61,8 +61,6 @@ $docenteConfig = $docenteConfig ?? [
 
         // totales
         'score3_13'                     => 'score3_13',
-        'comision3_13'                 => 'comision3_13',
-        '.comision3_13'                 => 'comision3_13',
         '#comision3_13'                 => 'comision3_13',
     ],
 
