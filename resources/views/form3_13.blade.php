@@ -62,8 +62,6 @@ $docenteConfig = $docenteConfig ?? [
         // totales
         'score3_13'                     => 'score3_13',
         'comision3_13'                 => 'comision3_13',
-        '.comision3_13'                 => 'comision3_13',
-        '#comision3_13'                 => 'comision3_13',
     ],
 
     // ---- Inputs ocultos que se llenan desde docenteData.form3_13 ----
@@ -261,7 +259,7 @@ $user_identity = $user->id;
                      @if ($userType == 'dictaminador')   
                         <input type="number" step="0.01" id="comisionInicioInvInterno" name="comisionInicioInvInterno" value="{{ oldValueOrDefault('comisionInicioInvInterno') }}" oninput="onActv3Comision3_13()">
                     @else
-                        <span id="comisionInicioInvInterno"name="comisionInicioInvInterno" ></span>
+                        <span id="comisionInicioInvInterno" name="comisionInicioInvInterno" ></span>
                     @endif
                     </td>
                     <td class="obsInicioInvInterno">
@@ -278,23 +276,24 @@ $user_identity = $user->id;
                         financiamiento externo
                     </td>
                     <td id="puntajeReporteFinanciamExt">100</td>
-                    <td id="cantReporteFinanciamExt" class="cantidad"></td>
+                    <td id="cantReporteFinanciamExt" class="cantidad" name="cantReporteFinanciamExt"></td>
                     <td colspan="3"></td>
 
-                    <td id="subtotalReporteFinanciamExt"></td>
+                    <td id="subtotalReporteFinanciamExt" name="subtotalReporteFinanciamExt"></td>
                     <td class="comision3_13">
                      @if ($userType == 'dictaminador')     
-                        <input type="number" step="0.01" id="comisionReporteFinanciamExt" value="{{ oldValueOrDefault('comisionReporteFinanciamExt') }}" oninput="onActv3Comision3_13()">
+                        <input type="number" step="0.01" id="comisionReporteFinanciamExt" name="comisionReporteFinanciamExt" value="{{ oldValueOrDefault('comisionReporteFinanciamExt') }}" oninput="onActv3Comision3_13()">
                     @else
                     <span id="comisionReporteFinanciamExt" name="comisionReporteFinanciamExt"></span>
                     @endif
-                    </td class="comision3_13">
+                    </td>
                     <td class="obsReporteFinanciamExt">
                     @if ($userType == 'dictaminador')      
-                        <input class="table-header" type="text" id="obsReporteFinanciamExt"  name="obsReporteFinanciamExt"></td>
+                        <input class="table-header" type="text" id="obsReporteFinanciamExt"  name="obsReporteFinanciamExt">
                     @else
-                    <span id="obsReporteFinanciamExt" name="obsReporteFinanciamExt" class="obsBackground"></span>
+                        <span id="obsReporteFinanciamExt" name="obsReporteFinanciamExt" class="obsBackground"></span>
                     @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>d)</td>
@@ -302,13 +301,13 @@ $user_identity = $user->id;
                         aprobado por CAAC
                     </td>
                     <td id="puntajeReporteInvInt">50</td>
-                    <td id="cantReporteInvInt" class="cantidad"></td>
+                    <td id="cantReporteInvInt" class="cantidad" name="cantReporteInvInt"></td>
                     <td colspan="3"></td>
 
-                    <td id="subtotalReporteInvInt"></td>
+                    <td id="subtotalReporteInvInt" name="subtotalReporteInvInt"></td>
                     <td class="comision3_13">
                     @if ($userType == 'dictaminador')      
-                        <input type="number" step="0.01" id="comisionReporteInvInt" value="{{ oldValueOrDefault('comisionReporteInvInt') }}" oninput="onActv3Comision3_13()">
+                        <input type="number" step="0.01" id="comisionReporteInvInt" name="comisionReporteInvInt" value="{{ oldValueOrDefault('comisionReporteInvInt') }}" oninput="onActv3Comision3_13()">
                     @else
                         <span id="comisionReporteInvInt" name="comisionReporteInvInt" class="obsBackground"></span>
                     @endif

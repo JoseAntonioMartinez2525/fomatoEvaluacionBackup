@@ -33,18 +33,18 @@ class DictaminatorForm3_13Controller extends TransferController
                 'email' => 'required|exists:users,email',
                 'score3_13' => 'required|numeric',
                 'comision3_13' => 'required|numeric',
-                'cantInicioFinanExt' => 'required|numeric',
-                'subtotalInicioFinanExt' => 'required|numeric',
-                'comisionInicioFinancimientoExt' => 'required|numeric',
-                'cantInicioInvInterno' => 'required|numeric',
-                'subtotalInicioInvInterno' => 'required|numeric',
-                'comisionInicioInvInterno' => 'required|numeric',
-                'cantReporteFinanciamExt' => 'required|numeric',
-                'subtotalReporteFinanciamExt' => 'required|numeric',
-                'comisionReporteFinanciamExt' => 'required|numeric',
-                'cantReporteInvInt' => 'required|numeric',
-                'subtotalReporteInvInt' => 'required|numeric',
-                'comisionReporteInvInt' => 'required|numeric',
+                'cantInicioFinanExt' => 'nullable|numeric',
+                'subtotalInicioFinanExt' => 'nullable|numeric',
+                'comisionInicioFinancimientoExt' => 'nullable|numeric',
+                'cantInicioInvInterno' => 'nullable|numeric',
+                'subtotalInicioInvInterno' => 'nullable|numeric',
+                'comisionInicioInvInterno' => 'nullable|numeric',
+                'cantReporteFinanciamExt' => 'nullable|numeric',
+                'subtotalReporteFinanciamExt' => 'nullable|numeric',
+                'comisionReporteFinanciamExt' => 'nullable|numeric',
+                'cantReporteInvInt' => 'nullable|numeric',
+                'subtotalReporteInvInt' => 'nullable|numeric',
+                'comisionReporteInvInt' => 'nullable|numeric',
                 'obsInicioFinancimientoExt' => 'nullable|string',
                 'obsInicioInvInterno' => 'nullable|string',
                 'obsReporteFinanciamExt' => 'nullable|string',
@@ -54,6 +54,17 @@ class DictaminatorForm3_13Controller extends TransferController
 
             if (!isset($validatedData['score3_13'])) {
                 $validatedData['score3_13'] = 0;
+            }
+            
+            // Asignar 0 por defecto si vienen nulos
+            $numericNullableFields = [
+                'cantInicioFinanExt', 'subtotalInicioFinanExt', 'comisionInicioFinancimientoExt',
+                'cantInicioInvInterno', 'subtotalInicioInvInterno', 'comisionInicioInvInterno',
+                'cantReporteFinanciamExt', 'subtotalReporteFinanciamExt', 'comisionReporteFinanciamExt',
+                'cantReporteInvInt', 'subtotalReporteInvInt', 'comisionReporteInvInt'
+            ];
+            foreach ($numericNullableFields as $field) {
+                $validatedData[$field] = $validatedData[$field] ?? 0;
             }
 
             $campos = ['obsInicioFinancimientoExt', 'obsInicioInvInterno', 'obsReporteFinanciamExt', 'obsReporteInvInt'];
@@ -171,4 +182,3 @@ class DictaminatorForm3_13Controller extends TransferController
         ]);
     }
 }
-
