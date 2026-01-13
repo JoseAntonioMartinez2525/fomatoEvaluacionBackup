@@ -97,9 +97,9 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
 <style>
-/* #btn3_6{
-    margin-left: 17rem;
-}     */
+#btn3_6Button{
+    margin-left: 60rem;
+}    
 body.dark-mode [id^="btn3_"]{
         background-color: #456483;
         color: floralwhite;
@@ -230,7 +230,7 @@ $formNumber = '36';
                                 @endif
                                 {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
                                 @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
-                                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_6">Enviar</button>
+                                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_6Button">Enviar</button>
                                 @endif
                             </tr>
                         </thead>
