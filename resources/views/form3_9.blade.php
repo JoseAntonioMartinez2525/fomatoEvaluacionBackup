@@ -162,6 +162,8 @@ if (!isset($docenteConfigForm)) {
 if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     $docenteConfig['preselectedEmail'] = $teacherEmailFromUrl;
 }
+
+
 @endphp
 <!DOCTYPE html>
 <html lang="">
@@ -305,6 +307,10 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
   td{
     font-size: 1rem;
   }
+
+  button#btn3_9Button{
+    margin-left: 60rem;
+  }
     </style>
 </head>
 
@@ -322,6 +328,17 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+$hasData = false;
+$checkFields = ['comision3_9'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_9';
+$formNumber = '39';
 @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -334,12 +351,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_9 -->
-        <form id="form3_9" method="POST">
+        <form id="form3_9" action="/formato-evaluacion/store-form39" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
              <div>
                 <!--3.9 Trabajos dirigidos para la titulación de estudiantes-->
@@ -775,11 +794,14 @@ $user_identity = $user->id;
 
                         <th class="descripcion"><b>DSE para pregrado, DIIP para posgrado</b>
                         </th>
-                        <th>
-                            @if ($userType != 'secretaria')
-                                <button id="btn3_9" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-                            @endif    
-                        </th>
+                        {{-- Lógica de botones --}}
+                        @if($userType != 'docente')
+                        <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                        @endif
+                        {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                        @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_9Button">Enviar</button>
+                        @endif
                     </tr>
                 </thead>
             </table>
@@ -853,6 +875,7 @@ $user_identity = $user->id;
 
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])
     @include('partials.submit-form', ['config' => $docenteConfigForm])
+
 
 </body>
 
