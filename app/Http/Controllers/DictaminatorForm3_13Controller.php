@@ -126,27 +126,37 @@ class DictaminatorForm3_13Controller extends TransferController
     public function getFormData313(Request $request)
     {
         try {
-            $data = DictaminatorsResponseForm3_13::where('user_id', $request->query('user_id'))->first();
-            if (!$data) {
+                $query = DictaminatorsResponseForm3_13::query()
+                    ->where('dictaminador_id', $request->query('dictaminador_id'));
+
+                if ($request->has('user_id')) {
+                    $query->where('user_id', $request->query('user_id'));
+                } elseif ($request->has('email')) {
+                    $query->where('email', $request->query('email'));
+                }
+
+                $data = $query->first();
+
+                if (!$data) {
+                    return response()->json([
+                        'success' => false,
+                        'hasData' => false,
+                        'message' => 'Data not found',
+                    ], 200);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'hasData' => true,
+                    'data' => $data
+                ]);
+            } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data not found',
-                ], 404);
+                    'message' => $e->getMessage(),
+                ], 500);
             }
-
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
-            ], 500);
         }
-
-    }
 
     private function updateUserResponseComision($userId, $comisionValue)
     {

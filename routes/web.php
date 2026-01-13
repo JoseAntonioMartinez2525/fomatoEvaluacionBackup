@@ -407,6 +407,10 @@ Route::get('/get-form-data31', [DictaminatorForm3_1Controller::class, 'getFormDa
 
 Route::get('/get-form-data32', [DictaminatorForm3_2Controller::class, 'getFormData32']);
 
+Route::get('/get-form-data33', [DictaminatorForm3_3Controller::class, 'getFormData33']);
+
+// Route::get('/get-form-data313', [DictaminatorForm3_13Controller::class, 'getFormData313']);
+
 Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFormData381'])
     ->name('formato-evaluacion.get-form-data381');
 

@@ -392,6 +392,18 @@ window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
     </div>
     <x-general-header />
 
+@php
+    $hasData = false;
+    $checkFields = ['comision3_3'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_3';
+$formNumber = '33';
+@endphp    
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
 <div class="container mt-4" id="seleccionDocente">
@@ -403,12 +415,14 @@ window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
 
     <main class="container">
         <!--Form for Part 3_3 -->
-        <form id="form3_3" action="/formato-evaluacion/store-form33" method="POST">
+        <form id="form3_3" action="/formato-evaluacion/store-form33" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
                 <!-- Actividad 3.3 Publicaciones relacionadas con la docencia -->
@@ -600,10 +614,15 @@ window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
                     </tr>
                 </thead>
             </table>
-                @if ($userType != 'secretaria')
-                    <button id="btn3_3" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+            <br>
+                {{-- Lógica de botones --}}
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                 @endif
-
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_3">Enviar</button>
+                @endif
 
             <div id="piedepagina_copy"
                 class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
@@ -651,8 +670,9 @@ window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
         });
     </script>
 
-    @include('partials.autocompleteForm3_3', ['config' => $docenteConfig])
-    @include('partials.submitForm3_3', ['config' => $docenteConfigForm])
+    {{-- partial blade para autocompletar datos--}}
+    @include('partials.docente-autocomplete', ['config' => $docenteConfig])
+    @include('partials.submit-form', ['config' => $docenteConfigForm])
 </body>
 
 </html>

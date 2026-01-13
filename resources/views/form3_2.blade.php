@@ -234,7 +234,7 @@ $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
     $hasData = false;
-    $checkFields = ['actv3Comision'];
+    $checkFields = ['comision3_2'];
     foreach($checkFields as $f) {
         if (!empty($docenteConfig[$f] ?? null)) {
             $hasData = true;

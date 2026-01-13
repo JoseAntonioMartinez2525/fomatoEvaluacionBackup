@@ -33,36 +33,36 @@ class DictaminatorForm3_12Controller extends TransferController
                 'email' => 'required|exists:users,email',
                 'score3_12' => 'required|numeric',
                 'comision3_12' => 'required|numeric',
-                'cantCientifico' => 'required|numeric',
-                'subtotalCientificos' => 'required|numeric',
-                'comisionCientificos' => 'required|numeric',
-                'cantDivulgacion' => 'required|numeric',
-                'subtotalDivulgacion' => 'required|numeric',
-                'comisionDivulgacion' => 'required|numeric',
-                'cantTraduccion' => 'required|numeric',
-                'subtotalTraduccion' => 'required|numeric',
-                'comisionTraduccion' => 'required|numeric',
-                'cantArbitrajeInt' => 'required|numeric',
-                'subtotalArbitrajeInt' => 'required|numeric',
-                'comisionArbitrajeInt' => 'required|numeric',
-                'cantArbitrajeNac' => 'required|numeric',
-                'subtotalArbitrajeNac' => 'required|numeric',
-                'comisionArbitrajeNac' => 'required|numeric',
-                'cantSinInt' => 'required|numeric',
-                'subtotalSinInt' => 'required|numeric',
-                'comisionSinInt' => 'required|numeric',
-                'cantSinNac' => 'required|numeric',
-                'subtotalSinNac' => 'required|numeric',
-                'comisionSinNac' => 'required|numeric',
-                'cantAutor' => 'required|numeric',
-                'subtotalAutor' => 'required|numeric',
-                'comisionAutor' => 'required|numeric',
-                'cantEditor' => 'required|numeric',
-                'subtotalEditor' => 'required|numeric',
-                'comisionEditor' => 'required|numeric',
-                'cantWeb' => 'required|numeric',
-                'subtotalWeb' => 'required|numeric',
-                'comisionWeb' => 'required|numeric',
+                'cantCientifico' => 'nullable|numeric',
+                'subtotalCientificos' => 'nullable|numeric',
+                'comisionCientificos' => 'nullable|numeric',
+                'cantDivulgacion' => 'nullable|numeric',
+                'subtotalDivulgacion' => 'nullable|numeric',
+                'comisionDivulgacion' => 'nullable|numeric',
+                'cantTraduccion' => 'nullable|numeric',
+                'subtotalTraduccion' => 'nullable|numeric',
+                'comisionTraduccion' => 'nullable|numeric',
+                'cantArbitrajeInt' => 'nullable|numeric',
+                'subtotalArbitrajeInt' => 'nullable|numeric',
+                'comisionArbitrajeInt' => 'nullable|numeric',
+                'cantArbitrajeNac' => 'nullable|numeric',
+                'subtotalArbitrajeNac' => 'nullable|numeric',
+                'comisionArbitrajeNac' => 'nullable|numeric',
+                'cantSinInt' => 'nullable|numeric',
+                'subtotalSinInt' => 'nullable|numeric',
+                'comisionSinInt' => 'nullable|numeric',
+                'cantSinNac' => 'nullable|numeric',
+                'subtotalSinNac' => 'nullable|numeric',
+                'comisionSinNac' => 'nullable|numeric',
+                'cantAutor' => 'nullable|numeric',
+                'subtotalAutor' => 'nullable|numeric',
+                'comisionAutor' => 'nullable|numeric',
+                'cantEditor' => 'nullable|numeric',
+                'subtotalEditor' => 'nullable|numeric',
+                'comisionEditor' => 'nullable|numeric',
+                'cantWeb' => 'nullable|numeric',
+                'subtotalWeb' => 'nullable|numeric',
+                'comisionWeb' => 'nullable|numeric',
                 'obsCientificos' => 'nullable|string',
                 'obsDivulgacion' => 'nullable|string',
                 'obsTraduccion' => 'nullable|string',
@@ -148,27 +148,37 @@ class DictaminatorForm3_12Controller extends TransferController
     public function getFormData312(Request $request)
     {
         try {
-            $data = DictaminatorsResponseForm3_12::where('user_id', $request->query('user_id'))->first();
-            if (!$data) {
+                $query = DictaminatorsResponseForm3_12::query()
+                    ->where('dictaminador_id', $request->query('dictaminador_id'));
+
+                if ($request->has('user_id')) {
+                    $query->where('user_id', $request->query('user_id'));
+                } elseif ($request->has('email')) {
+                    $query->where('email', $request->query('email'));
+                }
+
+                $data = $query->first();
+
+                if (!$data) {
+                    return response()->json([
+                        'success' => false,
+                        'hasData' => false,
+                        'message' => 'Data not found',
+                    ], 200);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'hasData' => true,
+                    'data' => $data
+                ]);
+            } catch (\Exception $e) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data not found',
-                ], 404);
+                    'message' => $e->getMessage(),
+                ], 500);
             }
-
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
-            ], 500);
         }
-
-    }
 
     private function updateUserResponseComision($userId, $comisionValue)
     {

@@ -26,18 +26,18 @@ class DictaminatorForm3_3Controller extends TransferController
                 'email' => 'required|exists:users,email',
                 'score3_3' => 'required|numeric',
                 'comision3_3' => 'required|numeric',
-                'rc1' => 'required|numeric',
-                'rc2' => 'required|numeric',
-                'rc3' => 'required|numeric',
-                'rc4' => 'required|numeric',
-                'stotal1' => 'required|numeric',
-                'stotal2' => 'required|numeric',
-                'stotal3' => 'required|numeric',
-                'stotal4' => 'required|numeric',
-                'comIncisoA' => 'required|numeric',
-                'comIncisoB' => 'required|numeric',
-                'comIncisoC' => 'required|numeric',
-                'comIncisoD' => 'required|numeric',
+                'rc1' => 'nullable|numeric',
+                'rc2' => 'nullable|numeric',
+                'rc3' => 'nullable|numeric',
+                'rc4' => 'nullable|numeric',
+                'stotal1' => 'nullable|numeric',
+                'stotal2' => 'nullable|numeric',
+                'stotal3' => 'nullable|numeric',
+                'stotal4' => 'nullable|numeric',
+                'comIncisoA' => 'nullable|numeric',
+                'comIncisoB' => 'nullable|numeric',
+                'comIncisoC' => 'nullable|numeric',
+                'comIncisoD' => 'nullable|numeric',
                 'obs3_3_1' => 'nullable|string',
                 'obs3_3_2' => 'nullable|string',
                 'obs3_3_3' => 'nullable|string',
@@ -136,18 +136,30 @@ class DictaminatorForm3_3Controller extends TransferController
     public function getFormData33(Request $request)
     {
         try {
-            $data = DictaminatorsResponseForm3_3::where('user_id', $request->query('user_id'))->first();
+            $query = DictaminatorsResponseForm3_3::query()
+                ->where('dictaminador_id', $request->query('dictaminador_id'));
+
+            if ($request->has('user_id')) {
+                $query->where('user_id', $request->query('user_id'));
+            } elseif ($request->has('email')) {
+                $query->where('email', $request->query('email'));
+            }
+
+            $data = $query->first();
+
             if (!$data) {
                 return response()->json([
                     'success' => false,
+                    'hasData' => false,
                     'message' => 'Data not found',
-                ], 404);
+                ], 200);
             }
 
             return response()->json([
                 'success' => true,
+                'hasData' => true,
                 'data' => $data
-            ], 200);
+            ]);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -184,16 +196,39 @@ class DictaminatorForm3_3Controller extends TransferController
     public function updateform33(Request $request)
     {
         // Validar los datos de entrada
-        $validatedData = $request->validate(self::getValidationRules());
-
         try {
+            $validatedData = $request->validate(self::getValidationRules());
+
+            if (!isset($validatedData['score3_3'])) {
+                $validatedData['score3_3'] = 0;
+            }
+
+            $campos = ['obs3_3_1', 'obs3_3_2', 'obs3_3_3', 'obs3_3_4'];
+            foreach ($campos as $campo) {
+                $validatedData[$campo] = isset($validatedData[$campo]) && trim($validatedData[$campo]) !== '' ? $validatedData[$campo] : 'sin comentarios';
+            }
+
             // Buscar el registro existente por user_id y dictaminador_id
             $response = DictaminatorsResponseForm3_3::updateOrCreate(
                 [
                     'user_id' => $validatedData['user_id'],
                     'dictaminador_id' => $validatedData['dictaminador_id']
                 ],
-                $validatedData // Los datos con los que se actualizará o creará
+                collect($validatedData)->except('user_type')->toArray()
+            );
+
+            $this->updateUserResponseComision($validatedData['user_id'], $validatedData['comision3_3']);
+
+            DB::table('dictaminador_docente')->updateOrInsert(
+                [
+                    'docente_id' => $validatedData['user_id'],
+                    'dictaminador_id' => $response->dictaminador_id,
+                    'form_type' => 'form3_3',
+                ],
+                [
+                    'docente_email' => $response->email,
+                    'updated_at' => now(),
+                ]
             );
 
             return response()->json([
@@ -213,4 +248,3 @@ class DictaminatorForm3_3Controller extends TransferController
         }
     }
 }
-
