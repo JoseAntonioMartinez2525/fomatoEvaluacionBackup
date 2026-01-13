@@ -417,10 +417,24 @@ Route::get('/get-form-data36', [DictaminatorForm3_6Controller::class, 'getFormDa
 
 Route::get('/get-form-data37', [DictaminatorForm3_7Controller::class, 'getFormData37']);
 
+Route::get('/get-form-data38', [DictaminatorForm3_8Controller::class, 'getFormData38']);
+
 // Route::get('/get-form-data313', [DictaminatorForm3_13Controller::class, 'getFormData313']);
 
 Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFormData381'])
     ->name('formato-evaluacion.get-form-data381');
+
+Route::get('/get-form-data39', [DictaminatorForm3_9Controller::class, 'getFormData39']);
+Route::get('/get-form-data310', [DictaminatorForm3_10Controller::class, 'getFormData310']);
+Route::get('/get-form-data311', [DictaminatorForm3_11Controller::class, 'getFormData311']);
+Route::get('/get-form-data312', [DictaminatorForm3_12Controller::class, 'getFormData312']);
+Route::get('/get-form-data313', [DictaminatorForm3_13Controller::class, 'getFormData313']);
+Route::get('/get-form-data314', [DictaminatorForm3_14Controller::class, 'getFormData314']);
+Route::get('/get-form-data315', [DictaminatorForm3_15Controller::class, 'getFormData315']);
+Route::get('/get-form-data316', [DictaminatorForm3_16Controller::class, 'getFormData316']);
+Route::get('/get-form-data317', [DictaminatorForm3_17Controller::class, 'getFormData317']);
+Route::get('/get-form-data318', [DictaminatorForm3_18Controller::class, 'getFormData318']);
+Route::get('/get-form-data319', [DictaminatorForm3_19Controller::class, 'getFormData319']);
 
     // Route::prefix('formato-evaluacion')
     // ->name('formato-evaluacion.')

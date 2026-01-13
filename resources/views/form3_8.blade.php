@@ -85,6 +85,17 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+    $hasData = false;
+    $checkFields = ['comision3_8'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_8';
+$formNumber = '38';
 @endphp
 <!DOCTYPE html>
 <html lang="">
@@ -129,12 +140,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_8 -->
-        <form id="form3_8" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}">
+        <form id="form3_8" action="/formato-evaluacion/store-form38" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-             <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
                 <!--3.8 Impartición de cursos, diplomados, seminarios, talleres extracurriculares, de educación, continua o de formación y capacitación docente-->
@@ -213,9 +226,14 @@ continua o de formación y capacitación docente </td>
                     </table>
                 </tbody>
             </table>
-            @if ($userType != 'secretaria')
-                <button id="btn3_8" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-            @endif
+                {{-- Lógica de botones --}}
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                @endif
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_8">Enviar</button>
+                @endif
             </form>
     </main>
 <center>

@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\EvaluationCompleted;
+
 use App\Models\DictaminatorsResponseForm3_7;
 use App\Models\UsersResponseForm3_7;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
-use App\Traits\ValidatesDictaminatorPeriod;
+
 
 class DictaminatorForm3_7Controller extends AbstractDictaminatorFormController
 {
