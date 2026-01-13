@@ -1668,3 +1668,8 @@ body.dark-mode td.obsInicioFinancimientoExt, body.dark-mode td.obsInicioInvInter
 .obsBackground{
     background-color: #d6fff7;
 }
+
+
+ button#btn3_11Button{
+    margin-left: 60rem;
+  }
