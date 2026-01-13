@@ -409,6 +409,14 @@ Route::get('/get-form-data32', [DictaminatorForm3_2Controller::class, 'getFormDa
 
 Route::get('/get-form-data33', [DictaminatorForm3_3Controller::class, 'getFormData33']);
 
+Route::get('/get-form-data34', [DictaminatorForm3_4Controller::class, 'getFormData34']);
+
+Route::get('/get-form-data35', [DictaminatorForm3_5Controller::class, 'getFormData35']);
+
+Route::get('/get-form-data36', [DictaminatorForm3_6Controller::class, 'getFormData36']);
+
+Route::get('/get-form-data37', [DictaminatorForm3_7Controller::class, 'getFormData37']);
+
 // Route::get('/get-form-data313', [DictaminatorForm3_13Controller::class, 'getFormData313']);
 
 Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFormData381'])
