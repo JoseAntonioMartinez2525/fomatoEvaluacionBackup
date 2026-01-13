@@ -61,6 +61,22 @@ $docenteConfig =  $docenteConfig ?? [
 
 ];
 
+if (!isset($docenteConfigForm)) {
+    $docenteConfigForm = [
+        'extraFields' => [
+            'score3_6',
+            'comision3_6',
+            'puntaje3_6',
+            'puntajeHoras3_6',
+            'comisionDict3_6',
+            'obs3_6_1',
+        ],
+        'exposeAs' => 'submitForm',
+        'selectedEmailInputId' => 'selectedDocenteEmail',
+        'searchInputId' => 'docenteSearch',
+    ];
+}
+
 // Si se recibe un email desde la URL, se lo pasamos a la configuración del autocompletado.
 if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     $docenteConfig['preselectedEmail'] = $teacherEmailFromUrl;
@@ -81,9 +97,9 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
 <style>
-#btn3_6{
-    margin-left: 280px;
-}    
+/* #btn3_6{
+    margin-left: 17rem;
+}     */
 body.dark-mode [id^="btn3_"]{
         background-color: #456483;
         color: floralwhite;
@@ -110,6 +126,16 @@ body.dark-mode [id^="btn3_"]:hover {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+    $hasData = false;
+    $checkFields = ['comision3_6'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_6';
+$formNumber = '36';
 @endphp
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
@@ -121,13 +147,15 @@ $user_identity = $user->id;
     </div>
 
     <main class="container">
-        <!-- Form for Part 3_1 -->
-        <form id="form3_6" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-form36', 'form3_6');">
+        <!-- Form for Part 3_6 -->
+        <form id="form3_6" action="/formato-evaluacion/store-form36" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
                 <!-- 3.6 Capacitación y actualización pedagógica recibida  -->
@@ -194,12 +222,16 @@ $user_identity = $user->id;
                             <tr>
                                 <th class="acreditacion" scope="col">Acreditacion: </th>
             
-                                <th class="descripcion"><b>DDIE</b>
+                                <th class="descripcion"><b>DDIE</b></th>
             
-                                <th>@if($userType != 'secretaria')
-                                    <button id="btn3_6" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                                {{-- Lógica de botones --}}
+                                @if($userType != 'docente')
+                                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                                 @endif
-                                </th>
+                                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_6">Enviar</button>
+                                @endif
                             </tr>
                         </thead>
                     </table>
@@ -242,120 +274,25 @@ $user_identity = $user->id;
                 }
             });
 
-        };          
-
-    // Function to handle form submission
-    async function submitForm(url, formId) {
-        const form = document.getElementById(formId);
-        if (!form) { console.error(`Form ${formId} not found`); return; }
-
-        // Garantizar que email y user_id estén presentes
-        const hiddenEmailInput = form.querySelector('input[name="email"]');
-        const hiddenUserIdInput = form.querySelector('input[name="user_id"]');
-        const selectedDocenteEmailInput = document.getElementById('selectedDocenteEmail'); // partial usa este id por defecto
-        const docenteSearch = document.getElementById('docenteSearch');
-
-        // 1) resolver email (varias fuentes)
-        let email = (hiddenEmailInput && hiddenEmailInput.value && hiddenEmailInput.value.trim()) ||
-                    (selectedDocenteEmailInput && selectedDocenteEmailInput.value && selectedDocenteEmailInput.value.trim()) ||
-                    (docenteSearch && typeof docenteSearch.value === 'string' && (docenteSearch.value.match(/\(([^)]+)\)$/) || [])[1]) ||
-                    '';
-
-        if (!email) {
-            alert('Seleccione un docente antes de enviar (email ausente).');
-            return;
-        }
-        // asegurar hidden input actualizado
-        if (hiddenEmailInput) hiddenEmailInput.value = email;
-
-        // 2) resolver user_id si hace falta
-        let userId = hiddenUserIdInput && hiddenUserIdInput.value && hiddenUserIdInput.value.trim();
-        if (!userId) {
-            try {
-                const resp = await fetch(`/formato-evaluacion/get-user-id?email=${encodeURIComponent(email)}`);
-                if (resp.ok) {
-                    const json = await resp.json();
-                    userId = json.user_id || '';
-                    if (hiddenUserIdInput) hiddenUserIdInput.value = userId;
-                }
-            } catch (err) {
-                console.warn('No se pudo obtener user_id desde el servidor:', err);
-            }
-        }
-
-        // si aún no hay user_id, opcional: bloquear envío
-        if (!userId) {
-            const ok = confirm('No se pudo resolver user_id. Desea enviar de todos modos?');
-            if (!ok) return;
-        }
-
-        // Recolectar resto de campos (ajusta según tu form)
-        const formData = {
-            dictaminador_id: form.querySelector('input[name="dictaminador_id"]').value || '',
-            user_id: hiddenUserIdInput ? hiddenUserIdInput.value : userId,
-            email: selectedEmail,
-            user_type: form.querySelector('input[name="user_type"]')?.value || '',
-            // campos específicos de form3_6 (ejemplo)
-            score3_6: document.getElementById('score3_6')?.textContent || '0',
-            puntaje3_6: document.getElementById('puntaje3_6')?.textContent || '0',
-            puntajeHoras3_6: document.getElementById('puntajeHoras3_6')?.textContent || '0',
-            comision3_6: document.getElementById('comision3_6')?.textContent || '0',
-
-            comisionDict3_6: (
-                document.querySelector('input[name="comisionDict3_6"]')?.value ||
-                document.querySelector('span[name="comisionDict3_6"]')?.textContent ||
-                '0'
-
-            ), 
-            obs3_6_1: (
-                document.querySelector('input[name="obs3_6_1"]')?.value ||
-                document.querySelector('span[name="obs3_6_1"]')?.textContent ||
-                ''
-            ),
         };
 
-        console.log('Submitting form3_6 data:', formData);
-
-        try {
-            const resp = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const json = await resp.json();
-            if (!resp.ok) {
-                console.error('Server error:', json);
-                showMessage(json.message || 'Error al enviar', 'red');
-                return;
-            }
-            showMessage(json.message || 'Enviado', 'green');
-        } catch (err) {
-            console.error('Network error:', err);
-            showMessage('Problema de red al enviar', 'red');
-        }
-        }
         function minWithSum(value1, value2) {
             const sum = value1 + value2;
             return Math.min(sum, 200);
-
-
         }
+
         document.addEventListener('DOMContentLoaded', function () {
+            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
+            if (toggleDarkModeButton) {
+                const widthDarkButton = window.outerWidth - 230;
+                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
+            }
 
-                const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-                if (toggleDarkModeButton) {
-                    const widthDarkButton = window.outerWidth - 230;
-                    toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-                }
-
-                toggleDarkMode();
-            });    
+            toggleDarkMode();
+        });    
     </script>
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])
+    @include('partials.submit-form', ['config' => $docenteConfigForm])
 </body>
 
 </html>
