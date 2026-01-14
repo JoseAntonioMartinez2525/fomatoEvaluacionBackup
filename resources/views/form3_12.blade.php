@@ -343,6 +343,10 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         td{
             font-size: 1rem;
         }
+
+        button#edit-btn-form3_12{
+            margin-left: 15rem;
+        }
     </style>
 </head>
 
@@ -360,8 +364,22 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
-    @endphp
 
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_12'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_12';
+$formNumber = '312';
+    @endphp
+{{-- @php dd($userType) @endphp --}}
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo
         Obscuro</button>
 
@@ -374,12 +392,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_1 -->
-        <form id="form3_12" method="POST">
+        <form id="form3_12" action="/formato-evaluacion/store-form312" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.12 Trabajos dirigidos para la titulación de estudiantes-->
             <h4>Puntaje máximo
@@ -679,9 +699,13 @@ $user_identity = $user->id;
 
                         <th class="descripcion"><b>Instancia que la otorga</b> </th>
                         <th>
-                            @if ($userType != 'secretaria')
-                                <button id="btn3_12" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-                            @endif
+                        @if($userType != 'docente')
+                        <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                        @endif
+                        {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                        @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_12">Enviar</button>
+                        @endif
                         </th>
                     </tr>
                 </thead>
