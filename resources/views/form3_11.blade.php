@@ -242,14 +242,14 @@ $formNumber = '311';
                         <td id="cantAsesoria"></td>
                         <td colspan="3"></td>
                         <td id="subtotalAsesoria"></td>
-                        <td id="comisionAsesoria">
+                        <td id="td_comisionAsesoria">
                             @if ($userType == 'dictaminador')
                                 <input type="number" step="0.01" id="comisionAsesoria" name="comisionAsesoria" oninput="onActv3Comision3_11()" value="{{ oldValueOrDefault('comisionAsesoria') }}">   
                             @else
                                 <span  id="comisionAsesoria" name="comisionAsesoria" ></span>                      
                             @endif
                         </td>
-                        <td id="obsAsesoria">
+                        <td id="td_obsAsesoria">
                             @if ($userType == 'dictaminador')
                                 <input class="table-header" type="text" id="obsAsesoria" name="obsAsesoria">
                             @else
@@ -266,7 +266,7 @@ $formNumber = '311';
                         <td id="cantServicio"></td>
                         <td colspan="3"></td>
                         <td id="subtotalServicio"></td>
-                        <td id="comisionServicio">
+                        <td id="td_comisionServicio">
                         @if ($userType == 'dictaminador')   
                             <input type="number" step="0.01" id="comisionServicio" name="comisionServicio" placeholder="0" oninput="onActv3Comision3_11()" value="{{ oldValueOrDefault('comisionServicio') }}">
                         @else
@@ -274,7 +274,7 @@ $formNumber = '311';
                         @endif
 
                         </td>
-                        <td id="obsServicio">
+                        <td id="td_obsServicio">
                         @if ($userType == 'dictaminador')   
                             <input class="table-header" type="text" id="obsServicio" name="obsServicio"></td>
                         @else
@@ -290,7 +290,7 @@ $formNumber = '311';
                         <td id="cantPracticas"></td>
                         <td colspan="3"></td>
                         <td id="subtotalPracticas"></td>
-                        <td  id="comisionPracticas">
+                        <td  id="td_comisionPracticas">
                         @if ($userType == 'dictaminador')  
                             <input type="number" step="0.01" id="comisionPracticas"  name="comisionPracticas" oninput="onActv3Comision3_11()" value="{{ oldValueOrDefault('comisionPracticas') }}">
                         @else
@@ -298,7 +298,7 @@ $formNumber = '311';
                         @endif  
                             
                         </td>
-                        <td id="obsPracticas">
+                        <td id="td_obsPracticas">
                         @if ($userType == 'dictaminador')  
                             <input class="table-header" type="text" id="obsPracticas" name="obsPracticas">
                         @else
