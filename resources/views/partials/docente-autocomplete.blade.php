@@ -1,7 +1,8 @@
-
 <script>
 (function () {
     const config = @json($config ?? []);
+    // Preferir window.ENDPOINTS si existe
+    const endpoints = window.ENDPOINTS || {};
 
     // util: leer propiedad segura por path "a.b.c"
     function readProp(obj, path) {
@@ -113,7 +114,9 @@
                 if (q.length < (config.minChars || 2)) { suggestionsBox.style.display = 'none'; return; }
                 debounceTimer = setTimeout(async () => {
                     try {
-                        const docentesResp = await fetch((config.docentesEndpoint) ? config.docentesEndpoint + '?search=' + encodeURIComponent(q) : `/formato-evaluacion/get-docentes?search=${encodeURIComponent(q)}`);
+                        // Usar endpoint global si existe, si no fallback
+                        const docentesEndpoint = endpoints.getDictaminatorsResponses || config.docentesEndpoint || (config.baseUrl ? config.baseUrl + '/get-docentes' : '/get-docentes');
+                        const docentesResp = await fetch(docentesEndpoint + '?search=' + encodeURIComponent(q));
                         const docentes = await docentesResp.json();
                         suggestionsBox.innerHTML = '';
                         if (Array.isArray(docentes) && docentes.length) {
@@ -206,7 +209,8 @@
                 }
                 // --- FIN BLOQUE NUEVO (solo scores) ---
             try {
-                const docenteDataEndpoint = config.docenteDataEndpoint || '/formato-evaluacion/get-docente-data';
+                // Usar endpoint global si existe, si no fallback
+                const docenteDataEndpoint = endpoints.getDocenteData || config.docenteDataEndpoint || (config.baseUrl ? config.baseUrl + '/get-docente-data' : '/get-docente-data');
                 // se usa axios (por preferencia del proyecto)
                 const axiosResp = await axios.get(docenteDataEndpoint, { params: { email } });
                 const docenteData = axiosResp.data;
@@ -266,7 +270,9 @@
                     // --- CARGA DE RESPUESTA DE DICTAMINADOR ---
                     if (config.dictEndpoint) {
                         try {
-                            const dictRespUrl = `${config.dictEndpoint}?email=${email}`;
+                            // Usar endpoint global si existe, si no fallback
+                            const dictEndpoint = endpoints.getDictaminatorsResponses || config.dictEndpoint || (config.baseUrl ? config.baseUrl + '/get-dictaminators-responses' : '/get-dictaminators-responses');
+                            const dictRespUrl = `${dictEndpoint}?email=${email}`;
                             const resp = await fetch(dictRespUrl);
                             const dictData = await resp.json();
 

@@ -202,7 +202,11 @@ document.addEventListener('DOMContentLoaded', function () {
             console.warn('[edit-button] submitBtn NO encontrado para', formId);
         }
 
-
+        if (form && userType === 'dictaminador') {
+            form.querySelectorAll('input, textarea, select').forEach(el => {
+                el.removeAttribute('disabled');
+            });
+        }
 
     });
 

@@ -156,7 +156,9 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
-
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
 $hasData = false;
 $checkFields = ['comision3_11'];
 foreach($checkFields as $f) {
@@ -166,8 +168,9 @@ foreach($checkFields as $f) {
     }
 }
 $formId = $docenteConfigForm['formId'] ?? 'form3_11';
-$formNumber = '3_11';
+$formNumber = '311';
 @endphp
+{{-- @php dd($userType) @endphp --}}
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
@@ -179,8 +182,8 @@ $formNumber = '3_11';
     </div>
 
     <main class="container">
-        <!-- Form for Part 3_1 -->
-        <form id="form3_11" action="/formato-evaluacion/store-form3_11" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
+        <!-- Form for Part 3_11 -->
+        <form id="form3_11" action="/formato-evaluacion/store-form311" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
             @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">

@@ -10,156 +10,96 @@ use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ValidatesDictaminatorPeriod;
-class DictaminatorForm3_10Controller extends TransferController
+class DictaminatorForm3_10Controller extends AbstractDictaminatorFormController
 {
-    use ValidatesDictaminatorPeriod;
-    public function storeform310(Request $request)
+    /**
+     * Devuelve el número del formulario
+     */
+    protected function getFormNumber(): string
     {
+        return '3_10';
+    }
 
+    /**
+     * Devuelve la clase del modelo de respuesta del dictaminador
+     */
+    protected function getDictaminatorModelClass(): string
+    {
+        return DictaminatorsResponseForm3_10::class;
+    }
 
-        try {
-            // 1. Obtener el ID del dictaminador autenticado y añadirlo al request.
-            $dictaminadorId = \Auth::id();
-            $request->merge(['dictaminador_id' => $dictaminadorId]);
+    /**
+     * Devuelve la clase del modelo de respuesta del usuario
+     */
+    protected function getUserResponseModelClass(): string
+    {
+        return UsersResponseForm3_10::class;
+    }
 
-            // 2. Llamar a la validación de fecha al inicio del método
-            if ($error = $this->validateEvaluationPeriod($request, 'form3_10')) {
-                return $error;
-            }
+    /**
+     * Devuelve los campos de observaciones
+     */
+    protected function getObservationFields(): array
+    {
+        return [
+            'obsGrupal', 'obsIndividual', 
+        ];
+    }
 
-            $validatedData = $request->validate([
+    /**
+     * Devuelve el nombre de la vista
+     */
+    protected function getViewName(): string
+    {
+        return 'form3_10';
+    }
+
+    /**
+     * Devuelve las reglas de validación para el formulario 3.9.
+     * @return array
+     */
+    public static function getValidationRules(): array
+    {
+        return [
                 'dictaminador_id' => 'required|numeric',
                 'user_id' => 'required|exists:users,id',
                 'email' => 'required|exists:users,email',
                 'score3_10' => 'required|numeric',
                 'comision3_10' => 'required|numeric',
-                'comisionGrupal' => 'required|numeric',
-                'comisionIndividual' => 'required|numeric',
-                'grupalesCant' => 'required|numeric',
-                'evaluarGrupales' => 'required|numeric',
-                'evaluarIndividual' => 'required|numeric',
-                'individualCant' => 'required|numeric',
+                'comisionGrupal' => 'nullable|numeric',
+                'comisionIndividual' => 'nullable|numeric',
+                'grupalesCant' => 'nullable|numeric',
+                'evaluarGrupales' => 'nullable|numeric',
+                'evaluarIndividual' => 'nullable|numeric',
+                'individualCant' => 'nullable|numeric',
                 'obsGrupal' => 'nullable|string',
                 'obsIndividual' => 'nullable|string',
                 'user_type' => 'required|in:user,docente,dictaminator',
-            ]);
+        ];
+    }
 
-
-            if (!isset($validatedData['score3_10'])) {
-                $validatedData['score3_10'] = 0;
-            }
-            $validatedData['obsGrupal'] = trim($validatedData['obsGrupal']) !== '' ? $validatedData['obsGrupal'] : 'sin comentarios';
-            $validatedData['obsIndividual'] = trim($validatedData['obsIndividual']) !== '' ? $validatedData['obsIndividual'] : 'sin comentarios';
-        
-
-            $validatedData['form_type'] = 'form3_10';
-
-                // 3. VERIFICAR SI YA EXISTE UN REGISTRO PARA ESTE DICTAMINADOR Y DOCENTE
-                $existingRecord = DictaminatorsResponseForm3_10::where('dictaminador_id', $dictaminadorId)
-                    ->where('user_id', $validatedData['user_id'])
-                    ->first();
-
-                if ($existingRecord) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Error al enviar, formulario ya existente'
-                    ], 409);
-                }
-
-            $response = DictaminatorsResponseForm3_10::updateOrCreate(
-                [
-                    'dictaminador_id' => $dictaminadorId,
-                    'user_id' => $validatedData['user_id']
-                ],
-                $validatedData
-            );
-            // Actualizar automáticamente el modelo docente con la comision
-            $this->updateUserResponseComision($validatedData['user_id'], $validatedData['comision3_10']);
-            DB::table('dictaminador_docente')->insert([
-                //'dictaminador_form_id' => $response->id, // Asegúrate de que este ID exista
-                'docente_id' => $validatedData['user_id'], // Asegúrate de que este ID exista
-                'dictaminador_id' => $response->dictaminador_id,
-                'form_type' => 'form3_10', // O el tipo de formulario correspondiente
-                'docente_email' => $response->email,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-            
-            $this->checkAndTransfer('DictaminatorsResponseForm3_10');
-
-            event(new EvaluationCompleted($validatedData['user_id']));
-            
-            return response()->json([
-                'success' => true,
-               'message' => 'Formulario enviado',
-                'data' => $validatedData,
-            ], 200);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation fallida',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (QueryException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al enviar, formulario ya existente',
-            ], 500); // Cambiado de 1000 a 500
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred: ' . $e->getMessage(),
-            ], 500); // Cambiado de 1000 a 500
-        }
-
+    // Métodos alias para mantener compatibilidad con las rutas existentes
+    public function storeform310(Request $request)
+    {
+        return $this->storeForm($request);
     }
 
     public function getFormData310(Request $request)
     {
-        try {
-            $data = DictaminatorsResponseForm3_10::where('user_id', $request->query('user_id'))->first();
-            if (!$data) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data not found',
-                ], 404);
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
-            ], 1000);
-        }
-
+        return $this->getFormData($request);
     }
 
-    private function updateUserResponseComision($userId, $comisionValue)
+    public function showForm310($teacherEmail = null)
     {
-        // Buscar el registro de UsersResponseForm2 correspondiente y actualizar comision1
-        $userResponse = UsersResponseForm3_10::where('user_id', $userId)->first();
 
-        if ($userResponse) {
-            $userResponse->comision3_10 = $comisionValue;
-            $userResponse->save();
-        }
+        return $this->showForm($teacherEmail);
     }
 
-            public function showForm310($teacherEmail = null)
+    public function updateform310(Request $request)
     {
-        // Si se proporciona un email de docente en la URL, no necesitamos mostrar el buscador.
-        // El script de autocompletado cargará los datos automáticamente.
-        $showSearchComponent = is_null($teacherEmail);
-
-        return view('form3_10', [
-            'teacherEmailFromUrl' => $teacherEmail,
-            'showSearch' => $showSearchComponent
-        ]);
+        return $this->updateForm($request);
     }
+
 }
+
 

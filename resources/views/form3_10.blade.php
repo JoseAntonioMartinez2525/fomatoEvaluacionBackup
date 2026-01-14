@@ -125,6 +125,12 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <x-head-resources />
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
+
+    <style>
+        button#btn3_10Button{
+            margin-left: 60rem;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 text-black/50">
@@ -138,10 +144,24 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     </div>
     <x-general-header />
 @php
-$user = Auth::user();
-$userType = $user->user_type;
-$user_identity = $user->id; 
+$userType = $userType ?? (Auth::user() ? Auth::user()->user_type : null);
+$user_identity = Auth::user() ? Auth::user()->id : null;
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_10'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_10';
+$formNumber = '310';
 @endphp
+{{-- @php dd($userType) @endphp --}}
+
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
@@ -154,13 +174,15 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_10 -->
-        <form id="form3_10" method="POST">
+        <form id="form3_10" action="/formato-evaluacion/store-form310" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
-            <input type="hidden" name="user_type" value="dictaminador">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
+            <input type="hidden" name="user_type" value="">
             <!--3.10 Trabajos dirigidos para la titulación de estudiantes-->
             <h4>Puntaje máximo
                 <label class="bg-black text-white px-4 mt-3" for="">115</label>
@@ -205,7 +227,7 @@ $user_identity = $user->id;
                             <td colspan="4"></td>
 
                             <td id="evaluarGrupales"></td>
-                            <td class="td_obs" id="comisionGrupal">
+                            <td class="td_obs" id="td_comisionGrupal">
                             @if ($userType == 'dictaminador')
 
                                 <input type="number" step="0.01" id="comisionGrupal" name="comisionGrupal" oninput="onActv3Comision3_10()"
@@ -214,7 +236,7 @@ $user_identity = $user->id;
                                 <span id="comisionGrupal" name="comisionGrupal"></span>
                             @endif    
                             </td>
-                            <td class="td_obs" id="obsGrupal">
+                            <td class="td_obs" id="td_obsGrupal">
                             @if ($userType == 'dictaminador')
                                 <input class="table-header" type="text" id="obsGrupal" name="obsGrupal">
                             @else
@@ -230,7 +252,7 @@ $user_identity = $user->id;
                             <td colspan="4"></td>
 
                             <td id="evaluarIndividual"></td>
-                            <td class="td_obs" id="comisionIndividual">
+                            <td class="td_obs" id="td_comisionIndividual">
                             @if ($userType == 'dictaminador')
                                 <input type="number" step="0.01" id="comisionIndividual" name="comisionIndividual" oninput="onActv3Comision3_10()"
                                         value="{{ oldValueOrDefault('comisionIndividual') }}"> 
@@ -238,7 +260,7 @@ $user_identity = $user->id;
                                 <span id="comisionIndividual"  name="comisionIndividual"></span>
                             @endif    
                             </td>
-                            <td class="td_obs" id="obsIndividual">
+                            <td class="td_obs" id="td_obsIndividual">
                             @if ($userType == 'dictaminador')
                                 <input class="table-header" type="text" id="obsIndividual" name="obsIndividual">
                             @else
@@ -260,9 +282,14 @@ $user_identity = $user->id;
                             </tr>
                         </thead>
                     </table>
-                    @if ($userType != 'secretaria')
-                        <button id="btn3_10" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-                    @endif
+                        {{-- Lógica de botones --}}
+                        @if($userType != 'docente')
+                        <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                        @endif
+                        {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                        @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_10Button">Enviar</button>
+                        @endif
             </form>
     </main>
     <center>

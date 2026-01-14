@@ -211,10 +211,12 @@ abstract class AbstractDictaminatorFormController extends TransferController
     public function showForm($teacherEmail = null)
     {
         $showSearchComponent = is_null($teacherEmail);
+        $userType = \Auth::user() ? \Auth::user()->user_type : null;
 
         return view($this->getViewName(), [
             'teacherEmailFromUrl' => $teacherEmail,
-            'showSearch' => $showSearchComponent
+            'showSearch' => $showSearchComponent,
+            'userType' => $userType,
         ]);
     }
 
