@@ -153,9 +153,26 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <style>
 
 #edit-btn-form3_13{
-    margin-left: 17rem;
+    margin-left: 67rem;
 }
 
+#btn3_13{
+    margin-left: 60rem;
+}
+
+input#obsInicioFinancimientoExt, input#obsInicioInvInterno, input#obsReporteFinanciamExt, input#obsReporteInvInt{
+    padding: 1px 2px;
+}
+
+body.light-mode td.td_obsInicioFinancimientoExt, body.light-mode td.td_obsInicioInvInterno, body.light-mode td.td_obsReporteInvInt, body.light-mode td.td_obsReporteFinanciamExt{
+        background-color: #d6fff7;
+        border-width: thin;
+        border-color: white;
+}
+
+body.dark-mode td.td_obsInicioFinancimientoExt, body.dark-mode td.td_obsInicioInvInterno, body.dark-mode td.td_obsReporteInvInt, body.dark-mode td.td_obsReporteFinanciamExt{
+        background-color: #82bdb2 !important;
+}
 
     </style>
 </head>
