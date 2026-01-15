@@ -130,6 +130,12 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <x-head-resources />
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
+
+    <style>
+    button#edit-btn-form3_15{
+        margin-left:67rem;
+    }
+    </style>
 </head>
 
 <body class="bg-gray-50 text-black/50">
@@ -146,6 +152,20 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_15'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_15';
+$formNumber = '315';
 @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -159,12 +179,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_1 -->
-        <form id="form3_15" method="POST">
+        <form id="form3_15" action="/formato-evaluacion/store-form315" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
         <!--3.15 Registro de patentes y productos de investigación tecnológica y educativa -->
         <h4>Puntaje máximo
@@ -208,16 +230,16 @@ $user_identity = $user->id;
                     <td id="subtotalPatentes">0</td>
                     <td class="td_form3_15">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionPatententes" value="{{ oldValueOrDefault('comisionPatententes') }}" oninput="onActv3Comision3_15()">
+                            <input type="number" step="0.01" name="comisionPatententes" id="comisionPatententes" value="{{ oldValueOrDefault('comisionPatententes') }}" oninput="onActv3Comision3_15()">
                         @else
-                            <span id="comisionPatententes"></span>
+                            <span name="comisionPatententes" id="comisionPatententes"></span>
                         @endif               
                     </td>
                     <td class="td_form3_15">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsPatentes">
+                            <input class="table-header" type="text" name="obsPatentes" id="obsPatentes">
                         @else
-                            <span id="obsPatentes"></span>
+                            <span name="obsPatentes" id="obsPatentes"></span>
                         @endif                      
                     </td>
                 </tr>
@@ -230,16 +252,16 @@ $user_identity = $user->id;
                     <td id="subtotalPrototipos">0</td>
                     <td class="td_form3_15">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionPrototipos" value="{{ oldValueOrDefault('comisionPrototipos') }}" oninput="onActv3Comision3_15()">
+                            <input type="number" step="0.01" name="comisionPrototipos" id="comisionPrototipos" value="{{ oldValueOrDefault('comisionPrototipos') }}" oninput="onActv3Comision3_15()">
                         @else
-                            <span id="comisionPrototipos"></span>
+                            <span name="comisionPrototipos" id="comisionPrototipos"></span>
                         @endif
                     </td>
                     <td class="td_form3_15">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsPrototipos">
+                            <input class="table-header" type="text" name="obsPrototipos" id="obsPrototipos">
                         @else
-                            <span id="obsPrototipos"></span>
+                            <span name="obsPrototipos" id="obsPrototipos"></span>
                         @endif
                     </td>
                 </tr>
@@ -255,9 +277,13 @@ $user_identity = $user->id;
                 </tr>
             </thead>
         </table>
-        @if($userType != 'secretaria')
-            <th><button id="btn3_15" type="submit" class="btn custom-btn printButtonClass">Enviar</button></th>
-        @endif
+            @if($userType != 'docente')
+            <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+            @endif
+            {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+            @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+            <button type="submit" class="btn custom-btn printButtonClass" id="btn3_15">Enviar</button>
+            @endif
         </form>
     </main>
     <center>
