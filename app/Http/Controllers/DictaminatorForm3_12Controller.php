@@ -126,8 +126,7 @@ class DictaminatorForm3_12Controller extends AbstractDictaminatorFormController
 
     public function updateform312(Request $request)
     {
-        dd($request->all());
-
+        
         return $this->updateForm($request);
     }
 
