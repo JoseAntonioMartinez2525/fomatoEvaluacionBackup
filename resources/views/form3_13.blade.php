@@ -174,6 +174,11 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+
     $hasData = false;
     $checkFields = ['comision3_13'];
     foreach($checkFields as $f) {
@@ -198,12 +203,14 @@ $formNumber = '313';
 
     <main class="container">
         <!-- Form for Part 3_13 -->
-        <form id="form3_13" method="POST">
+        <form id="form3_13" action="/formato-evaluacion/store-form313" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.13 Proyectos académicos de investigación-->
             <h4>Puntaje máximo
@@ -259,9 +266,9 @@ $formNumber = '313';
                     @endif
                         
                     </td>
-                    <td class="obsInicioFinancimientoExt">
+                    <td class="td_obsInicioFinancimientoExt">
                     @if ($userType == 'dictaminador')
-                        <input class="table-header" type="text" id="obsInicioFinancimientoExt" name="obsInicioFinancimientoExt">
+                        <input class="table-header" type="text" name="obsInicioFinancimientoExt" id="obsInicioFinancimientoExt">
                     @else
                         <span id="obsInicioFinancimientoExt" name="obsInicioFinancimientoExt" class="obsBackground"></span>
                     @endif                    
@@ -281,7 +288,7 @@ $formNumber = '313';
                         <span id="comisionInicioInvInterno"name="comisionInicioInvInterno" ></span>
                     @endif
                     </td>
-                    <td class="obsInicioInvInterno">
+                    <td class="td_obsInicioInvInterno">
                     @if ($userType == 'dictaminador')
                         <input class="table-header" type="text" id="obsInicioInvInterno" name="obsInicioInvInterno">
                     @else
@@ -301,17 +308,18 @@ $formNumber = '313';
                     <td id="subtotalReporteFinanciamExt"></td>
                     <td class="comision3_13">
                      @if ($userType == 'dictaminador')     
-                        <input type="number" step="0.01" id="comisionReporteFinanciamExt" value="{{ oldValueOrDefault('comisionReporteFinanciamExt') }}" oninput="onActv3Comision3_13()">
+                        <input type="number" step="0.01" name="comisionReporteFinanciamExt" id="comisionReporteFinanciamExt" value="{{ oldValueOrDefault('comisionReporteFinanciamExt') }}" oninput="onActv3Comision3_13()">
                     @else
                     <span id="comisionReporteFinanciamExt" name="comisionReporteFinanciamExt"></span>
                     @endif
-                    </td class="comision3_13">
-                    <td class="obsReporteFinanciamExt">
+                    </td>
+                    <td class="td_obsReporteFinanciamExt">
                     @if ($userType == 'dictaminador')      
-                        <input class="table-header" type="text" id="obsReporteFinanciamExt"  name="obsReporteFinanciamExt"></td>
+                        <input class="table-header" type="text" id="obsReporteFinanciamExt"  name="obsReporteFinanciamExt">
                     @else
-                    <span id="obsReporteFinanciamExt" name="obsReporteFinanciamExt" class="obsBackground"></span>
+                        <span id="obsReporteFinanciamExt" name="obsReporteFinanciamExt" class="obsBackground"></span>
                     @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>d)</td>
@@ -325,12 +333,12 @@ $formNumber = '313';
                     <td id="subtotalReporteInvInt"></td>
                     <td class="comision3_13">
                     @if ($userType == 'dictaminador')      
-                        <input type="number" step="0.01" id="comisionReporteInvInt" value="{{ oldValueOrDefault('comisionReporteInvInt') }}" oninput="onActv3Comision3_13()">
+                        <input type="number" step="0.01" name="comisionReporteInvInt" id="comisionReporteInvInt" value="{{ oldValueOrDefault('comisionReporteInvInt') }}" oninput="onActv3Comision3_13()">
                     @else
                         <span id="comisionReporteInvInt" name="comisionReporteInvInt" class="obsBackground"></span>
                     @endif
                     </td>
-                    <td class="obsReporteInvInt">
+                    <td class="td_obsReporteInvInt">
                     @if ($userType == 'dictaminador')      
                         <input class="table-header" type="text" id="obsReporteInvInt" name="obsReporteInvInt">
                     @else
@@ -348,8 +356,7 @@ $formNumber = '313';
         
                     <th class="descripcion"><b>CAAC, DIIP</b> </th>
         
-                    <th>
-                         {{-- Lógica de botones --}}
+                    {{-- Lógica de botones --}}
                     @if($userType != 'docente')
                     <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                     @endif
@@ -357,7 +364,6 @@ $formNumber = '313';
                     @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
                         <button type="submit" class="btn custom-btn printButtonClass" id="btn3_13">Enviar</button>
                     @endif
-                    </th>
                 </tr>
             </thead>
         </table>

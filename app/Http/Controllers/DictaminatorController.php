@@ -505,6 +505,27 @@ public function adminResetTimer(Request $request)
 
         $validatedData = $validator->validated();
 
+        // Normalize observation fields to avoid NULL values that break DB constraints.
+        // Instantiate the form controller to access its observation field list.
+        try {
+            $formControllerInstance = new $controllerClass();
+            if (method_exists($formControllerInstance, 'getObservationFields')) {
+                $reflectionMethod = new \ReflectionMethod($formControllerInstance, 'getObservationFields');
+                
+                // REMOVED: $reflectionMethod->setAccessible(true);
+                
+                $obsFields = $reflectionMethod->invoke($formControllerInstance);
+
+                foreach ($obsFields as $campo) {
+                    if (!array_key_exists($campo, $validatedData) || $validatedData[$campo] === null || trim((string)($validatedData[$campo] ?? '')) === '') {
+                        $validatedData[$campo] = 'sin comentarios';
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::warning("Normalization failed for form_{$formIdentifier}: " . $e->getMessage());
+        }
+
         try {
             // 4. Usar updateOrCreate para actualizar o crear el registro
             $record = $modelClass::updateOrCreate(
