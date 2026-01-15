@@ -286,6 +286,14 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 td{
     font-size: 1rem;
 }
+
+    button#edit-btn-form3_16{
+        margin-left:67rem;
+    }
+
+    button#btn3_16{
+        margin-left:60rem;
+    }
     </style>
 </head>
 
@@ -302,7 +310,21 @@ td{
 @php
 $user = Auth::user();
 $userType = $user->user_type;
-$user_identity = $user->id; 
+$user_identity = $user->id;
+
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_16'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_16';
+$formNumber = '316';
 @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -316,12 +338,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_16 -->
-        <form id="form3_16" method="POST">
+        <form id="form3_16" action="/formato-evaluacion/store-form316" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
         <!--3.16 Actividades de arbitraje, revisión, correción y edición -->
            <div>
@@ -351,17 +375,17 @@ $user_identity = $user->id;
                         <td id="subtotalArbInt"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionArbInt" value="{{ oldValueOrDefault('comisionArbInt') }}"
+                            <input type="number" step="0.01" name="comisionArbInt" id="comisionArbInt" value="{{ oldValueOrDefault('comisionArbInt') }}"
                                 oninput="onActv3Comision3_16()">
                         @else
-                            <span id="comisionArbInt"></span>
+                            <span name="comisionArbInt" id="comisionArbInt"></span>
                         @endif
                         </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsArbInt">
+                            <input class="table-header" type="text" name="obsArbInt" id="obsArbInt">
                         @else
-                            <span id="obsArbInt"></span>
+                            <span name="obsArbInt" id="obsArbInt"></span>
                         @endif
                         </td>
                     </tr>
@@ -376,18 +400,18 @@ $user_identity = $user->id;
                         <td id="subtotalArbNac"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionArbNac" value="{{ oldValueOrDefault('comisionArbNac') }}"
+                            <input type="number" step="0.01" name="comisionArbNac" id="comisionArbNac" value="{{ oldValueOrDefault('comisionArbNac') }}"
                                 oninput="onActv3Comision3_16()">
                         @else
-                            <span id="comisionArbNac"></span>
+                            <span name="comisionArbNac" id="comisionArbNac"></span>
                         @endif
                         
                         </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsArbNac">
+                            <input class="table-header" type="text" name="obsArbNac" id="obsArbNac">
                         @else
-                            <span id="obsArbNac"></span>
+                            <span name="obsArbNac" id="obsArbNac"></span>
                         @endif
                         </td>
                     </tr>
@@ -402,18 +426,17 @@ $user_identity = $user->id;
                         <td id="subtotalPubInt"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionPubInt" value="{{ oldValueOrDefault('comisionPubInt') }}"
-                                oninput="onActv3Comision3_16()"></td>
+                            <input type="number" step="0.01" name="comisionPubInt" id="comisionPubInt" value="{{ oldValueOrDefault('comisionPubInt') }}"
+                                oninput="onActv3Comision3_16()">
                         @else
-                        <span id="comisionPubInt"></span>
-
+                            <span name="comisionPubInt" id="comisionPubInt"></span>
                         @endif
+                        </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsPubInt">
+                            <input class="table-header" type="text" name="obsPubInt" id="obsPubInt">
                         @else
-
-                        <span id="obsPubInt"></span>
+                            <span name="obsPubInt" id="obsPubInt"></span>
                         @endif
                         </td>
                     </tr>
@@ -447,17 +470,17 @@ $user_identity = $user->id;
                         <td id="subtotalPubNac"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionPubNac" value="{{ oldValueOrDefault('comisionPubNac') }}"
+                            <input type="number" step="0.01" name="comisionPubNac" id="comisionPubNac" value="{{ oldValueOrDefault('comisionPubNac') }}"
                                 oninput="onActv3Comision3_16()">
                         @else
-                            <span id="comisionPubNac"></span>
+                            <span name="comisionPubNac" id="comisionPubNac"></span>
                         @endif
                         </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsPubNac">
+                            <input class="table-header" type="text" name="obsPubNac" id="obsPubNac">
                         @else
-                            <span id="obsPubNac"></span>
+                            <span name="obsPubNac" id="obsPubNac"></span>
                         @endif
                         </td>
                     </tr>                    
@@ -472,16 +495,17 @@ $user_identity = $user->id;
                         <td id="subtotalRevInt"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionRevInt" value="{{ oldValueOrDefault('comisionRevInt') }}"
-                                oninput="onActv3Comision3_16()"></td>
+                            <input type="number" step="0.01" name="comisionRevInt" id="comisionRevInt" value="{{ oldValueOrDefault('comisionRevInt') }}"
+                                oninput="onActv3Comision3_16()">
                         @else
-                            <span id="comisionRevInt"> </span>
+                            <span name="comisionRevInt" id="comisionRevInt"> </span>
                         @endif
+                        </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsRevInt">
+                            <input class="table-header" type="text" name="obsRevInt" id="obsRevInt">
                         @else
-                            <span id="obsRevInt"> </span>
+                            <span name="obsRevInt" id="obsRevInt"> </span>
                         @endif
                         </td>
                     </tr>
@@ -496,16 +520,17 @@ $user_identity = $user->id;
                         <td id="subtotalRevNac"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionRevNac" value="{{ oldValueOrDefault('comisionRevNac') }}"
-                                oninput="onActv3Comision3_16()"></td>
+                            <input type="number" step="0.01" name="comisionRevNac" id="comisionRevNac" value="{{ oldValueOrDefault('comisionRevNac') }}"
+                                oninput="onActv3Comision3_16()">
                         @else
-                            <span id="comisionRevNac"> </span>
+                            <span name="comisionRevNac" id="comisionRevNac"> </span>
                         @endif
+                        </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsRevNac">
+                            <input class="table-header" type="text" name="obsRevNac" id="obsRevNac">
                         @else
-                            <span id="obsRevNac"> </span>
+                            <span name="obsRevNac" id="obsRevNac"> </span>
                         @endif
                         </td>
                     </tr>
@@ -520,16 +545,17 @@ $user_identity = $user->id;
                         <td id="subtotalRevista"></td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input type="number" step="0.01" id="comisionRevista" value="{{ oldValueOrDefault('comisionRevista') }}"
-                                oninput="onActv3Comision3_16()"></td>
+                            <input type="number" step="0.01" name="comisionRevista" id="comisionRevista" value="{{ oldValueOrDefault('comisionRevista') }}"
+                                oninput="onActv3Comision3_16()">
                         @else
-                            <span id="comisionRevista"> </span>
+                            <span name="comisionRevista" id="comisionRevista"> </span>
                         @endif
+                        </td>
                         <td class="td_obs">
                         @if($userType == 'dictaminador')
-                            <input class="table-header" type="text" id="obsRevista">
+                            <input class="table-header" type="text" name="obsRevista" id="obsRevista">
                         @else
-                            <span id="obsRevista"> </span>
+                            <span name="obsRevista" id="obsRevista"> </span>
                         @endif
                         </td>
                     </tr>
@@ -545,11 +571,13 @@ $user_identity = $user->id;
                                 DIIP, SG, CA,
                                 JD.</b>
                         </th>
-                        <th>
-                            @if($userType != 'secretaria')
-                            <button id="btn3_16" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-                            @endif   
-                        </th>
+                            @if($userType != 'docente')
+                            <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                            @endif
+                            {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                            @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                            <button type="submit" class="btn custom-btn printButtonClass" id="btn3_16">Enviar</button>
+                            @endif
                     </tr>
                 </thead>
             </table> 
