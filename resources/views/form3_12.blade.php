@@ -428,7 +428,7 @@ $formNumber = '312';
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCientificos">
+                                <input class="table-header" type="text" id="obsCientificos" name="obsCientificos">
                             @else
                                 <span id="obsCientificos" name="obsCientificos" class="form3_19_dark"></span>
                             @endif
@@ -452,7 +452,7 @@ $formNumber = '312';
                             @endif                          </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsDivulgacion">
+                                <input class="table-header" type="text" id="obsDivulgacion" name="obsDivulgacion">
                             @else
                                 <span id="obsDivulgacion" name="obsDivulgacion" class="form3_19_dark"></span>
                             @endif
@@ -478,7 +478,7 @@ $formNumber = '312';
                      </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsTraduccion">
+                                <input class="table-header" type="text" id="obsTraduccion" name="obsTraduccion">
                             @else
                                 <span id="obsTraduccion" name="obsTraduccion" class="form3_19_dark"></span>
                             @endif
@@ -504,7 +504,7 @@ $formNumber = '312';
                     </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsArbitrajeInt">
+                                <input class="table-header" type="text" id="obsArbitrajeInt" name="obsArbitrajeInt">
                             @else
                                 <span id="obsArbitrajeInt" name="obsArbitrajeInt" class="form3_19_dark"></span>
                             @endif
@@ -530,7 +530,7 @@ $formNumber = '312';
                      </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsArbitrajeNac">
+                                <input class="table-header" type="text" id="obsArbitrajeNac" name="obsArbitrajeNac">
                             @else
                                 <span id="obsArbitrajeNac" name="obsArbitrajeNac" class="form3_19_dark"></span>
                             @endif
@@ -575,7 +575,7 @@ $formNumber = '312';
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsSinInt">
+                                <input class="table-header" type="text" id="obsSinInt" name="obsSinInt">
                             @else
                                 <span id="obsSinInt" name="obsSinInt" class="form3_19_dark"></span>
                             @endif
@@ -602,7 +602,7 @@ $formNumber = '312';
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsSinNac">
+                                <input class="table-header" type="text" id="obsSinNac" name="obsSinNac">
                             @else
                                 <span id="obsSinNac" name="obsSinNac" class="form3_19_dark"></span>
                             @endif
@@ -629,7 +629,7 @@ $formNumber = '312';
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsAutor">
+                                <input class="table-header" type="text" id="obsAutor" name="obsAutor">
                             @else
                                 <span id="obsAutor" name="obsAutor" class="form3_19_dark"></span>
                             @endif
@@ -656,7 +656,7 @@ $formNumber = '312';
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsEditor">
+                                <input class="table-header" type="text" id="obsEditor" name="obsEditor">
                             @else
                                 <span id="obsEditor" name="obsEditor" class="form3_19_dark"></span>
                             @endif
@@ -683,7 +683,7 @@ $formNumber = '312';
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsWeb">
+                                <input class="table-header" type="text" id="obsWeb" name="obsWeb">
                             @else
                                 <span id="obsWeb" name="obsWeb" class="form3_19_dark"></span>
                             @endif
