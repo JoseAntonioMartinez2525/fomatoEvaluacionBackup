@@ -115,7 +115,7 @@
                 debounceTimer = setTimeout(async () => {
                     try {
                         // Usar endpoint global si existe, si no fallback
-                        const docentesEndpoint = endpoints.getDictaminatorsResponses || config.docentesEndpoint || (config.baseUrl ? config.baseUrl + '/get-docentes' : '/get-docentes');
+                        // const docentesEndpoint = endpoints.getDictaminatorsResponses || config.docentesEndpoint || (config.baseUrl ? config.baseUrl + '/get-docentes' : '/get-docentes');
                         const docentesResp = await fetch(docentesEndpoint + '?search=' + encodeURIComponent(q));
                         const docentes = await docentesResp.json();
                         suggestionsBox.innerHTML = '';
@@ -270,8 +270,11 @@
                     // --- CARGA DE RESPUESTA DE DICTAMINADOR ---
                     if (config.dictEndpoint) {
                         try {
+                            // Priorizar configuración específica del formulario, luego global, luego fallback
                             // Usar endpoint global si existe, si no fallback
-                            const dictEndpoint = endpoints.getDictaminatorsResponses || config.dictEndpoint || (config.baseUrl ? config.baseUrl + '/get-dictaminators-responses' : '/get-dictaminators-responses');
+                            // const dictEndpoint = endpoints.getDictaminatorsResponses || config.dictEndpoint || (config.baseUrl ? config.baseUrl + '/get-dictaminators-responses' : '/get-dictaminators-responses');
+                            // Priorizar configuración específica del formulario, luego global, luego fallback
+                            const dictEndpoint = config.dictEndpoint || endpoints.getDictaminatorsResponses || (config.baseUrl ? config.baseUrl + '/get-dictaminators-responses' : '/get-dictaminators-responses');
                             const dictRespUrl = `${dictEndpoint}?email=${email}`;
                             const resp = await fetch(dictRespUrl);
                             const dictData = await resp.json();
