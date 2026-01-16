@@ -198,6 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.style.display = 'inline-block';
             submitBtn.disabled = false;
             submitBtn.classList.remove('hidden');
+            submitBtn.classList.add('printButtonClass');
+            
         } else {
             console.warn('[edit-button] submitBtn NO encontrado para', formId);
         }

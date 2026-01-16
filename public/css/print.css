@@ -1,6 +1,6 @@
 @media print{
 .printButtonClass {
-    display: none;
+    display: none !important;
     width:fit-content;
     margin-top: -50px;
     
@@ -101,10 +101,3 @@
 
     
 }
-
-
-
-
-
-
-
