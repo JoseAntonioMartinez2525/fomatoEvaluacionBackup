@@ -98,6 +98,29 @@ public function adminResetTimer(Request $request)
     return response()->json($docentes);
 }
 
+    public function getDocentesByDictaminador(Request $request)
+    {
+        $dictaminadorId = $request->input('dictaminador_id') ?? \Auth::id();
+        $includeOthers = $request->input('include_others') === 'true';
+
+        if ($includeOthers) {
+            // Traer TODOS los docentes registrados en el sistema (tabla users)
+            $docentes = \App\Models\User::where('user_type', 'docente')
+                ->select('id', 'name', 'email')
+                ->orderBy('name')
+                ->get();
+            return response()->json($docentes);
+        }
+
+        // Consultar la tabla pivote (historial de evaluaciones) solo para el dictaminador actual
+        $query = DB::table('dictaminador_docente')
+            ->join('users', 'dictaminador_docente.docente_id', '=', 'users.id')
+            ->where('dictaminador_docente.dictaminador_id', $dictaminadorId)
+            ->select('users.id', 'users.name', 'users.email')
+            ->distinct();
+
+        return response()->json($query->get());
+    }
 
     public function getDocenteData(Request $request)
     {

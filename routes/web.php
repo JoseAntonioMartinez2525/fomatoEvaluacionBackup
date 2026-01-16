@@ -285,7 +285,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/get-dictaminators-responses', [ResponseJson::class, 'getDictaminatorResponses']);
     Route::get('/get-dictaminators-responses-id', [ResponseJson::class, 'getDictaminatorResponsesId']);
-    Route::get('/get-docentes-by-dictaminador', [DictaminatorForm2_Controller::class, 'getDocentesByDictaminador']);
+    Route::get('/get-docentes-by-dictaminador', [DictaminatorController::class, 'getDocentesByDictaminador']);
     Route::get('/comision_dictaminadora', [FirmaDictaminadorController::class, 'showForm'])->name('comision_dictaminadora');
     Route::get('/get-user-id', [DictaminatorController::class, 'getUserId']);
 

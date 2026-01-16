@@ -160,17 +160,31 @@ public function getFormData2(Request $request)
         return view('resumen_comision', compact('convocatoria'));
     }
 
-    public function getDocentesByDictaminador(Request $request)
-    {
-        $dictaminador = DictaminatorsResponseForm2::find($request->dictaminador_id);
+    // public function getDocentesByDictaminador(Request $request)
+    // {
+    //     $dictaminadorId = $request->input('dictaminador_id') ?? \Auth::id();
+    //     $includeOthers = $request->input('include_others') === 'true';
 
-        if ($dictaminador) {
-            $docentes = $dictaminador->docentes()->get();
-            return response()->json($docentes);
-        }
+    //     if ($includeOthers) {
+    //         // Traer TODOS los docentes registrados en el sistema (tabla users)
+    //         $docentes = \App\Models\User::where('user_type', 'docente')
+    //             ->select('id', 'name', 'email')
+    //             ->orderBy('name')
+    //             ->get();
+    //         return response()->json($docentes);
+    //     }
 
-        return response()->json([], 404);  // Retorna un 404 si no se encuentra el dictaminador
-    }
+    //     // Consultar la tabla pivote (historial de evaluaciones) solo para el dictaminador actual
+    //     $query = DB::table('dictaminador_docente')
+    //         ->join('users', 'dictaminador_docente.docente_id', '=', 'users.id')
+    //         ->where('dictaminador_docente.dictaminador_id', $dictaminadorId)
+    //         ->select('users.id', 'users.name', 'users.email')
+    //         ->distinct();
+
+    //     $docentes = $query->get();
+
+    //     return response()->json($docentes);
+    // }
 
 
     public function asignarDocentes(Request $request, $dictaminador_id)

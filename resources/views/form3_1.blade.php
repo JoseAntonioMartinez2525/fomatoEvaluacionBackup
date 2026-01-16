@@ -31,7 +31,7 @@ $docenteConfig = array_merge([
     'formKey' => 'form3_1',
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-    'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+    'dictEndpoint' => '/formato-evaluacion/get-form-data31',
     'dictCollectionKey' => 'form3_1',
     'userTypeForDict' => 'dictaminador',
 

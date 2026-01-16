@@ -84,8 +84,8 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                            onkeyup="filterDocentes()">
                 </div>
 
-                @if($docentes->count() > 0)
-                    <div id="docentesList">
+                <div id="docentesList">
+                    @if($docentes->count() > 0)
                         @foreach($docentes as $docente)
                             <div class="docente-card" data-name="{{ strtolower($docente->name) }}" data-email="{{ strtolower($docente->email) }}">
                                 <div class="row align-items-center">
@@ -106,11 +106,17 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </div>
                             </div>
                         @endforeach
-                    </div>
-                @else
-                    <div class="alert alert-info">
+                    @endif
+                </div>
+
+                @if($docentes->count() == 0)
+                    <div id="no-docentes-alert" class="alert alert-info" style="display: none;">
                         <i class="fa-solid fa-info-circle"></i> 
-                        No tiene docentes asignados actualmente.
+                        No se encontraron docentes.
+                    </div>
+                    <div id="loading-docentes" class="text-center mt-4">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p class="mt-2">Cargando lista de docentes...</p>
                     </div>
                 @endif
             </div>
@@ -146,6 +152,53 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             }
 
             toggleDarkMode();
+
+            // Si no hay docentes cargados por el servidor, intentar cargarlos vía API
+            if ({{ $docentes->count() }} === 0) {
+                // Solicitamos docentes asociados al dictaminador actual O evaluados por otros (include_others=true)
+                fetch('{{ url("/get-docentes-by-dictaminador") }}?dictaminador_id={{ Auth::id() }}&include_others=true')
+                    .then(response => response.json())
+                    .then(data => {
+                        const listContainer = document.getElementById('docentesList');
+                        const loadingDiv = document.getElementById('loading-docentes');
+                        const alertDiv = document.getElementById('no-docentes-alert');
+
+                        if (loadingDiv) loadingDiv.style.display = 'none';
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(docente => {
+                                const name = docente.nombre || docente.name || 'Sin nombre';
+                                const email = docente.email || '';
+                                const card = document.createElement('div');
+                                card.className = 'docente-card';
+                                card.setAttribute('data-name', name.toLowerCase());
+                                card.setAttribute('data-email', email.toLowerCase());
+                                
+                                card.innerHTML = `
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h5 class="mb-1"><i class="fa-solid fa-user"></i> ${name}</h5>
+                                            <p class="mb-0 text-xs"><i class="fa-solid fa-envelope"></i> ${email}</p>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <a href="/docente-formularios/${email}" class="btn btn-view-forms">
+                                                <i class="fa-solid fa-folder-open"></i> Ver Formularios
+                                            </a>
+                                        </div>
+                                    </div>
+                                `;
+                                listContainer.appendChild(card);
+                            });
+                        } else {
+                            if (alertDiv) alertDiv.style.display = 'block';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error cargando docentes:', err);
+                        const loadingDiv = document.getElementById('loading-docentes');
+                        if (loadingDiv) loadingDiv.innerHTML = '<p class="text-danger">Error al cargar docentes.</p>';
+                    });
+            }
         });
     </script>
 </body>
