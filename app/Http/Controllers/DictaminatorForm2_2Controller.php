@@ -134,8 +134,13 @@ public function getFormData22(Request $request)
 
             $dictaminadorId = $request->query('dictaminador_id') ?? Auth::id();
 
-            // Obtener estrictamente el registro del dictaminador actual
+            // Intentar obtener primero el registro del dictaminador actual
             $data = (clone $query)->where('dictaminador_id', $dictaminadorId)->first();
+
+            // Si no se encuentra, buscar cualquier registro existente (de otro dictaminador) para prellenar
+            if (!$data) {
+                $data = $query->first();
+            }
 
         if (!$data) {
             return response()->json([
@@ -182,6 +187,7 @@ public function getFormData22(Request $request)
             $user = \App\Models\User::where('email', $teacherEmail)->first();
             if ($user) {
                 $hasData = DictaminatorsResponseForm2_2::where('email', $teacherEmail)
+                    ->where('dictaminador_id', Auth::id())
                     ->exists();
             }
         }

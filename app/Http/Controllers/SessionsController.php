@@ -68,6 +68,7 @@ public function login(Request $request)
         if (!$user) {
             $index = array_search($email, $this->dictaminadorEmails);
             $name = config('dictaminadores.nombres')[$index] ?? $email;
+            $departamento = config('dictaminadores.departamentos')[$index] ?? null;
 
             $user = User::create([
                 'name' => $name,
@@ -75,12 +76,17 @@ public function login(Request $request)
                 'is_dictaminador' => true,
                 'email' => $email,
                 'password' => Hash::make('defaultpassword'),
+                'departamento' => $departamento,
             ]);
         } else {
-            // Asegurarse de que el tipo sea dictaminador y flag esté activado
+            $index = array_search($email, $this->dictaminadorEmails);
+            $departamento = config('dictaminadores.departamentos')[$index] ?? $user->departamento;
+
+            // Asegurarse de que el tipo sea dictaminador, flag esté activado y departamento actualizado
             $user->update([
                 'user_type' => 'dictaminador',
                 'is_dictaminador' => true,
+                'departamento' => $departamento,
             ]);
         }
 

@@ -181,7 +181,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                             <p class="mb-0 text-xs"><i class="fa-solid fa-envelope"></i> ${email}</p>
                                         </div>
                                         <div class="col-md-4 text-end">
-                                            <a href="/docente-formularios/${email}" class="btn btn-view-forms">
+                                            <a href="{{ url('/docente-formularios') }}/${email}" class="btn btn-view-forms">
                                                 <i class="fa-solid fa-folder-open"></i> Ver Formularios
                                             </a>
                                         </div>

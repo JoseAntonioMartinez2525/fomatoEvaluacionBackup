@@ -166,7 +166,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form2_2';
 </div>
     <main class="container">
         <!-- Form for Part 2_2 -->
-        <form id="form2_2" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
+        <form id="form2_2" action="/formato-evaluacion/store-form22" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
             <div>
                 <!-- Activity 2: Commitment in Teaching Performance -->
@@ -174,8 +174,10 @@ $formId = $docenteConfigForm['formId'] ?? 'form2_2';
                     <label class="bg-black text-white px-4 mt-3" for="">200</label>
                 </h4>
             </div>
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
             <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">

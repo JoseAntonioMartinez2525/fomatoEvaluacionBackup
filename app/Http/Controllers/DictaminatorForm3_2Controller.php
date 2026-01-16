@@ -135,8 +135,7 @@ class DictaminatorForm3_2Controller extends TransferController
         public function getFormData32(Request $request)
         {
             try {
-                $query = DictaminatorsResponseForm3_2::query()
-                    ->where('dictaminador_id', $request->query('dictaminador_id'));
+                $query = DictaminatorsResponseForm3_2::query();
 
                 if ($request->has('user_id')) {
                     $query->where('user_id', $request->query('user_id'));
@@ -144,7 +143,14 @@ class DictaminatorForm3_2Controller extends TransferController
                     $query->where('email', $request->query('email'));
                 }
 
-                $data = $query->first();
+                $dictaminadorId = $request->query('dictaminador_id') ?? Auth::id();
+
+                // Intentar obtener primero el registro del dictaminador actual
+                $data = (clone $query)->where('dictaminador_id', $dictaminadorId)->first();
+
+                if (!$data) {
+                    $data = $query->first();
+                }
 
                 if (!$data) {
                     return response()->json([
