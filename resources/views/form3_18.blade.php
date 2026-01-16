@@ -272,6 +272,16 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         button#btn3_18{
             margin-left:60rem;
         }
+
+        body.dark-mode input#obsComOrgInt, body.dark-mode input#obsComOrgNac, body.dark-mode input#obsComOrgReg, body.dark-mode input#obsComApoyoInt, body.dark-mode input#obsComApoyoNac, 
+        body.dark-mode input#obsComApoyoReg, body.dark-mode input#obsCicloComOrgInt, body.dark-mode input#obsCicloComOrgNac, body.dark-mode input#obsCicloComOrgReg, body.dark-mode input#obsCicloComApoyoInt,
+         body.dark-mode input#obsCicloComApoyoNac, body.dark-mode input#obsCicloComApoyoReg{
+        color: white!important;
+        font-size: .8rem;
+        font-weight: bold;
+        
+
+    }
     </style>
 
 </head>
@@ -678,13 +688,6 @@ $formNumber = '318';
                         <th class="acreditacion" style="padding-left: 100px;">Acreditacion:</th>
                         <th class="descripcion"><b>Instancia que lo otorga</b></th>
 
-                        @if($userType != 'docente')
-                        <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
-                        @endif
-                        {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
-                        @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
-                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_18">Enviar</button>
-                        @endif
                     </tr>
                 </tbody>
             </table>
@@ -694,7 +697,13 @@ $formNumber = '318';
                     
                 </thead>
             </table> --}}
-
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                @endif
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                <button type="submit" class="btn custom-btn printButtonClass" id="btn3_18">Enviar</button>
+                @endif
             <!--Convocatoria 2-->
             <div style="display: flex; justify-content: space-between;padding-top: 150px;">
                 <div id="convocatoria2">
@@ -724,18 +733,21 @@ $formNumber = '318';
     <script>
         
         window.onload = function () {
-            const footerHeight = document.querySelector('footer').offsetHeight;
-            const elements = document.querySelectorAll('.prevent-overlap');
+            const footer = document.querySelector('footer');
+            if (footer) {
+                const footerHeight = footer.offsetHeight;
+                const elements = document.querySelectorAll('.prevent-overlap');
 
-            elements.forEach(element => {
-                const rect = element.getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
+                elements.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
 
-                // Verifica si el elemento está demasiado cerca del footer y aplica page-break-before si es necesario
-                if (rect.bottom + footerHeight > viewportHeight) {
-                    element.style.pageBreakBefore = "always"; // Forzar salto antes
-                }
-            });
+                    // Verifica si el elemento está demasiado cerca del footer y aplica page-break-before si es necesario
+                    if (rect.bottom + footerHeight > viewportHeight) {
+                        element.style.pageBreakBefore = "always"; // Forzar salto antes
+                    }
+                });
+            }
 
         };
         let cant3_18 = ['cantComOrgInt', 'cantComOrgNac', 'cantComOrgReg', 'cantComApoyoInt', 'cantComApoyoNac', 'cantComApoyoReg', 'cantCicloComOrgInt', 'cantCicloComOrgNac', 'cantCicloComOrgReg', 'cantCicloComApoyoInt', 'cantCicloComApoyoNac', 'cantCicloComApoyoReg'];
