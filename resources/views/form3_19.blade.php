@@ -34,7 +34,7 @@ $docenteConfig = $docenteConfig ?? array_merge([
     'formKey' => 'form3_19',
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-        'dictEndpoint' => '/formato-evaluacion/get-form-data319',
+    'dictEndpoint' => '/formato-evaluacion/get-form-data319',
     'dictCollectionKey'   => 'form3_19',
     'userTypeForDict'     => '',
 
@@ -1195,6 +1195,10 @@ $formNumber = '319';
 
             toggleDarkMode();
         });    
+    </script>
+    <script>
+        console.log('Form3_19 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
     </script>
     
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])

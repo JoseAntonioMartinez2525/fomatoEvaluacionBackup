@@ -155,6 +155,7 @@ class DictaminatorForm3_19Controller extends AbstractDictaminatorFormController
 
     public function getFormData319(Request $request)
     {
+        \Log::info('DictaminatorForm3_19Controller::getFormData319 - Request received', $request->all());
         return $this->getFormData($request);
     }
 
