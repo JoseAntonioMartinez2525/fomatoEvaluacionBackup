@@ -188,6 +188,13 @@ class DocenteFormsController extends Controller
                 'name' => '3.19 Participación en cuerpos colegiados',
                 'route' => 'getData319',
                 'view_route' => 'form3_19'
+            ],
+            //Resumen
+                'form4' => [
+                'table' => 'users_final_resume',
+                'name' => 'Resumen comision',
+                'route' => 'getDictaminadorFinalData',
+                'view_route' => 'form4'
             ]
         ];
 

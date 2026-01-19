@@ -131,7 +131,7 @@ Route::middleware(['auth'])->group(function (){
     // Route::get('form3_17', function () {return view('form3_17'); })->name('form3_17');
     // Route::get('form3_18', function () {return view('form3_18'); })->name('form3_18');
     // Route::get('form3_19', function () {return view('form3_19'); })->name('form3_19');
-    Route::get('form4', function () {return view('form4'); })->name('form4');
+    // Route::get('form4', function () {return view('form4'); })->name('form4');
     Route::get('form5', function () {return view('form5'); })->name('form5');
     Route::get('resumen_comision', function () {return view('resumen_comision'); })->name('resumen_comision');
 
@@ -180,7 +180,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/docente-formularios/{docenteEmail}', [DocenteFormsController::class, 'show'])->name('docente.forms.show');
     //Route::get('/get-form-content/{form}', [FormContentController::class, 'getFormContent']);
     Route::get('/get-dictaminadores', [FormsController::class, 'getdictaminadores'])->name('getdictaminadores');
-    Route::get('/form4', [ConsolidatedResponseController::class, 'showResumen'])->name('form4');
+    Route::get('/form4/{teacher?}', [ConsolidatedResponseController::class, 'showResumen'])->name('form4');
     Route::get('/get-dictaminador-data', [FormsController::class, 'getDictaminadorData'])->name('getDictaminadorData');
     Route::get('otros_formularios', function () {return view('otros_formularios'); })->name('otros_formularios');
         Route::get('/get-docentes-otros-form', [DynamicFormController::class, 'getDocentesOtrosForm'])->name('get-docentes-otros-form');

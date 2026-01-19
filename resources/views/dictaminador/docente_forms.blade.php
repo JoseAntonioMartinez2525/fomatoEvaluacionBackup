@@ -124,8 +124,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                         <i class="fa-solid fa-user"></i> {{ $docente->name ?? 'Docente' }}
                     </h2>
                     <p class="mb-0">
-                        <i class="fa-solid fa-envelope"></i> {{ $docenteEmail }}
+                        <i class="fa-solid fa-envelope"></i> {{ $docenteEmail }} 
                     </p>
+                    <a class="text-white mt-4 fw-bold" href="{{ route('form4', ['teacher' => $docenteEmail]) }}">Ver Resumen General de comision</a>
                 </div>
 
                 <h4 class="mb-4">
