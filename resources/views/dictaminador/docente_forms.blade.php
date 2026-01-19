@@ -102,7 +102,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
 <body class="font-sans antialiased">
     @auth
-        @if(Auth::user()->user_type === 'dictaminador')
+        @if(Auth::user()->user_type !== 'docente')
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             

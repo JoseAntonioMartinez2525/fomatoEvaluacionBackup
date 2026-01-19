@@ -57,7 +57,7 @@ body.dark-mode .nav {
                             <a class="nav-link active enlaceSN" style="width: 200px;"
                                 href="{{ route('comision_dictaminadora') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a> --}}
                         @if($user->user_type === 'secretaria')
-                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
+                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('docente.forms.index') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
                         @endif
                     </li>
                     @if($user->user_type === 'dictaminador')
