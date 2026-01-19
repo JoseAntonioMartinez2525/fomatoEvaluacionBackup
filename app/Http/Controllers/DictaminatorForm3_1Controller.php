@@ -175,6 +175,8 @@ class DictaminatorForm3_1Controller extends TransferController
 public function getFormData31(Request $request)
 {
     try {
+            \Log::info('DictaminatorForm3_1Controller::getFormData31 - Inicio', ['request' => $request->all()]);
+
             $query = DictaminatorsResponseForm3_1::query();
 
         if ($request->has('user_id')) {
@@ -183,10 +185,10 @@ public function getFormData31(Request $request)
             $query->where('email', $request->query('email'));
         }
 
-            $dictaminadorId = $request->query('dictaminador_id') ?? Auth::id();
+            $dictaminadorId = $request->query('dictaminador_id');
 
             // Intentar obtener primero el registro del dictaminador actual
-            $data = (clone $query)->where('dictaminador_id', $dictaminadorId)->first();
+            $data = $dictaminadorId ? (clone $query)->where('dictaminador_id', $dictaminadorId)->first() : null;
 
             // Si no se encuentra, buscar cualquier registro existente (de otro dictaminador)
             if (!$data) {
@@ -194,19 +196,23 @@ public function getFormData31(Request $request)
             }
 
         if (!$data) {
+            \Log::info('DictaminatorForm3_1Controller::getFormData31 - Data not found');
             return response()->json([
                 'success' => false,
                 'message' => 'Data not found',
-                'form2_2' => [],
+                'form3_1' => [],
             ], 200);
         }
+
+        \Log::info('DictaminatorForm3_1Controller::getFormData31 - Data found', ['id' => $data->id]);
 
         return response()->json([
             'success' => true,
             'data' => $data,
-            'form2_2' => [$data]
+            'form3_1' => [$data]
         ]);
     } catch (\Exception $e) {
+        \Log::error('DictaminatorForm3_1Controller::getFormData31 - Error: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => $e->getMessage(),
@@ -409,7 +415,6 @@ public function getFormData31(Request $request)
             $user = \App\Models\User::where('email', $teacherEmail)->first();
             if ($user) {
                 $hasData = DictaminatorsResponseForm3_1::where('email', $teacherEmail)
-                    ->where('dictaminador_id', Auth::id())
                     ->exists();
 
                 // Reutilizar la lógica para obtener los puntajes

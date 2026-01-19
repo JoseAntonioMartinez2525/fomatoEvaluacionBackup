@@ -24,7 +24,7 @@ $docenteConfig = $docenteConfig ?? [
 
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-    'dictEndpoint'        => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data318',
 
     'dictCollectionKey'   => 'form3_18',
     'userTypeForDict'     => '',

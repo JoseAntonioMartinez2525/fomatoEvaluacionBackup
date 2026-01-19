@@ -135,6 +135,8 @@ class DictaminatorForm3_2Controller extends TransferController
         public function getFormData32(Request $request)
         {
             try {
+                \Log::info('DictaminatorForm3_2Controller::getFormData32 - Inicio', ['request' => $request->all()]);
+
                 $query = DictaminatorsResponseForm3_2::query();
 
                 if ($request->has('user_id')) {
@@ -149,23 +151,30 @@ class DictaminatorForm3_2Controller extends TransferController
                 $data = (clone $query)->where('dictaminador_id', $dictaminadorId)->first();
 
                 if (!$data) {
+                    \Log::info('DictaminatorForm3_2Controller::getFormData32 - No data for specific dictaminador, trying fallback');
                     $data = $query->first();
                 }
 
                 if (!$data) {
+                    \Log::info('DictaminatorForm3_2Controller::getFormData32 - Data not found');
                     return response()->json([
                         'success' => false,
                         'hasData' => false,
                         'message' => 'Data not found',
+                        'form3_2' => [],
                     ], 200);
                 }
+
+                \Log::info('DictaminatorForm3_2Controller::getFormData32 - Data found', ['id' => $data->id]);
 
                 return response()->json([
                     'success' => true,
                     'hasData' => true,
-                    'data' => $data
+                    'data' => $data,
+                    'form3_2' => [$data]
                 ]);
             } catch (\Exception $e) {
+                \Log::error('DictaminatorForm3_2Controller::getFormData32 - Error: ' . $e->getMessage());
                 return response()->json([
                     'success' => false,
                     'message' => $e->getMessage(),
@@ -196,7 +205,6 @@ class DictaminatorForm3_2Controller extends TransferController
             $user = \App\Models\User::where('email', $teacherEmail)->first();
             if ($user) {
                 $hasData = DictaminatorsResponseForm3_2::where('email', $teacherEmail)
-                    ->where('dictaminador_id', Auth::id())
                     ->exists();
             }
         }

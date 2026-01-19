@@ -11,7 +11,7 @@ $docenteConfig = [
         'formKey' => 'form3_3',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
         'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-        'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data33',
         'dictCollectionKey' => 'form3_3',
         'userTypeForDict' => '',
         'docenteMappings' => [
@@ -668,6 +668,10 @@ $formNumber = '33';
 
             toggleDarkMode();
         });
+    </script>
+    <script>
+        console.log('Form3_3 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
     </script>
 
     {{-- partial blade para autocompletar datos--}}

@@ -7,7 +7,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         'formKey' => 'form3_2',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
         'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-        'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data32',
         'dictCollectionKey' => 'form3_2',
         'userTypeForDict' => '',
         'docenteMappings' => [
@@ -444,6 +444,10 @@ $formNumber = '32';
 
         toggleDarkMode();
     });
+    </script>
+    <script>
+        console.log('Form3_2 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
     </script>
 
     {{-- partial blade para autocompletar datos--}}

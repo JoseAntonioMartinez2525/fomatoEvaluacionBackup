@@ -696,6 +696,10 @@ $formNumber = '31';
         console.log('data.score3_1 despues init:', data.score3_1);
         console.log('docencia despues init:', docencia);
     </script>
+    <script>
+        console.log('Form3_1 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
+    </script>
 
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])
     @include('partials.submit-form', ['config' => $docenteConfigForm])

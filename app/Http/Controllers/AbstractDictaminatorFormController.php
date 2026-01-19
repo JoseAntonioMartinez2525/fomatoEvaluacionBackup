@@ -156,33 +156,48 @@ abstract class AbstractDictaminatorFormController extends TransferController
     public function getFormData(Request $request)
     {
         try {
+            \Log::info("AbstractDictaminatorFormController::getFormData [Form {$this->getFormNumber()}] - Inicio", ['request' => $request->all()]);
+
             $modelClass = $this->getDictaminatorModelClass();
-            $query = $modelClass::query()
-                ->where('dictaminador_id', $request->query('dictaminador_id'));
+            $query = $modelClass::query();
 
             if ($request->has('user_id')) {
                 $query->where('user_id', $request->query('user_id'));
             } elseif ($request->has('email')) {
                 $query->where('email', $request->query('email'));
             }
+            
+            $dictaminadorId = $request->query('dictaminador_id');
 
-            $data = $query->first();
+            // Intentar obtener primero el registro del dictaminador actual
+            $data = $dictaminadorId ? (clone $query)->where('dictaminador_id', $dictaminadorId)->first() : null;
+
+            // Si no se encuentra, buscar cualquier registro existente (de otro dictaminador)
+            if (!$data) {
+                $data = $query->first();
+            }
 
             if (!$data) {
+                \Log::info("AbstractDictaminatorFormController::getFormData [Form {$this->getFormNumber()}] - Data not found");
                 return response()->json([
                     'success' => false,
                     'hasData' => false,
                     'message' => 'Data not found',
+                    'form' . $this->getFormNumber() => [],
                 ], 200);
             }
+
+            \Log::info("AbstractDictaminatorFormController::getFormData [Form {$this->getFormNumber()}] - Data found", ['id' => $data->id ?? 'N/A']);
 
             return response()->json([
                 'success' => true,
                 'hasData' => true,
-                'data' => $data
+                'data' => $data,
+                'form' . $this->getFormNumber() => [$data]
             ]);
 
         } catch (\Exception $e) {
+            \Log::error("AbstractDictaminatorFormController::getFormData [Form {$this->getFormNumber()}] - Error: " . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
@@ -212,11 +227,18 @@ abstract class AbstractDictaminatorFormController extends TransferController
     {
         $showSearchComponent = is_null($teacherEmail);
         $userType = \Auth::user() ? \Auth::user()->user_type : null;
+        
+        $hasData = false;
+        if ($teacherEmail) {
+             $modelClass = $this->getDictaminatorModelClass();
+             $hasData = $modelClass::where('email', $teacherEmail)->exists();
+        }
 
         return view($this->getViewName(), [
             'teacherEmailFromUrl' => $teacherEmail,
             'showSearch' => $showSearchComponent,
             'userType' => $userType,
+            'hasData' => $hasData,
         ]);
     }
 

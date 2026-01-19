@@ -120,20 +120,45 @@ class DictaminatorForm2_Controller extends TransferController
 public function getFormData2(Request $request)
     {
         try {
-            $data = DictaminatorsResponseForm2::where('user_id', $request->query('user_id'))->first();
+            \Log::info('DictaminatorForm2_Controller::getFormData2 - Inicio', ['request' => $request->all()]);
+
+            $query = DictaminatorsResponseForm2::query();
+
+            if ($request->has('user_id')) {
+                $query->where('user_id', $request->query('user_id'));
+            } elseif ($request->has('email')) {
+                $query->where('email', $request->query('email'));
+            }
+
+            $dictaminadorId = $request->query('dictaminador_id');
+
+            // 1. Intentar obtener el registro del dictaminador actual
+            $data = $dictaminadorId ? (clone $query)->where('dictaminador_id', $dictaminadorId)->first() : null;
+
+            // 2. Si no existe, buscar cualquier registro existente (de otro dictaminador)
             if (!$data) {
+                $data = $query->first();
+            }
+
+            if (!$data) {
+                \Log::info('DictaminatorForm2_Controller::getFormData2 - Data not found');
                 return response()->json([
                     'success' => false,
                     'message' => 'Data not found',
-                ], 404);
+                    'form2' => [],
+                ], 200);
             }
+
+            \Log::info('DictaminatorForm2_Controller::getFormData2 - Data found', ['id' => $data->id]);
 
             return response()->json([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
+                'form2' => [$data]
             ], 200);
 
         } catch (\Exception $e) {
+            \Log::error('DictaminatorForm2_Controller::getFormData2 - Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
@@ -248,9 +273,15 @@ public function getFormData2(Request $request)
         $emailFromUrl = $teacherEmail ?: $request->query('docente_email');
         $showSearchComponent = is_null($emailFromUrl);
 
+        $hasData = false;
+        if ($emailFromUrl) {
+            $hasData = DictaminatorsResponseForm2::where('email', $emailFromUrl)->exists();
+        }
+
         return view('form2', [
             'teacherEmailFromUrl' => $emailFromUrl,
-            'showSearch' => $showSearchComponent
+            'showSearch' => $showSearchComponent,
+            'hasData' => $hasData
         ]);
     }
 

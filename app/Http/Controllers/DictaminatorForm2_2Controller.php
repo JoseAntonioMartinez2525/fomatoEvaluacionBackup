@@ -124,7 +124,7 @@ class DictaminatorForm2_2Controller extends TransferController
 public function getFormData22(Request $request)
 {
     try {
-            $query = DictaminatorsResponseForm2_2::query();
+        $query = DictaminatorsResponseForm2_2::query();
 
         if ($request->has('user_id')) {
             $query->where('user_id', $request->query('user_id'));
@@ -132,15 +132,15 @@ public function getFormData22(Request $request)
             $query->where('email', $request->query('email'));
         }
 
-            $dictaminadorId = $request->query('dictaminador_id') ?? Auth::id();
+        $dictaminadorId = $request->query('dictaminador_id');
 
-            // Intentar obtener primero el registro del dictaminador actual
-            $data = (clone $query)->where('dictaminador_id', $dictaminadorId)->first();
+        // 1. Intentar obtener el registro del dictaminador actual
+        $data = $dictaminadorId ? (clone $query)->where('dictaminador_id', $dictaminadorId)->first() : null;
 
-            // Si no se encuentra, buscar cualquier registro existente (de otro dictaminador) para prellenar
-            if (!$data) {
-                $data = $query->first();
-            }
+        // 2. Si no se encuentra, buscar cualquier registro existente (de otro dictaminador) para prellenar
+        if (!$data) {
+            $data = $query->first();
+        }
 
         if (!$data) {
             return response()->json([
@@ -187,8 +187,7 @@ public function getFormData22(Request $request)
             $user = \App\Models\User::where('email', $teacherEmail)->first();
             if ($user) {
                 $hasData = DictaminatorsResponseForm2_2::where('email', $teacherEmail)
-                    ->where('dictaminador_id', Auth::id())
-                    ->exists();
+                    ->exists(); // Se elimina el filtro por dictaminador_id para que sea true si alguien más ya evaluó
             }
         }
         return view('form2_2', [
