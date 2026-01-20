@@ -16,8 +16,8 @@ class EvaluatorSignatureController1 extends Controller
             Log::info('Received request to store evaluator signature', $request->all());
             // Validate the request data
             $validatedData = $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'email' => 'required|exists:users,email',
+                'user_id' => 'nullable|integer', // Permitir nulo para usuarios no registrados
+                'email' => 'required|email',     // Validar formato email, sin requerir existencia en users
                 'evaluator_name' => 'nullable|string|max:255',
                 'evaluator_name_2' => 'nullable|string|max:255',
                 'evaluator_name_3' => 'nullable|string|max:255',
@@ -32,8 +32,10 @@ class EvaluatorSignatureController1 extends Controller
             // Cargar o crear una entrada de firma de dictaminador
             $evaluatorSignature = EvaluatorSignature::updateOrCreate(
             [
-                'user_id' => $validatedData['user_id'],
-                'email' => $validatedData['email']
+                'email' => $validatedData['email'] // Buscar principalmente por email
+            ],
+            [
+                'user_id' => $validatedData['user_id'] ?? null // Actualizar user_id si viene
             ]);
 
 

@@ -117,6 +117,45 @@ public function showResumen(Request $request)
         ]);
     }
 
+    public function storeFirmaSecretaria(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'firma1' => 'required|image|max:2048|mimes:png,jpg,jpeg',
+            'evaluator_name' => 'required|string',
+        ]);
+
+        $user = User::find($request->user_id);
+        $file = $request->file('firma1');
+
+        // Crear manager con driver GD
+        $manager = new ImageManager(new Driver());
+
+        // Leer la imagen subida
+        $image = $manager->read($file->getPathname());
+
+        // Convertir/cachear en GD y quitar fondo blanco
+        $pngBytes = $this->removeBackgroundAndReturnPngBytes($image);
+
+        // Base64
+        $imageData = base64_encode($pngBytes);
+
+        // Guardar o actualizar
+        DictaminadorSignature::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'evaluator_name' => $request->evaluator_name,
+                'signature_image' => $imageData,
+                'mime' => 'image/png',
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Firma guardada correctamente.',
+        ]);
+    }
+
     /**
      * Recibe un objeto Intervention Image (v3), quita fondo casi blanco
      * y devuelve los bytes PNG (string) resultantes.
@@ -149,7 +188,7 @@ public function showResumen(Request $request)
         ob_start();
         imagepng($gd);
         $pngData = ob_get_clean();
-        imagedestroy($gd);
+        // imagedestroy($gd);
 
         return $pngData;
     }

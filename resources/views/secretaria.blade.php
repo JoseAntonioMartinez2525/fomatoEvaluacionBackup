@@ -5,9 +5,32 @@ $formType = request()->query('formType');
 $formName = request()->query('formName');
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 use App\Models\DynamicForm; // Ensure to include the model
+use App\Models\DictaminadorSignature;
+use App\Models\User;
 
 $forms = DynamicForm::all(); // Fetch all forms from the database
 $existingFormNames = [];
+
+// Obtener dictaminadores registrados que coinciden con la configuración
+$allowedEmails = config('dictaminadores.emails', []);
+$allowedNames = config('dictaminadores.nombres', []);
+$registeredDictaminators = User::whereIn('email', $allowedEmails)->get();
+
+// Obtener firmas existentes para saber quién ya tiene firma cargada
+$registeredUserIds = $registeredDictaminators->pluck('id');
+$existingSignatures = DictaminadorSignature::whereIn('user_id', $registeredUserIds)->pluck('user_id')->toArray();
+
+// Combinar información para el listado completo
+$allDictaminadores = [];
+foreach ($allowedEmails as $index => $email) {
+    $user = $registeredDictaminators->firstWhere('email', $email);
+    $allDictaminadores[] = (object) [
+        'email' => $email,
+        'name' => $allowedNames[$index] ?? 'N/A',
+        'user' => $user,
+        'has_signature' => $user && in_array($user->id, $existingSignatures)
+    ];
+}
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $newLocale }}">
@@ -215,6 +238,12 @@ $existingFormNames = [];
                 padding-left: 20px;
             }
         }
+
+        .hover-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+            transition: all .3s ease;
+        }
     </style>
 </head>
 
@@ -247,15 +276,159 @@ $existingFormNames = [];
                         </div>
                     </x-nav-menu>
                 @endif
-
+                    <br>
                 <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                     <div class="flex lg:justify-center lg:col-start-2"></div>
 
                     <nav class="-mx-3 flex flex-1 justify-end"></nav>
 
-                    <div class="container mt-4 printButtonClass">
+                    <div class="container mt-4 printButtonClass"> 
+                        <div class="row g-4 mb-4">
+                            <!-- Card 1: Docentes Asignados (Redirección) -->
+                            <div class="col-md-4">
+                                <a href="{{ route('docente.forms.index') }}" class="text-decoration-none">
+                                    <div class="card h-100 shadow-sm hover-card" style="border-left: 5px solid #528fb3;">
+                                        <div class="card-body d-flex align-items-center p-4">
+                                            <div class="bg-light rounded-circle p-3 me-3">
+                                                <i class="fa-solid fa-chalkboard-user fa-2x" style="color: #528fb3;"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title text-dark mb-1">Docentes Asignados</h5>
+                                                <p class="card-text text-muted small mb-0">Ir al listado de evaluaciones.</p>
+                                            </div>
+                                            <div class="ms-auto">
+                                                <i class="fa-solid fa-arrow-right text-secondary"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Card 2: Dictaminadores Registrados (Collapse) -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #198754;" data-bs-toggle="collapse" data-bs-target="#collapseDictaminadores" aria-expanded="false" aria-controls="collapseDictaminadores">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-user-tie fa-2x" style="color: #198754;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Dictaminadores Registrados</h5>
+                                            <p class="card-text text-muted small mb-0">Ver usuarios registrados.</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Cargar Firmas (Collapse) -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #ffc107;" data-bs-toggle="collapse" data-bs-target="#collapseFirmas" aria-expanded="false" aria-controls="collapseFirmas">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-file-signature fa-2x" style="color: #ffc107;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Cargar Firmas</h5>
+                                            <p class="card-text text-muted small mb-0">Gestionar firmas faltantes.</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Colapsable -->
+                        <div class="collapse mt-3" id="collapseDictaminadores" data-bs-parent=".container">
+                            <div class="card card-body shadow-sm">
+                                <h5 class="card-title mb-3 text-success"><i class="fa-solid fa-list-check"></i> Dictaminadores en el Sistema</h5>
+                                @if($registeredDictaminators->isEmpty())
+                                    <div class="alert alert-info">No se encontraron dictaminadores registrados del listado oficial.</div>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Correo Electrónico</th>
+                                                    <th>Fecha Registro</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($registeredDictaminators as $dictaminador)
+                                                    <tr>
+                                                        <td class="fw-bold">{{ $dictaminador->name }}</td>
+                                                        <td>{{ $dictaminador->email }}</td>
+                                                        <td>{{ $dictaminador->created_at ? $dictaminador->created_at->format('d/m/Y') : '-' }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Contenido Colapsable: Cargar Firmas -->
+                        <div class="collapse mt-3" id="collapseFirmas" data-bs-parent=".container">
+                            <div class="card card-body shadow-sm mb-4">
+                                <h5 class="card-title mb-3 text-warning"><i class="fa-solid fa-file-signature"></i> Gestión de Firmas de Dictaminadores</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Dictaminador</th>
+                                                <th>Estado Usuario</th>
+                                                <th>Firma en Sistema</th>
+                                                <th>Cargar Firma</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($allDictaminadores as $dict)
+                                                <tr>
+                                                    <td>
+                                                        <div class="fw-bold">{{ $dict->name }}</div>
+                                                        <div class="small text-muted">{{ $dict->email }}</div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if($dict->user)
+                                                            <span class="badge bg-success">Registrado</span>
+                                                        @else
+                                                            <span class="badge bg-secondary">No Registrado</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if($dict->has_signature)
+                                                            <span class="badge bg-primary"><i class="fa-solid fa-check"></i> Cargada</span>
+                                                        @else
+                                                            <span class="badge bg-danger"><i class="fa-solid fa-xmark"></i> Pendiente</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <form class="upload-signature-form d-flex gap-2" onsubmit="event.preventDefault(); uploadSignature(this);">
+                                                            <input type="hidden" name="email" value="{{ $dict->email }}">
+                                                            <input type="hidden" name="user_id" value="{{ $dict->user ? $dict->user->id : '' }}">
+                                                            <input type="hidden" name="evaluator_name" value="{{ $dict->name }}">
+                                                            
+                                                            <input type="file" name="firma1" class="form-control form-control-sm" accept="image/*" required>
+                                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                                <i class="fa-solid fa-upload"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Selector para elegir el formulario -->
-                        <label for="formGrid">Buscar Evaluación:</label>
+                        {{-- <label for="formGrid">Buscar Evaluación:</label>
                         
                         <div id="formGrid" class="hierarchy-container mt-4">
                             <!-- Left Column: Categories 1, 2, and 3 -->
@@ -399,12 +572,15 @@ $existingFormNames = [];
                                     @endforeach
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
+                        
+                        
+                   
                     </div>
 
-                    <div id="formContainer" class="mt-4">
+                    {{-- <div id="formContainer" class="mt-4">
                         <!-- Aquí se cargará el contenido del formulario seleccionado -->
-                    </div>
+                    </div> --}}
                 </header>
             @endif
         </div>
