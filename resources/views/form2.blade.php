@@ -375,7 +375,7 @@ document.getElementById('horasActv2Input').value =
         const footers = document.querySelectorAll('#piedepagina');
         footers.forEach((footer, index) => {
             const pageNumberElement = footer.querySelector('.page-number');
-            pageNumberElement.textContent = "página "+ (index + 1) + " de 33";
+            pageNumberElement.textContent = "página "+ (index + 1) + " de 34";
         });
     });
 

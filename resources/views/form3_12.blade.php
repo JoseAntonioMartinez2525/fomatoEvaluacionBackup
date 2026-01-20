@@ -298,7 +298,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
 
             .page-number:before {
-                content: "Página " counter(page) " de 33";
+                content: "Página " counter(page) " de 34";
             }
 
             .secretaria-style {
@@ -546,7 +546,7 @@ $formNumber = '312';
                             </div>
                         </td>
                         <td id="piedepagina1"
-                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">Página 18 de 33</td>
+                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">Página 18 de 34</td>
                     </tr>
                 </tbody>
             </table>
@@ -722,7 +722,7 @@ $formNumber = '312';
 
                 <div id="piedepagina2"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 19 de 33
+                    Página 19 de 34
                 </div>
             </div><br><br>
         </form>

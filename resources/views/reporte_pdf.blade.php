@@ -168,6 +168,19 @@ $filas3_9To3_19 = [
     <meta charset="utf-8">
     <title>Resumen Comisión PDF</title>
     <style>
+        @page {
+            margin-top: 160px; /* Espacio reservado para el encabezado en cada página */
+            margin-bottom: 60px;
+        }
+
+        header {
+            position: fixed;
+            top: -140px; /* Ubicación del encabezado dentro del margen superior */
+            left: 0px;
+            right: 0px;
+            height: 130px;
+        }
+
         body {
             font-family: Arial, sans-serif;
             font-size: 12px;
@@ -270,8 +283,7 @@ $filas3_9To3_19 = [
 
 <body>
     
-
-<!-- Para reporte_pdf.blade.php -->
+<header>
 <table style="width:100%; border:none; margin-bottom: 10px;">
     <tr>
         <td style="width: 110px; text-align:center; border:none; vertical-align:middle;">
@@ -283,6 +295,7 @@ $filas3_9To3_19 = [
         </td>
     </tr>
 </table>
+</header>
 
 <div>
     <h2 class="center">Resumen</h2>
@@ -313,7 +326,7 @@ $filas3_9To3_19 = [
             </tr>
         </tbody>
     </table>
-    <div class="pie-pag">página 31 de 33</div>
+    <div class="pie-pag">página 31 de 34</div>
 
     <table>
     @include('components.fila-headers')
@@ -363,6 +376,21 @@ $filas3_9To3_19 = [
             <td colspan="2" class="puntaje-subtotal"><strong>Total logrado en la evaluación</strong></td>
             <td class="puntaje_total">{{ $totalComisionRepetido ?? '0.00' }}</td>
         </tr>
+        <tr>
+            <td colspan="3" class="center">
+                <strong>Convocatoria:</strong> {{ $convocatoria }}
+                
+            </td>
+        </tr>
+        </tbody>           
+    </table>
+    <span class="pie-pag2">página 32 de 34</span>
+
+    <div style="page-break-before: always;"></div>
+
+    <table>
+    @include('components.fila-headers')
+        <tbody>
         {{-- Detalle de los tres rubros principales --}}
         <tr>
             <td>1. Permanencia en las actividades de la docencia</td>
@@ -397,19 +425,18 @@ $filas3_9To3_19 = [
             <td class="center"><strong>Mínima Total</strong></td>
             <td class="center"><strong>{{ $minimaTotal ?? '' }}</strong></td>
         </tr>
-        <tr>
-            <td colspan="3" class="center">
-                <strong>Convocatoria:</strong> {{ $convocatoria }}
-                
-            </td>
-        </tr>
         </tbody>           
     </table>
-    <span class="pie-pag2">página 32 de 33</span>
+
+    <div style="margin-top: 20rem; text-align: center;">
+    <strong>Convocatoria:</strong> {{ $convocatoria }}
+    <label class="pie-pag" style="margin-left: 10rem;">página 33 de 34</label>
+</div>
 
 {{-- Salto de página 
 <div style="page-break-before: always;"></div> --}}
 
+<div style="page-break-inside: avoid;">
 <table class="firmas-table" style="width:100%; border-collapse:collapse; margin-top:20px;">
     <thead>
         <tr style="background:#f9f9f9;">
@@ -447,9 +474,10 @@ $filas3_9To3_19 = [
 
 <div style="margin-top: 100px; text-align: center;">
     <strong>Convocatoria:</strong> {{ $convocatoria }}
+    <label class="pie-pag" style="margin-left: 10rem;">página 34 de 34</label>
 </div>
 
-<div class="pie-pag">página 33 de 33</div>
+</div>
 
     {{-- Footer dinámico para Snappy/wkhtmltopdf --}}
     <script type="text/php">

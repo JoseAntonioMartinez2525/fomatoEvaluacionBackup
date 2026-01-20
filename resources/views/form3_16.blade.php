@@ -226,7 +226,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
 
         .page-number:before {
-            content: "Página " counter(page) " de 33";
+            content: "Página " counter(page) " de 34";
         }
 
         .secretaria-style {
@@ -279,7 +279,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     }
 
     .page-number:before {
-        content: "Página " counter(page) " de 33";
+        content: "Página " counter(page) " de 34";
     }
 }
 
@@ -453,7 +453,7 @@ $formNumber = '316';
                 </div>
                 <div id="piedepagina1"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 23 de 33
+                    Página 23 de 34
                 </div>
             </div><br>
             <table class="table table-sm tutorias">
@@ -596,7 +596,7 @@ $formNumber = '316';
 
                 <div id="piedepagina2"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 24 de 33
+                    Página 24 de 34
                 </div>
             </div>
             </form>

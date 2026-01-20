@@ -301,7 +301,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
             }
 
                 .page-number:before {
-            content: "Página " counter(page) " de 33";
+            content: "Página " counter(page) " de 34";
             }
 
             .secretaria-style {
@@ -516,14 +516,14 @@ $formNumber = '33';
                                 <h1>Convocatoria: </h1>
                             </span>
                             <span id="piedepagina" style="display: none; margin-left: 20px;">
-                                Página 3 de 33
+                                Página 3 de 34
                             </span>
                         @endif
                     @endif
                 </div>
             <div>
                 @if($userType == 'dictaminador')
-                    <span id="piedepagina" style="display: none;margin-left:800px;">Página 6 de 33</span>
+                    <span id="piedepagina" style="display: none;margin-left:800px;">Página 6 de 34</span>
                 @endif
             </div>
             </div><br><br>
@@ -626,7 +626,7 @@ $formNumber = '33';
 
             <div id="piedepagina_copy"
                 class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                Página 7 de 33
+                Página 7 de 34
             </div>
           
         </form>

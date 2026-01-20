@@ -229,7 +229,7 @@ if (!isset($docenteConfigForm)) {
 
 
         .page-number:before {
-            content: "Página " counter(page) " de 33";
+            content: "Página " counter(page) " de 34";
         }
 
         .secretaria-style {
@@ -290,7 +290,7 @@ if (!isset($docenteConfigForm)) {
     }
 
     .page-number:before {
-        content: "Página " counter(page) " de 33";
+        content: "Página " counter(page) " de 34";
     }
 
     #convocatoria2{
@@ -512,7 +512,7 @@ $formNumber = '319';
                 </div>
                 <div id="piedepagina1"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 28 de 33
+                    Página 28 de 34
                 </div>
             </div>
             <!--Siguiente tabla-->
@@ -759,7 +759,7 @@ $formNumber = '319';
 
                 <div id="piedepagina2"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 29 de 33
+                    Página 29 de 34
                 </div>
             </div><br><br><br>
 
@@ -954,7 +954,7 @@ $formNumber = '319';
                 </div>
                 <div id="piedepagina3"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 30 de 33
+                    Página 30 de 34
                 </div>
             </div>
         </form>

@@ -510,7 +510,7 @@ $formNumber = '31';
                         </div>
                         <div id="piedepagina1"
                             class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                            Página 3 de 33
+                            Página 3 de 34
                         </div>
                     </div><br>
 
@@ -627,7 +627,7 @@ $formNumber = '31';
 
                                     <div id="piedepagina2"
                                         class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                                        Página 4 de 33
+                                        Página 4 de 34
                                     </div>
                                 </div>
 
