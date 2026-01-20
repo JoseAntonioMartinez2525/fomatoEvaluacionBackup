@@ -23,20 +23,11 @@ body.dark-mode .nav {
             </div><br>
             <div>
                 <ul style="list-style: none;">
-                    <li class="nav-item">
-                        <a class="nav-link active enlaceSN" aria-current="page" style="width: 200px;" href="{{ route('rules') }}" title="Reglamento deacuerdo al artículo 10 de PEDPD"><i class="fas fa-book"></i>&nbspReglamento</a>
-                    </li>
-                    {{-- @if($user->user_type === 'dictaminador')
-                        <li class="nav-item">
-                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('comision_dictaminadora') }}" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
-                        </li>
-                    @endif --}}
                     @if($user->user_type != 'docente')
                         @if($user->user_type === 'secretaria')
-                        {{-- <li id="reportLink" class="nav-item d-none">
-                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('perfil') }}"><i class="fas fa-chart-bar"></i>Mostrar
-                                Reporte</a>
-                        </li> --}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('secretaria') }}"><i class="fa-solid fa-table-columns"></i>  Dashboard </a>
+                        </li>
                         {{-- <li class="nav-item">
                             <a href="{{ route('tiempo') }}" class="nav-link" title="Otorgar Prórroga de tiempo"><i class='fas fa-clock'></i> Agregar Tiempo</a>
                         </li> --}}
@@ -45,6 +36,14 @@ body.dark-mode .nav {
                         </li>
                         @endif   
                     @endif
+                    <li class="nav-item">
+                        <a class="nav-link active enlaceSN" aria-current="page" style="width: 200px;" href="{{ route('rules') }}" title="Reglamento deacuerdo al artículo 10 de PEDPD"><i class="fas fa-book"></i>&nbspReglamento</a>
+                    </li>
+                    {{-- @if($user->user_type === 'dictaminador')
+                        <li class="nav-item">
+                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('comision_dictaminadora') }}" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
+                        </li>
+                    @endif --}}
                     <li class="nav-item">
                         {{-- @if($user->user_type === 'dictaminador')
                             <a class="nav-link active enlaceSN" style="width: 200px;"

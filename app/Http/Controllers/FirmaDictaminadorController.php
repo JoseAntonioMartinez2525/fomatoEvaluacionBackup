@@ -174,21 +174,32 @@ public function showResumen(Request $request)
     private function removeBackgroundAndReturnPngBytes($image)
     {
         $gd = $image->core()->native();
+        
+        // Asegurar que la imagen es TrueColor para manejar transparencia correctamente (necesario para JPG)
+        if (!imageistruecolor($gd)) {
+            imagepalettetotruecolor($gd);
+        }
 
         $width = imagesx($gd);
         $height = imagesy($gd);
+        
+        // Configurar para guardar canal alfa y no mezclar al editar
+        imagealphablending($gd, false);
         imagesavealpha($gd, true);
 
         $threshold = 240; // nivel de blanco a eliminar
+        $transparent = imagecolorallocatealpha($gd, 255, 255, 255, 127);
 
         for ($x = 0; $x < $width; $x++) {
             for ($y = 0; $y < $height; $y++) {
                 $rgb = imagecolorat($gd, $x, $y);
-                $colors = imagecolorsforindex($gd, $rgb);
+                // Extraer componentes RGB usando operadores bit a bit (más rápido y compatible con TrueColor)
+                $r = ($rgb >> 16) & 0xFF;
+                $g = ($rgb >> 8) & 0xFF;
+                $b = $rgb & 0xFF;
 
-                if ($colors['red'] >= $threshold && $colors['green'] >= $threshold && $colors['blue'] >= $threshold) {
-                    $alphaColor = imagecolorallocatealpha($gd, 255, 255, 255, 127);
-                    imagesetpixel($gd, $x, $y, $alphaColor);
+                if ($r >= $threshold && $g >= $threshold && $b >= $threshold) {
+                    imagesetpixel($gd, $x, $y, $transparent);
                 }
             }
         }
