@@ -244,7 +244,15 @@ foreach ($allowedEmails as $index => $email) {
             box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
             transition: all .3s ease;
         }
+
+        #cardBody1.dark-mode{
+            color: white;
+            background-color:#22426d;
+        }
+
+
     </style>
+    
 </head>
 
 <body class="font-sans antialiased">
@@ -284,7 +292,43 @@ foreach ($allowedEmails as $index => $email) {
 
                     <div class="container mt-4 printButtonClass"> 
                         <div class="row g-4 mb-4">
-                            <!-- Card 1: Docentes Asignados (Redirección) -->
+                            <!-- Card 1: Dictaminadores Registrados (Collapse) -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #198754;" data-bs-toggle="collapse" data-bs-target="#collapseDictaminadores" aria-expanded="false" aria-controls="collapseDictaminadores">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-user-tie fa-2x" style="color: #198754;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Dictaminadores Registrados</h5>
+                                            <p class="card-text text-muted small mb-0">Ver usuarios registrados.</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Cargar Firmas (Collapse) -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #ffc107;" data-bs-toggle="collapse" data-bs-target="#collapseFirmas" aria-expanded="false" aria-controls="collapseFirmas">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-file-signature fa-2x" style="color: #ffc107;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Cargar Firmas</h5>
+                                            <p class="card-text text-muted small mb-0">Gestionar firmas faltantes.</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Docentes Asignados (Redirección) -->
                             <div class="col-md-4">
                                 <a href="{{ route('docente.forms.index') }}" class="text-decoration-none">
                                     <div class="card h-100 shadow-sm hover-card" style="border-left: 5px solid #528fb3;">
@@ -304,41 +348,7 @@ foreach ($allowedEmails as $index => $email) {
                                 </a>
                             </div>
 
-                            <!-- Card 2: Dictaminadores Registrados (Collapse) -->
-                            <div class="col-md-4">
-                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #198754;" data-bs-toggle="collapse" data-bs-target="#collapseDictaminadores" aria-expanded="false" aria-controls="collapseDictaminadores">
-                                    <div class="card-body d-flex align-items-center p-4">
-                                        <div class="bg-light rounded-circle p-3 me-3">
-                                            <i class="fa-solid fa-user-tie fa-2x" style="color: #198754;"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="card-title text-dark mb-1">Dictaminadores Registrados</h5>
-                                            <p class="card-text text-muted small mb-0">Ver usuarios registrados.</p>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Card 3: Cargar Firmas (Collapse) -->
-                            <div class="col-md-4">
-                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #ffc107;" data-bs-toggle="collapse" data-bs-target="#collapseFirmas" aria-expanded="false" aria-controls="collapseFirmas">
-                                    <div class="card-body d-flex align-items-center p-4">
-                                        <div class="bg-light rounded-circle p-3 me-3">
-                                            <i class="fa-solid fa-file-signature fa-2x" style="color: #ffc107;"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="card-title text-dark mb-1">Cargar Firmas</h5>
-                                            <p class="card-text text-muted small mb-0">Gestionar firmas faltantes.</p>
-                                        </div>
-                                        <div class="ms-auto">
-                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Contenido Colapsable -->
@@ -408,16 +418,20 @@ foreach ($allowedEmails as $index => $email) {
                                                         @endif
                                                     </td>
                                                     <td>
+                                                        @if($dict->user)
                                                         <form class="upload-signature-form d-flex gap-2" onsubmit="event.preventDefault(); uploadSignature(this);">
                                                             <input type="hidden" name="email" value="{{ $dict->email }}">
-                                                            <input type="hidden" name="user_id" value="{{ $dict->user ? $dict->user->id : '' }}">
+                                                            <input type="hidden" name="user_id" value="{{ $dict->user->id }}">
                                                             <input type="hidden" name="evaluator_name" value="{{ $dict->name }}">
                                                             
                                                             <input type="file" name="firma1" class="form-control form-control-sm" accept="image/*" required>
-                                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                            <button type="submit" class="btn btn-sm btn-primary" title="Subir firma">
                                                                 <i class="fa-solid fa-upload"></i>
                                                             </button>
                                                         </form>
+                                                        @else
+                                                            <small class="text-muted fst-italic">El usuario debe registrarse primero.</small>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -727,6 +741,58 @@ foreach ($allowedEmails as $index => $email) {
         window.location.href = route;
       }
 
+    function uploadSignature(form) {
+        const formData = new FormData(form);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Validar que se haya seleccionado un archivo
+        if (!formData.get('firma1').name) {
+            alert('Por favor seleccione un archivo de imagen.');
+            return;
+        }
+
+        // Validación de seguridad: Verificar que al menos el email esté presente para que el controlador pueda resolver el ID
+        if (!formData.get('user_id') && !formData.get('email')) {
+            alert('Error: No se pudo identificar al usuario (Falta ID o Email). Por favor recargue la página.');
+            return;
+        }
+
+        fetch('{{ route("store.signature.secretaria") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(async response => {
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errorData = await response.json();
+                    let message = errorData.message || 'Error de validación';
+                    if (errorData.errors) {
+                        message += ':\n' + Object.values(errorData.errors).flat().join('\n');
+                    }
+                    throw new Error(message);
+                }
+                throw new Error('Error ' + response.status + ': ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('✅ ' + data.message);
+                location.reload(); // Recargar para actualizar el estado de la firma en la tabla
+            } else {
+                alert('❌ Error: ' + (data.message || 'No se pudo guardar la firma.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Ocurrió un error al subir la firma: ' + error.message);
+        });
+    }
     </script>
 </body>
 </html>

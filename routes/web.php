@@ -255,6 +255,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store-form318', [DictaminatorForm3_18Controller::class, 'storeform318'])->name('form3_18.store_18')->withoutMiddleware('auth');
     Route::post('/store-form319', [DictaminatorForm3_19Controller::class, 'storeform319'])->name('form3_19.store_19')->withoutMiddleware('auth');
     Route::post('/store-dictaminator_signatures', [FirmaDictaminadorController::class, 'storeFirma'])->name('firmaDictaminador.store');    // Route::post('/formato-evaluacion/store-dictaminator-signature-secretaria', [FirmaDictaminadorController::class, 'storeFirmaSecretaria'])->name('store.dictaminator.signature.secretaria');
+    Route::post('/store-signature-secretaria', [FirmaDictaminadorController::class, 'storeFirmaSecretaria'])->name('store.signature.secretaria');
     
 
         // 

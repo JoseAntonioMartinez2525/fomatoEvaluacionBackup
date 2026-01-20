@@ -119,6 +119,14 @@ public function showResumen(Request $request)
 
     public function storeFirmaSecretaria(Request $request)
     {
+        // Recuperación robusta: Si user_id no llega, buscarlo por el email (que viene de la lista de configuración)
+        if (!$request->filled('user_id') && $request->filled('email')) {
+            $userByEmail = User::where('email', $request->email)->first();
+            if ($userByEmail) {
+                $request->merge(['user_id' => $userByEmail->id]);
+            }
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'firma1' => 'required|image|max:2048|mimes:png,jpg,jpeg',
