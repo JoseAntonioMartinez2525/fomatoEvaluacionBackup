@@ -383,6 +383,24 @@ foreach ($allowedEmails as $index => $email) {
                                 </div>
                             </div>
 
+                            <!-- Card 6: Generador de Formularios -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #dc3545;" data-bs-toggle="collapse" data-bs-target="#collapseGenerator" aria-expanded="false" aria-controls="collapseGenerator">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-table-list fa-2x" style="color: #dc3545;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Generador de Formularios</h5>
+                                            <p class="card-text text-muted small mb-0">Crear y configurar nuevas tablas.</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- Contenido Colapsable -->
@@ -533,6 +551,69 @@ foreach ($allowedEmails as $index => $email) {
                                         <i class="fa-solid fa-save"></i> Guardar y Asignar Convocatoria
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Colapsable: Generador -->
+                        <div class="collapse mt-3" id="collapseGenerator" data-bs-parent=".container">
+                            <div class="card card-body shadow-sm">
+                                <h5 class="card-title mb-3" style="color: #dc3545;"><i class="fa-solid fa-table-list"></i> Nuevo Formulario Dinámico</h5>
+                                <p class="text-muted">Defina la estructura de la nueva tabla de evaluación.</p>
+                                
+                                <form id="dynamicFormGenerator" onsubmit="event.preventDefault(); guardarFormularioDinamico();">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nombre del Formulario</label>
+                                            <input type="text" class="form-control" id="newFormName" required placeholder="Ej. 3.20 Convenios">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Puntaje Máximo</label>
+                                            <input type="number" class="form-control" id="newFormMaxScore" required placeholder="Ej. 50">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Número de Filas</label>
+                                            <input type="number" class="form-control" id="newFormRows" min="1" value="1">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Número de Columnas Dinámicas</label>
+                                            <input type="number" class="form-control" id="newFormCols" min="0" value="1">
+                                            <div class="form-text">Columnas adicionales entre Actividad y Puntajes.</div>
+                                        </div>
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button type="button" class="btn btn-secondary w-100" onclick="previewTable()">
+                                                <i class="fa-solid fa-eye"></i> Previsualizar Tabla
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="previewContainer" class="mt-4 table-responsive" style="display:none;">
+                                        <h6 class="text-muted mb-2">Vista Previa de Estructura</h6>
+                                        <table class="table table-bordered" id="previewTable">
+                                            <thead class="table-light">
+                                                <tr id="previewHeaderRow">
+                                                    <!-- Headers generated by JS -->
+                                                </tr>
+                                            </thead>
+                                            <tbody id="previewBody">
+                                                <!-- Rows generated by JS -->
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="100%">
+                                                        <label class="fw-bold">Acreditación:</label>
+                                                        <textarea class="form-control" id="newFormAcreditacion" rows="2" placeholder="Descripción de la acreditación..."></textarea>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        
+                                        <div class="d-grid gap-2 mt-3">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fa-solid fa-save"></i> Guardar Formulario
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
 
@@ -1007,6 +1088,105 @@ foreach ($allowedEmails as $index => $email) {
             console.error('Error:', error);
             alert('❌ Error de conexión al intentar actualizar la convocatoria.');
         });
+    }
+
+    function previewTable() {
+        const rows = parseInt(document.getElementById('newFormRows').value) || 1;
+        const cols = parseInt(document.getElementById('newFormCols').value) || 0;
+        const headerRow = document.getElementById('previewHeaderRow');
+        const body = document.getElementById('previewBody');
+
+        // Headers
+        let headersHtml = '<th class="bg-light">Actividad</th>';
+        for(let i=0; i<cols; i++) {
+            headersHtml += `<th><input type="text" class="form-control form-control-sm dynamic-col-name" placeholder="Encabezado ${i+1}"></th>`;
+        }
+        // Fixed headers as requested
+        headersHtml += '<th class="bg-light">Subtotal</th>'; 
+        headersHtml += '<th class="bg-light">Puntaje a evaluar</th>';
+        headersHtml += '<th class="bg-light">Puntaje Comisión</th>';
+        headersHtml += '<th class="bg-light">Observaciones</th>'; // Last
+        
+        headerRow.innerHTML = headersHtml;
+
+        // Rows
+        let rowsHtml = '';
+        for(let i=0; i<rows; i++) {
+            rowsHtml += '<tr>';
+            rowsHtml += '<td><input type="text" class="form-control form-control-sm row-activity" placeholder="Nombre Actividad"></td>';
+            for(let j=0; j<cols; j++) {
+                rowsHtml += `<td><input type="text" class="form-control form-control-sm row-dynamic-val" placeholder="Valor"></td>`;
+            }
+            // Fixed columns placeholders
+            rowsHtml += '<td class="text-center bg-light"><small>0</small></td>'; 
+            rowsHtml += '<td class="text-center bg-light"><small>0</small></td>'; 
+            rowsHtml += '<td class="text-center bg-light"><small>0</small></td>'; 
+            rowsHtml += '<td><input type="text" class="form-control form-control-sm" disabled></td>'; 
+            rowsHtml += '</tr>';
+        }
+        body.innerHTML = rowsHtml;
+
+        document.getElementById('previewContainer').style.display = 'block';
+    }
+
+    async function guardarFormularioDinamico() {
+        const formName = document.getElementById('newFormName').value;
+        const maxScore = document.getElementById('newFormMaxScore').value;
+        const acreditacion = document.getElementById('newFormAcreditacion').value;
+        const rows = document.getElementById('newFormRows').value;
+        const cols = document.getElementById('newFormCols').value;
+
+        const colInputs = document.querySelectorAll('.dynamic-col-name');
+        let columnNames = [];
+        colInputs.forEach(input => columnNames.push(input.value));
+
+        let tableData = [];
+        const trs = document.querySelectorAll('#previewBody tr');
+        trs.forEach(tr => {
+            let rowVals = [];
+            rowVals.push(tr.querySelector('.row-activity').value);
+            tr.querySelectorAll('.row-dynamic-val').forEach(input => rowVals.push(input.value));
+            rowVals.push('0'); // Subtotal
+            rowVals.push('0'); // Puntaje a evaluar
+            rowVals.push('0'); // Comision
+            rowVals.push('');  // Obs
+            tableData.push(rowVals);
+        });
+
+        const payload = {
+            form_name: formName,
+            puntaje_maximo: maxScore,
+            acreditacion: acreditacion,
+            filas: rows,
+            columnas: cols,
+            column_names: columnNames,
+            table_data: tableData,
+            user_id: {{ Auth::id() }},
+            email: "{{ Auth::user()->email }}",
+            user_type: "{{ Auth::user()->user_type }}"
+        };
+
+        try {
+            const response = await fetch('/dynamic-form/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+            if(result.success) {
+                alert('✅ Formulario guardado correctamente');
+                location.reload();
+            } else {
+                alert('❌ Error: ' + result.message);
+            }
+        } catch(e) {
+            console.error(e);
+            alert('❌ Error de conexión');
+        }
     }
     </script>
 </body>

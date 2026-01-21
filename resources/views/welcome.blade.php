@@ -59,7 +59,7 @@ button#edit-form-btn{
           <li class="nav-item">
             <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="javascript:void(0);" onclick="showStep(1)" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Evaluación</a>
           </li>
-          <ul class="actv3"><i class="fa-solid fa-clipboard-user"></i>&nbsp;Convocatoria:
+          <ul class="actv3"><i class="fa-solid fa-clipboard-user"></i>&nbsp;Actividades/Apartados:
             <li><a href="javascript:void(0);" onclick="showStep(2)">1. Permanencia en las actividades de la docencia</a></li>
             <li><a href="javascript:void(0);" onclick="showStep(3)">2. Dedicación en el desempeño docente</a></li>
           </ul>
