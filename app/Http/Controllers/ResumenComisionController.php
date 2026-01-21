@@ -172,6 +172,28 @@ public function getFirmasYResumen(Request $request)
     }
 
     /**
+     * Actualiza el campo 'convocatoria' de todos los registros de UsersResponseForm1.
+     */
+    public function updateConvocatoria(Request $request)
+    {
+        try {
+            $convocatoria = $request->input('convocatoria');
+            
+            if (!$convocatoria) {
+                return response()->json(['success' => false, 'message' => 'El nombre de la convocatoria es obligatorio.'], 400);
+            }
+
+            // Actualizar todos los registros existentes
+            \App\Models\UsersResponseForm1::query()->update(['convocatoria' => $convocatoria]);
+
+            return response()->json(['success' => true, 'message' => "Convocatoria '$convocatoria' asignada a todos los docentes correctamente."]);
+        } catch (\Exception $e) {
+            \Log::error('Error actualizando convocatoria: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al actualizar la convocatoria.'], 500);
+        }
+    }
+
+    /**
      * Obtiene el historial de fechas de evaluación para docentes.
      */
     public function getEvaluationDatesHistory()

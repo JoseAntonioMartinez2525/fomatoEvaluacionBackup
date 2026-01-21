@@ -86,7 +86,7 @@ button#edit-form-btn{
 
             <br>
             <label for="convocatoria" class="label">Convocatoria</label>
-            <input name="convocatoria" type="text" class="input-header mb-3" id="convocatoria"></input>
+            <input name="convocatoria" type="text" class="input-header mb-3" id="convocatoria" value="{{ $convocatoria ?? '' }}" readonly></input>
 
             <label for="periodo" class="label">Periodo de evaluación:</label>
             <input name="periodo" id="periodo" type="text" class="input-header mb-3" value="{{ $periodo ?? '' }}" readonly>
@@ -865,7 +865,7 @@ function onChange() {
     var convocatoriaInput = document.getElementById('convocatoria');
     if (convocatoriaInput) {
       // Update the canvas initially with the placeholder value or empty
-      updateCanvas(convocatoriaInput.placeholder);
+      updateCanvas(convocatoriaInput.value || convocatoriaInput.placeholder);
 
       // Listen for input events to dynamically update the canvas
       convocatoriaInput.addEventListener('input', function () {

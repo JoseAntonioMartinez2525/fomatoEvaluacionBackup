@@ -365,6 +365,24 @@ foreach ($allowedEmails as $index => $email) {
                                 </div>
                             </div>
 
+                            <!-- Card 5: Cargar Convocatoria -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #6f42c1;" data-bs-toggle="collapse" data-bs-target="#collapseConvocatoria" aria-expanded="false" aria-controls="collapseConvocatoria">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-bullhorn" style="color: #6f42c1;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Cargar Convocatoria</h5>
+                                            <p class="card-text text-muted small mb-0">Establecer nombre de convocatoria.</p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- Contenido Colapsable -->
@@ -494,6 +512,25 @@ foreach ($allowedEmails as $index => $email) {
                                 <div class="d-grid gap-2 mt-3">
                                     <button class="btn btn-outline-primary btn-sm" onclick="actualizarPeriodosDocentes()">
                                         <i class="fa-solid fa-sync"></i> Asignar Periodo a Todos los Docentes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Colapsable: Convocatoria -->
+                        <div class="collapse mt-3" id="collapseConvocatoria" data-bs-parent=".container">
+                            <div class="card card-body shadow-sm">
+                                <h5 class="card-title mb-3" style="color: #6f42c1;"><i class="fa-solid fa-bullhorn"></i> Configurar Convocatoria</h5>
+                                <p class="text-muted">Ingrese el nombre de la convocatoria vigente para asignarla a todos los docentes.</p>
+                                
+                                <div class="mb-3">
+                                    <label for="txtConvocatoria" class="form-label">Nombre de la Convocatoria</label>
+                                    <input type="text" class="form-control" id="txtConvocatoria" placeholder="Ej. Convocatoria 2024-1">
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" style="color: #6f42c1; border-color: #6f42c1;" onmouseover="this.style.backgroundColor='#6f42c1'; this.style.color='white';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6f42c1';" onclick="actualizarConvocatoriaDocentes()">
+                                        <i class="fa-solid fa-save"></i> Guardar y Asignar Convocatoria
                                     </button>
                                 </div>
                             </div>
@@ -932,6 +969,43 @@ foreach ($allowedEmails as $index => $email) {
         .catch(error => {
             console.error('Error:', error);
             alert('❌ Error de conexión al intentar actualizar los periodos.');
+        });
+    }
+
+    function actualizarConvocatoriaDocentes() {
+        const nombreConvocatoria = document.getElementById('txtConvocatoria').value;
+        
+        if (!nombreConvocatoria) {
+            alert('Por favor ingrese un nombre para la convocatoria.');
+            return;
+        }
+
+        if (!confirm('¿Está seguro de que desea establecer "' + nombreConvocatoria + '" como la convocatoria para TODOS los docentes?')) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch('{{ url("/formato-evaluacion/update-convocatoria") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ convocatoria: nombreConvocatoria })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ ' + data.message);
+            } else {
+                alert('❌ Error: ' + (data.message || 'Ocurrió un error al actualizar.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Error de conexión al intentar actualizar la convocatoria.');
         });
     }
     </script>

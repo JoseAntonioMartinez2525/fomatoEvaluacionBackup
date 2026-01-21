@@ -32,6 +32,7 @@ use App\Http\Controllers\FormContentController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ResponseForm3_8_1Controller;
 use App\Http\Controllers\ResumeController;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ResumenComisionController;
 use App\Http\Controllers\SecretariaController;
 use App\Http\Controllers\ThemeController;
@@ -98,7 +99,7 @@ Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
 Route::middleware(['auth'])->group(function (){
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('rules', function () {return view('rules'); })->name('rules');
-     Route::get('/welcome', [HomeController::class, 'showWelcome'])->name('welcome');
+     Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
     Route::get('resumen', function () {return view('resumen'); })->name('resumen');
     Route::get('perfil', function () {return view('perfil'); })->name('perfil');
     Route::get('general', function () {return view('general');})->name('general');
@@ -198,7 +199,7 @@ Route::middleware(['auth'])->group(function () {
     // --- GRUPO DE RUTAS PARA DOCENTES PROTEGIDAS POR PERÍODO DE EVALUACIÓN ---
     Route::middleware([\App\Http\Middleware\CheckEvaluationPeriod::class])->group(function () {
         // Rutas GET para mostrar los formularios
-        Route::get('/welcome', [SessionsController::class, 'welcome'])->name('welcome');
+        Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
         Route::get('docencia', function () {return view('docencia'); })->name('docencia');
 
         // Rutas POST para guardar los datos de los formularios
@@ -392,10 +393,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/forms/{id}', [DynamicFormController::class, 'destroy'])->name('forms.destroy');
 
 
-    Route::get('/formato-evaluacion//get-form-content/{formId}', [DynamicFormController::class, 'showDynamicForm'])->name('get-form-content');
+    Route::get('/formato-evaluacion/get-form-content/{formId}', [DynamicFormController::class, 'showDynamicForm'])->name('get-form-content');
 
 //Route::get('/get-form-data/{formType}', [DynamicFormController::class, 'getFormData']);
-    Route::get('/formato-evaluacion//get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
+    Route::get('/formato-evaluacion/get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
 
 
 });
@@ -457,7 +458,7 @@ Route::get('/docencia-scores?user_id=${userId}', [ResponseJson::class, 'getDocen
 // Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get');
 Route::post('/logout', action: [SessionsController::class, 'logout'])->name('logout');
 
-Route::get('/formato-evaluacion//test-dompdf', function () {
+Route::get('/formato-evaluacion/test-dompdf', function () {
     try {
         $dompdf = new Dompdf();
         return 'Dompdf está disponible y funcionando.';
@@ -488,6 +489,7 @@ Route::post('/evaluation-dates/docentes-evaluacion', [EvaluationDateController::
 Route::post('/evaluation-dates/evaluadores-captura', [EvaluationDateController::class, 'storeEvaluadoresCaptura']);
 Route::get('/evaluation-dates', [EvaluationDateController::class, 'getFechas']);
 Route::post('/formato-evaluacion/update-periods', [ResumenComisionController::class, 'updatePeriods'])->middleware('auth');
+Route::post('/formato-evaluacion/update-convocatoria', [ResumenComisionController::class, 'updateConvocatoria'])->middleware('auth');
 Route::get('/evaluation-dates/history', [ResumenComisionController::class, 'getEvaluationDatesHistory'])->middleware('auth');
 
 for ($i = 1; $i <= 19; $i++) {
