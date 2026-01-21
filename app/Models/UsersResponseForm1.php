@@ -72,16 +72,43 @@ class UsersResponseForm1 extends BaseResponse
             ->first();
         
         if ($dates && $dates->start_date && $dates->end_date) {
-            $start = Carbon::parse($dates->start_date);
-            $end = Carbon::parse($dates->end_date);
+            $start = \Carbon\Carbon::parse($dates->start_date);
+            $end = \Carbon\Carbon::parse($dates->end_date);
             
             // Formato: AñoInicio-AñoFin (ej. 2025-2026) o solo Año si es el mismo.
-            if ($start->year === $end->year) {
-                return (string)$start->year;
+            if ($start->year !== $end->year) {
+                return $start->year . '-' . $end->year;
             }
-            return $start->year . '-' . $end->year;
+            
+            // Si es el mismo año, calcular el número de convocatoria (I, II, etc.)
+            // Contamos cuántos periodos de 'docentes_llenado' existen en este año hasta el actual (inclusive)
+            $count = DB::table('evaluation_dates')
+                ->where('type', 'docentes_llenado')
+                ->whereYear('start_date', $start->year)
+                ->where('id', '<=', $dates->id) // Usamos ID para mantener el orden cronológico de creación
+                ->count();
+            
+            // Asegurar que el conteo sea al menos 1 para que toRoman devuelva 'I' como mínimo
+            $count = $count > 0 ? $count : 1;
+
+            return $start->year . '-' . self::toRoman($count);
         }
         
         return null;
+    }
+
+    private static function toRoman($number) {
+        $map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
+        $returnValue = '';
+        while ($number > 0) {
+            foreach ($map as $roman => $int) {
+                if ($number >= $int) {
+                    $number -= $int;
+                    $returnValue .= $roman;
+                    break;
+                }
+            }
+        }
+        return $returnValue;
     }
 }

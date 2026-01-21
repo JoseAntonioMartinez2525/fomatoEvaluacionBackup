@@ -198,7 +198,7 @@ Route::middleware(['auth'])->group(function () {
     // --- GRUPO DE RUTAS PARA DOCENTES PROTEGIDAS POR PERÍODO DE EVALUACIÓN ---
     Route::middleware([\App\Http\Middleware\CheckEvaluationPeriod::class])->group(function () {
         // Rutas GET para mostrar los formularios
-        Route::get('/welcome', [App\Http\Controllers\WelcomeController::class, 'index'])->name('welcome');
+        Route::get('/welcome', [SessionsController::class, 'welcome'])->name('welcome');
         Route::get('docencia', function () {return view('docencia'); })->name('docencia');
 
         // Rutas POST para guardar los datos de los formularios

@@ -89,7 +89,7 @@ button#edit-form-btn{
             <input name="convocatoria" type="text" class="input-header mb-3" id="convocatoria"></input>
 
             <label for="periodo" class="label">Periodo de evaluación:</label>
-            <input name="periodo" id="periodo" type="text" class="input-header mb-3"></input>
+            <input name="periodo" id="periodo" type="text" class="input-header mb-3" value="{{ $periodo ?? '' }}" readonly>
 
             <label for="nombre" class="label">Nombre del personal académico:</label> <input name="nombre" type="text"
             class="input-header mb-3"></input>

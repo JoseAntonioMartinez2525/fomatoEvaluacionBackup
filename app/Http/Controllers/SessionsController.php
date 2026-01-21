@@ -165,9 +165,13 @@ private function redirectByUserType($user)
     public function welcome(Request $request)
     {
         $user = Auth::user();
+        
+        // Obtener el periodo formateado (ej. "2025 I" o "2025-2026") directamente del modelo
+        // Esto asegura consistencia con lo que se guardará en la base de datos.
+        $periodo = \App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido';
 
         // Pass the user's email to the view
-        return view('welcome', compact('user'));
+        return view('welcome', compact('user', 'periodo'));
     }
 
     public function showLoginForm()
