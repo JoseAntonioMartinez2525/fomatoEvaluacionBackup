@@ -115,7 +115,7 @@ private function redirectByUserType($user)
 
     // Verificación de período para docentes al iniciar sesión
     if ($user->user_type === 'docente') {
-        $evaluationDates = EvaluationDate::where('type', 'docentes_llenado')->first();
+        $evaluationDates = EvaluationDate::where('type', 'docentes_llenado')->latest('id')->first();
         $now = Carbon::now();
 
         if ($evaluationDates) {
