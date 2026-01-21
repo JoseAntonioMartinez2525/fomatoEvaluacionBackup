@@ -66,7 +66,10 @@ class UsersResponseForm1 extends BaseResponse
      */
     public static function calculateCurrentPeriod()
     {
-        $dates = DB::table('evaluation_dates')->where('type', 'docentes_llenado')->first();
+        $dates = DB::table('evaluation_dates')
+            ->where('type', 'docentes_llenado')
+            ->orderBy('id', 'desc')
+            ->first();
         
         if ($dates && $dates->start_date && $dates->end_date) {
             $start = Carbon::parse($dates->start_date);

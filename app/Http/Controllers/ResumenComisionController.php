@@ -171,4 +171,16 @@ public function getFirmasYResumen(Request $request)
         }
     }
 
+    /**
+     * Obtiene el historial de fechas de evaluación para docentes.
+     */
+    public function getEvaluationDatesHistory()
+    {
+        $history = DB::table('evaluation_dates')
+            ->where('type', 'docentes_llenado')
+            ->orderBy('id', 'desc')
+            ->get();
+            
+        return response()->json($history);
+    }
 }

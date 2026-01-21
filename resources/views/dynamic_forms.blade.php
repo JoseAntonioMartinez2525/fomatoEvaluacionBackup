@@ -94,110 +94,110 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     <div class="bg-gray-50 text-black/50">
         <div class="relative min-h-screen flex flex-col items-center justify-center">
             @if (Route::has('login'))
-                                                                                    @if (Auth::check() && Auth::user()->user_type === 'secretaria')
-                                                                                        <x-nav-menu :user="Auth::user()">
-                                                                                            <div>
-                                                                                                <ul style="list-style: none;">
-                                                                                                    <li class="nav-item">
-                                                                                                        <a class="nav-link active enlaceSN" style="width: 300px;" href="{{route('/formato-evaluacion/edit_delete_form')}}"
-                                                                                                            title="Editar ó eliminar formulario"><i class="fa-solid fa-user-pen"></i>&nbspEditar/Eliminar</a>
-                                                                                                    </li>
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </x-nav-menu>
-                                                                                    @endif
+                @if (Auth::check() && Auth::user()->user_type === 'secretaria')
+                    <x-nav-menu :user="Auth::user()">
+                        <div>
+                            <ul style="list-style: none;">
+                                <li class="nav-item">
+                                    <a class="nav-link active enlaceSN" style="width: 300px;" href="{{route('/formato-evaluacion/edit_delete_form')}}"
+                                        title="Editar ó eliminar formulario"><i class="fa-solid fa-user-pen"></i>&nbspEditar/Eliminar</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </x-nav-menu>
+            @endif
 
-                                                                                    <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                                                                                        <div class="flex lg:justify-center lg:col-start-2"></div>
+            <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
+                <div class="flex lg:justify-center lg:col-start-2"></div>
 
-                                                                                        <nav class="-mx-3 flex flex-1 justify-end"></nav>
+                <nav class="-mx-3 flex flex-1 justify-end"></nav>
 
-                                                                    @php
+@php
     $user = Auth::user();
     $userType = $user->user_type;
     $user_identity = $user->id; 
-                                                                    @endphp
+@endphp
 
 
 
-                                                                        <!--Llenado de los campos-->
-                                                                        <div class="container mt-4">
-                                                                            <!-- Add pill navigation -->
-                                                                            <ul class="nav nav-pills nav-justified mb-3" id="formTabs" role="tablist">
-                                                                                <li class="nav-item no-active" role="presentation">
-                                                                                    <a class="nav-link" id="tab-new" data-mdb-pill-init role="tab" aria-controls="pills-new"
-                                                                                        aria-selected="true">Añadir nuevo Formulario</a>
-                                                                                </li>
-                                                                                <li class="nav-item " role="presentation">
-                                                                                    <a class="nav-link active" id="tab-edit" data-mdb-pill-init href="{{ route('/formato-evaluacion/edit_delete_form') }}" role="tab"
-                                                                                        aria-controls="pills-edit" aria-selected="false">Editar/Eliminar Formulario</a>
-                                                                                </li>
-                                                                            </ul>
-                                                                                <!-- Main form content starts here -->
-                                                                                <div class="tab-content">
-                                                                                    <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="tab-new">
-                                                                                        <h3>Generador de Formulario Dinámico</h3>
+    <!--Llenado de los campos-->
+    <div class="container mt-4">
+        <!-- Add pill navigation -->
+        <ul class="nav nav-pills nav-justified mb-3" id="formTabs" role="tablist">
+            <li class="nav-item no-active" role="presentation">
+                <a class="nav-link" id="tab-new" data-mdb-pill-init role="tab" aria-controls="pills-new"
+                    aria-selected="true">Añadir nuevo Formulario</a>
+            </li>
+            <li class="nav-item " role="presentation">
+                <a class="nav-link active" id="tab-edit" data-mdb-pill-init href="{{ route('/formato-evaluacion/edit_delete_form') }}" role="tab"
+                    aria-controls="pills-edit" aria-selected="false">Editar/Eliminar Formulario</a>
+            </li>
+        </ul>
+            <!-- Main form content starts here -->
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="tab-new">
+                    <h3>Generador de Formulario Dinámico</h3>
 
 
-                                                                            <!-- Nombre del formulario -->
-                                                                            <form id="dynamicForm" method="POST">
-                                                                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                                                                                <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                                                                <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
-                                                                                @csrf
-                                                                                <label for="formName">Nombre del formulario:</label>
-                                                                                <input type="text" id="formName" placeholder="Ingrese el nombre del formulario">
+        <!-- Nombre del formulario -->
+        <form id="dynamicForm" method="POST">
+            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+            <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+            <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+            @csrf
+            <label for="formName">Nombre del formulario:</label>
+            <input type="text" id="formName" placeholder="Ingrese el nombre del formulario">
 
-                                                                                <!-- Puntaje máximo -->
-                                                                                <div class="mt-3">
-                                                                                    <h4>Puntaje máximo</h4>
-                                                                                    @if($userType == 'secretaria') <!-- usuario secretaria -->
-                                                                                        <input class="pmax text-white px-4 mt-3" id="puntajeMaximo" placeholder="0" readonly>
-                                                                                        <button type="button" class="btn custom-btn"
-                                                                                            onclick="habilitarEdicion('puntajeMaximo')">Editar</button>
-                                                                                        <button type="button" class="btn custom-btn"
-                                                                                            onclick="guardarEdicion('puntajeMaximo')">Guardar</button>
-                                                                                    @else
-                                                                                        <span id="puntajeMaximoLabel"></span>
-                                                                                    @endif
-                                                                                </div>
+            <!-- Puntaje máximo -->
+            <div class="mt-3">
+                <h4>Puntaje máximo</h4>
+                @if($userType == 'secretaria') <!-- usuario secretaria -->
+                    <input class="pmax text-white px-4 mt-3" id="puntajeMaximo" placeholder="0" readonly>
+                    <button type="button" class="btn custom-btn"
+                        onclick="habilitarEdicion('puntajeMaximo')">Editar</button>
+                    <button type="button" class="btn custom-btn"
+                        onclick="guardarEdicion('puntajeMaximo')">Guardar</button>
+                @else
+                    <span id="puntajeMaximoLabel"></span>
+                @endif
+            </div>
 
-                                                                                <!-- Configuración dinámica -->
-                                                                                <div class="mt-4">
-                                                                                    <h5>Configuración de la tabla</h5>
-                                                                                    <label for="numColumns">Número de columnas:</label>
-                                                                                    <input type="number" id="numColumns" min="1" placeholder="Ingrese el número de columnas">
+            <!-- Configuración dinámica -->
+            <div class="mt-4">
+                <h5>Configuración de la tabla</h5>
+                <label for="numColumns">Número de columnas:</label>
+                <input type="number" id="numColumns" min="1" placeholder="Ingrese el número de columnas">
 
-                                                                                    <label for="numRows">Número de filas:</label>
-                                                                                    <input type="number" id="numRows" min="1" placeholder="Ingrese el número de filas">
+                <label for="numRows">Número de filas:</label>
+                <input type="number" id="numRows" min="1" placeholder="Ingrese el número de filas">
 
-                                                                                    <button type="button" class="btn btn-primary" onclick="generateTable()">Generar
-                                                                                        Tabla</button>
-                                                                                </div>
+                <button type="button" class="btn btn-primary" onclick="generateTable()">Generar
+                    Tabla</button>
+            </div>
 
-                                                                                <!-- Tabla dinámica -->
-                                                                                <table id="dynamicTable" class="table mt-4">
-                                                                                    <thead>
-                                                                                        <tr id="defaultHeader">
-                                                                                            <th>Actividad</th>
-                                                                                            <th>Puntaje a evaluar</th>
-                                                                                            <th>Puntaje de la Comisión Dictaminadora</th>
-                                                                                            <th>Observaciones</th>
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
+            <!-- Tabla dinámica -->
+            <table id="dynamicTable" class="table mt-4">
+                <thead>
+                    <tr id="defaultHeader">
+                        <th>Actividad</th>
+                        <th>Puntaje a evaluar</th>
+                        <th>Puntaje de la Comisión Dictaminadora</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
 
 
-                                                                                    </tbody>
-                                                                                </table>
-                                                                                <!-- Botones de acción -->
-                                                                                <div class="mt-4">
-                                                                                    <button type="button" class="btn btn-success" onclick="guardarTabla()">Guardar</button>
-                                                                                    <button type="reset" class="btn btn-danger">Eliminar</button>
-                                                                                </div>
-                                                                            </form>
-                                                                            </div>
-                                                                        </div>
+                </tbody>
+            </table>
+            <!-- Botones de acción -->
+            <div class="mt-4">
+                <button type="button" class="btn btn-success" onclick="guardarTabla()">Guardar</button>
+                <button type="reset" class="btn btn-danger">Eliminar</button>
+            </div>
+        </form>
+        </div>
+    </div>
 
 
             @endif

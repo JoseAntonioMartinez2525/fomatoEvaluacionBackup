@@ -479,6 +479,18 @@ foreach ($allowedEmails as $index => $email) {
                                     </div>
                                 </div>
 
+                                <!-- Sección Historial -->
+                                <div class="mt-3 border-top pt-2">
+                                    <button class="btn btn-link text-decoration-none text-secondary p-0 w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#historyCollapse" aria-expanded="false">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> Ver Historial de Periodos Anteriores
+                                    </button>
+                                    <div class="collapse mt-2" id="historyCollapse">
+                                        <ul class="list-group list-group-flush small" id="listaHistorialPeriodos">
+                                            <!-- Se llena con JS -->
+                                        </ul>
+                                    </div>
+                                </div>
+
                                 <div class="d-grid gap-2 mt-3">
                                     <button class="btn btn-outline-primary btn-sm" onclick="actualizarPeriodosDocentes()">
                                         <i class="fa-solid fa-sync"></i> Asignar Periodo a Todos los Docentes
@@ -860,16 +872,32 @@ foreach ($allowedEmails as $index => $email) {
             return `${dias} de ${mes} del ${anio}`;
         }
 
-        // Cargar fechas existentes para docentes_llenado (Solo visualización)
-        fetch('{{ url("/evaluation-dates") }}')
+        // Cargar historial de fechas para docentes_llenado
+        fetch('{{ url("/evaluation-dates/history") }}')
             .then(response => response.json())
             .then(data => {
                 const lblInicio = document.getElementById('lblFechaInicio');
                 const lblFin = document.getElementById('lblFechaFin');
+                const listaHistorial = document.getElementById('listaHistorialPeriodos');
 
-                if (data.docentes_llenado) {
-                    lblInicio.textContent = formatearFecha(data.docentes_llenado.start_date);
-                    lblFin.textContent = formatearFecha(data.docentes_llenado.end_date);
+                if (data && data.length > 0) {
+                    // El primer elemento es el vigente (ordenado por ID desc)
+                    const vigente = data[0];
+                    lblInicio.textContent = formatearFecha(vigente.start_date);
+                    lblFin.textContent = formatearFecha(vigente.end_date);
+
+                    // El resto son historial
+                    if (data.length > 1) {
+                        for (let i = 1; i < data.length; i++) {
+                            const periodo = data[i];
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item bg-light text-muted px-0';
+                            li.innerHTML = `<i class="fa-regular fa-calendar-check me-2"></i> ${formatearFecha(periodo.start_date)} - ${formatearFecha(periodo.end_date)}`;
+                            listaHistorial.appendChild(li);
+                        }
+                    } else {
+                        listaHistorial.innerHTML = '<li class="list-group-item text-muted fst-italic px-0">No hay periodos anteriores.</li>';
+                    }
                 } else {
                     lblInicio.textContent = 'No definido';
                     lblFin.textContent = 'No definido';

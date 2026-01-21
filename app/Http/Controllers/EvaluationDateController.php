@@ -3,73 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Models\EvaluationDate;
-use App\Models\DocentesEvaluationDate;
-use App\Models\EvaluadoresCaptureDate;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class EvaluationDateController extends Controller
 {
-    private function storeDates(Request $request, $modelClass, $type = null)
+    public function getFechas()
     {
-        try {
-            $validated = $request->validate([
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-            ]);
+        // Obtener la última fecha registrada para cada tipo (ordenado por ID descendente)
+        $docentesLlenado = EvaluationDate::where('type', 'docentes_llenado')->latest('id')->first();
+        $docentesEvaluacion = EvaluationDate::where('type', 'docentes_evaluacion')->latest('id')->first();
+        $evaluadoresCaptura = EvaluationDate::where('type', 'evaluadores_captura')->latest('id')->first();
 
-            if ($modelClass === EvaluationDate::class && $type) {
-                // Fusionamos el 'type' con los datos validados para asegurarnos de que se guarde.
-                EvaluationDate::updateOrCreate(
-                    ['type' => $type], // Condición de búsqueda
-                    array_merge($validated, ['type' => $type]) // Datos para guardar/actualizar
-                );
-            } elseif ($modelClass === DocentesEvaluationDate::class && $type) {
-                // Asumimos que solo hay un registro, así que el primer argumento puede estar vacío.
-                DocentesEvaluationDate::updateOrCreate( ['type' => $type], // Condición de búsqueda
-                    array_merge($validated, ['type' => $type]) // Datos para guardar/actualizar
-                );
-            } elseif ($modelClass === EvaluadoresCaptureDate::class && $type) {
-                EvaluadoresCaptureDate::updateOrCreate( ['type' => $type], // Condición de búsqueda
-                    array_merge($validated, ['type' => $type]) // Datos para guardar/actualizar
-                );
-            } else {
-                throw new \Exception("Tipo de modelo no manejado: " . $modelClass);
-            }
-
-            return response()->json(['success' => true, 'message' => 'Fechas guardadas correctamente']);
-        } catch (ValidationException $e) {
-            return response()->json(['success' => false, 'message' => 'Error de validación.', 'errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            // Devuelve el mensaje de error real para depuración
-            return response()->json([
-                'success' => false, 
-                'message' => $e->getMessage() // Esto nos dirá qué está fallando exactamente
-            ], 500);
-        }
+        return response()->json([
+            'docentes_llenado' => $docentesLlenado,
+            'dictaminadores_capturando_datos' => $docentesEvaluacion, // Mapeo para el frontend
+            'files_capture_dates' => $evaluadoresCaptura, // Mapeo para el frontend
+        ]);
     }
 
     public function storeDocentesLlenado(Request $request)
     {
-        return $this->storeDates($request, EvaluationDate::class, 'docentes_llenado');
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        // CORRECCIÓN: Usar create() para generar un nuevo registro y mantener historial
+        EvaluationDate::create([
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'type' => 'docentes_llenado',
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     public function storeDocentesEvaluacion(Request $request)
     {
-        return $this->storeDates($request, DocentesEvaluationDate::class,'dictaminadores_capturando_datos');
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        EvaluationDate::updateOrCreate(
+            ['type' => 'docentes_evaluacion'],
+            ['start_date' => $request->start_date, 'end_date' => $request->end_date]
+        );
+
+        return response()->json(['success' => true]);
     }
 
     public function storeEvaluadoresCaptura(Request $request)
     {
-        return $this->storeDates($request, EvaluadoresCaptureDate::class,'files_capture_dates');
-    }
-
-    public function getFechas()
-    {
-        return response()->json([
-            'docentes_llenado' => EvaluationDate::where('type', 'docentes_llenado')->latest()->first(),
-            'dictaminadores_capturando_datos' => DocentesEvaluationDate::where('type', 'dictaminadores_capturando_datos')->latest()->first(),
-            'files_capture_dates' => EvaluadoresCaptureDate::where('type', 'files_capture_dates')->latest()->first(),
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
+
+        EvaluationDate::updateOrCreate(
+            ['type' => 'evaluadores_captura'],
+            ['start_date' => $request->start_date, 'end_date' => $request->end_date]
+        );
+
+        return response()->json(['success' => true]);
     }
 }
