@@ -347,7 +347,23 @@ foreach ($allowedEmails as $index => $email) {
                                     </div>
                                 </a>
                             </div>
-
+                            <!-- Card 4: Periodos de evaluacion -->
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm hover-card" style="cursor: pointer; border-left: 5px solid #077bff;" data-bs-toggle="collapse" data-bs-target="#collapsePeriodos" aria-expanded="false" aria-controls="collapsePeriodos">
+                                    <div class="card-body d-flex align-items-center p-4">
+                                        <div class="bg-light rounded-circle p-3 me-3">
+                                            <i class="fa-solid fa-calendar" style="color: #077bff;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title text-dark mb-1">Cargar Periodo para docentes</h5>
+                                            
+                                        </div>
+                                        <div class="ms-auto">
+                                            <i class="fa-solid fa-chevron-down text-secondary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -437,6 +453,36 @@ foreach ($allowedEmails as $index => $email) {
                                             @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido Colapsable: Periodos -->
+                        <div class="collapse mt-3" id="collapsePeriodos" data-bs-parent=".container">
+                            <div class="card card-body shadow-sm">
+                                <h5 class="card-title mb-3 text-primary"><i class="fa-solid fa-calendar-days"></i> Periodo Vigente</h5>
+                                <p class="text-muted">Fechas habilitadas para el llenado de evaluaciones por parte de los docentes (Configurado en Establecer fechas).</p>
+                                
+                                <div class="alert alert-light border-primary" role="alert">
+                                    <div class="d-flex justify-content-between align-items-center px-3">
+                                        <div class="text-center">
+                                            <small class="text-muted text-uppercase fw-bold d-block mb-1">Inicio</small>
+                                            <span id="lblFechaInicio" class="fs-5 fw-bold text-dark"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                                        </div>
+                                        <div class="text-center text-primary">
+                                            <i class="fa-solid fa-arrow-right-long fa-2x"></i>
+                                        </div>
+                                        <div class="text-center">
+                                            <small class="text-muted text-uppercase fw-bold d-block mb-1">Fin</small>
+                                            <span id="lblFechaFin" class="fs-5 fw-bold text-dark"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 mt-3">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="actualizarPeriodosDocentes()">
+                                        <i class="fa-solid fa-sync"></i> Asignar Periodo a Todos los Docentes
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -791,6 +837,73 @@ foreach ($allowedEmails as $index => $email) {
         .catch(error => {
             console.error('Error:', error);
             alert('❌ Ocurrió un error al subir la firma: ' + error.message);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Función para formatear fecha: "2 de Diciembre del 2025"
+        function formatearFecha(fechaISO) {
+            if (!fechaISO) return 'No definido';
+            const fecha = new Date(fechaISO);
+            
+            // Validar fecha
+            if (isNaN(fecha.getTime())) return fechaISO;
+
+            const dias = fecha.getUTCDate();
+            const meses = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+            const mes = meses[fecha.getUTCMonth()];
+            const anio = fecha.getUTCFullYear();
+
+            return `${dias} de ${mes} del ${anio}`;
+        }
+
+        // Cargar fechas existentes para docentes_llenado (Solo visualización)
+        fetch('{{ url("/evaluation-dates") }}')
+            .then(response => response.json())
+            .then(data => {
+                const lblInicio = document.getElementById('lblFechaInicio');
+                const lblFin = document.getElementById('lblFechaFin');
+
+                if (data.docentes_llenado) {
+                    lblInicio.textContent = formatearFecha(data.docentes_llenado.start_date);
+                    lblFin.textContent = formatearFecha(data.docentes_llenado.end_date);
+                } else {
+                    lblInicio.textContent = 'No definido';
+                    lblFin.textContent = 'No definido';
+                }
+            })
+            .catch(error => console.error('Error al cargar fechas:', error));
+    });
+
+    function actualizarPeriodosDocentes() {
+        if (!confirm('¿Está seguro de que desea actualizar el periodo para TODOS los docentes registrados? Esta acción no se puede deshacer.')) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch('{{ url("/formato-evaluacion/update-periods") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ ' + data.message);
+            } else {
+                alert('❌ Error: ' + (data.message || 'Ocurrió un error al actualizar.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Error de conexión al intentar actualizar los periodos.');
         });
     }
     </script>

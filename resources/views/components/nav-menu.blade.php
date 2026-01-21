@@ -32,7 +32,7 @@ body.dark-mode .nav {
                             <a href="{{ route('tiempo') }}" class="nav-link" title="Otorgar Prórroga de tiempo"><i class='fas fa-clock'></i> Agregar Tiempo</a>
                         </li> --}}
                         <li class="nav-item">
-                            <a href="{{ route('fechas') }}" class="nav-link" title="fechas de evaluacion"><i class='fas fa-calendar'></i> establecer fechas</a>
+                            <a href="{{ route('fechas') }}" class="nav-link" title="fechas de evaluacion"><i class='fas fa-calendar'></i> Establecer fechas</a>
                         </li>
                         @endif   
                     @endif

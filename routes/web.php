@@ -487,6 +487,7 @@ Route::post('/evaluation-dates/docentes-llenado', [EvaluationDateController::cla
 Route::post('/evaluation-dates/docentes-evaluacion', [EvaluationDateController::class, 'storeDocentesEvaluacion']);
 Route::post('/evaluation-dates/evaluadores-captura', [EvaluationDateController::class, 'storeEvaluadoresCaptura']);
 Route::get('/evaluation-dates', [EvaluationDateController::class, 'getFechas']);
+Route::post('/formato-evaluacion/update-periods', [ResumenComisionController::class, 'updatePeriods'])->middleware('auth');
 
 for ($i = 1; $i <= 19; $i++) {
     Route::get("/get-form3{$i}", [ 
