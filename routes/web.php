@@ -498,3 +498,6 @@ for ($i = 1; $i <= 19; $i++) {
         'getFormData3'.$i
     ])->name("form3_{$i}.get")->withoutMiddleware('auth');
 }
+
+//Excel
+Route::get('users/export/', [UserController::class, 'export'])->name('users.export');

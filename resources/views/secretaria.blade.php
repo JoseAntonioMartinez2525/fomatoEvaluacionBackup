@@ -250,6 +250,10 @@ foreach ($allowedEmails as $index => $email) {
             background-color:#22426d;
         }
 
+        body.dark-mode .dynamic-th {
+            background-color: black !important;
+            color: white !important;
+        }
 
     </style>
     
@@ -616,7 +620,25 @@ foreach ($allowedEmails as $index => $email) {
                                 </form>
                             </div>
                         </div>
-
+                            <!-- Card 7: Generar Reportes de todos los docentes (Redirección) -->
+                            <div class="col-md-4">
+                                <a href="{{ route('users.export') }}" class="text-decoration-none">
+                                    <div class="card h-100 shadow-sm hover-card" style="border-left: 5px solid #9a96a3;">
+                                        <div class="card-body d-flex align-items-center p-4">
+                                            <div class="bg-light rounded-circle p-3 me-3">
+                                                <i class="fa-solid fa-download" style="color: #9a96a3;"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title text-dark mb-1">Generar Reportes de todos los docentes</h5>
+                                                <p class="card-text text-muted small mb-0">listado de docentes en excel y pdf independientes en archivo zip</p>
+                                            </div>
+                                            <div class="ms-auto">
+                                                <i class="fa-solid fa-arrow-right text-secondary"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         <!-- Selector para elegir el formulario -->
                         {{-- <label for="formGrid">Buscar Evaluación:</label>
                         
@@ -1106,20 +1128,20 @@ foreach ($allowedEmails as $index => $email) {
         
         // Actividad (colspan = 1 (Activity Name) + cols (Dynamic))
         const thActividad = document.createElement('th');
-        thActividad.className = 'bg-light text-center';
+        thActividad.className = 'bg-light text-center dynamic-th';
         thActividad.colSpan = cols;
         thActividad.textContent = 'Actividad';
         tr1.appendChild(thActividad);
 
         // Puntaje a evaluar
         const thPuntaje = document.createElement('th');
-        thPuntaje.className = 'bg-light text-center table-ajust cd';
+        thPuntaje.className = 'bg-light text-center table-ajust cd dynamic-th';
         thPuntaje.textContent = 'Puntaje a evaluar';
         tr1.appendChild(thPuntaje);
 
         // Puntaje Comisión
         const thComision = document.createElement('th');
-        thComision.className = 'bg-light text-center table-ajust cd';
+        thComision.className = 'bg-light text-center table-ajust cd dynamic-th';
         thComision.textContent = 'Puntaje de la Comisión Dictaminadora';
         tr1.appendChild(thComision);
 

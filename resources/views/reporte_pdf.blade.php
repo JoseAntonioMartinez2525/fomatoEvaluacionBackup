@@ -2,6 +2,7 @@
 @php
 
 // Inicializa
+$logoBase64 = $logoBase64 ?? ''; // Prevenir error si no se pasa en exportación masiva
 $convocatoria = '';
 
 // Intenta obtener email desde la query (la ruta que llama al PDF usa ?email=...)
