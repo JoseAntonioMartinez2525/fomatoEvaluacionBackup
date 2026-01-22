@@ -564,7 +564,7 @@ foreach ($allowedEmails as $index => $email) {
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="form-label">Nombre del Formulario</label>
-                                            <input type="text" class="form-control" id="newFormName" required placeholder="Ej. 3.20 Convenios">
+                                            <input type="text" class="form-control" id="newFormName" required placeholder="Ej. 3.20 Actividades Extraordinarias">
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Puntaje Máximo</label>
@@ -1093,34 +1093,124 @@ foreach ($allowedEmails as $index => $email) {
     function previewTable() {
         const rows = parseInt(document.getElementById('newFormRows').value) || 1;
         const cols = parseInt(document.getElementById('newFormCols').value) || 0;
-        const headerRow = document.getElementById('previewHeaderRow');
+        const formName = document.getElementById('newFormName').value || 'Nombre del Formulario';
+        const table = document.getElementById('previewTable');
+        const thead = table.querySelector('thead');
         const body = document.getElementById('previewBody');
 
-        // Headers
-        let headersHtml = '<th class="bg-light">Actividad</th>';
-        for(let i=0; i<cols; i++) {
-            headersHtml += `<th><input type="text" class="form-control form-control-sm dynamic-col-name" placeholder="Encabezado ${i+1}"></th>`;
-        }
-        // Fixed headers as requested
-        headersHtml += '<th class="bg-light">Subtotal</th>'; 
-        headersHtml += '<th class="bg-light">Puntaje a evaluar</th>';
-        headersHtml += '<th class="bg-light">Puntaje Comisión</th>';
-        headersHtml += '<th class="bg-light">Observaciones</th>'; // Last
+        // Clear existing headers
+        thead.innerHTML = '';
+
+        // --- Row 1: Super Headers ---
+        const tr1 = document.createElement('tr');
         
-        headerRow.innerHTML = headersHtml;
+        // Actividad (colspan = 1 (Activity Name) + cols (Dynamic))
+        const thActividad = document.createElement('th');
+        thActividad.className = 'bg-light text-center';
+        thActividad.colSpan = cols;
+        thActividad.textContent = 'Actividad';
+        tr1.appendChild(thActividad);
+
+        // Puntaje a evaluar
+        const thPuntaje = document.createElement('th');
+        thPuntaje.className = 'bg-light text-center table-ajust cd';
+        thPuntaje.textContent = 'Puntaje a evaluar';
+        tr1.appendChild(thPuntaje);
+
+        // Puntaje Comisión
+        const thComision = document.createElement('th');
+        thComision.className = 'bg-light text-center table-ajust cd';
+        thComision.textContent = 'Puntaje de la Comisión Dictaminadora';
+        tr1.appendChild(thComision);
+
+        // Empty header for Observaciones alignment in Row 1
+        const thObsPlaceholder1 = document.createElement('th');
+        thObsPlaceholder1.className = 'bg-light';
+        tr1.appendChild(thObsPlaceholder1);
+        
+        thead.appendChild(tr1);
+
+        // --- Row 2: Section Title & Totals ---
+        const tr2 = document.createElement('tr');
+
+        // Form Name / Section Title
+        const thSection = document.createElement('th');
+        thSection.colSpan = cols;
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'form-control form-control-sm fw-bold';
+        nameInput.value = formName;
+        nameInput.id = 'previewFormNameInput';
+        thSection.appendChild(nameInput);
+        thSection.className = 'text-start ps-3'; 
+        tr2.appendChild(thSection);
+
+        // Total Score Placeholder
+        const thTotalScore = document.createElement('th');
+        thTotalScore.textContent = '0';
+        thTotalScore.className = 'text-center';
+        thTotalScore.style.backgroundColor = '#0b5967';
+        thTotalScore.style.color = 'white';
+        tr2.appendChild(thTotalScore);
+
+        // Total Commission Placeholder
+        const thTotalComm = document.createElement('th');
+        thTotalComm.textContent = '0';
+        thTotalComm.className = 'text-center';
+        thTotalComm.style.backgroundColor = '#ffcc6d';
+        tr2.appendChild(thTotalComm);
+
+        // Empty header for Observaciones alignment in Row 2
+        const thObsPlaceholder2 = document.createElement('th');
+        tr2.appendChild(thObsPlaceholder2);
+
+        thead.appendChild(tr2);
+
+        // --- Row 3: Column Headers ---
+        const tr3 = document.createElement('tr');
+        
+
+        // Dynamic Columns Headers
+        for(let i=0; i<cols; i++) {
+            const th = document.createElement('th');
+            th.innerHTML = `<input type="text" class="form-control form-control-sm dynamic-col-name text-center" placeholder="Encabezado ${i+1}">`;
+            tr3.appendChild(th);
+        }
+
+        // Fixed: Subtotal
+        const thSubtotal = document.createElement('th');
+        thSubtotal.textContent = 'Subtotal';
+        thSubtotal.className = 'text-center';
+        tr3.appendChild(thSubtotal);
+
+        // Fixed: Empty/Commission Header
+        const thCommHeader = document.createElement('th');
+        thCommHeader.textContent = ''; 
+        tr3.appendChild(thCommHeader);
+
+        // Fixed: Observaciones
+        const thObs = document.createElement('th');
+        thObs.textContent = 'Observaciones';
+        thObs.className = 'text-center';
+        tr3.appendChild(thObs);
+
+        thead.appendChild(tr3);
 
         // Rows
         let rowsHtml = '';
         for(let i=0; i<rows; i++) {
             rowsHtml += '<tr>';
-            rowsHtml += '<td><input type="text" class="form-control form-control-sm row-activity" placeholder="Nombre Actividad"></td>';
+            
+            // Dynamic Values
             for(let j=0; j<cols; j++) {
-                rowsHtml += `<td><input type="text" class="form-control form-control-sm row-dynamic-val" placeholder="Valor"></td>`;
+                rowsHtml += `<td><input type="text" class="form-control form-control-sm row-dynamic-val text-center" placeholder="Valor"></td>`;
             }
-            // Fixed columns placeholders
+            
+            // Subtotal
             rowsHtml += '<td class="text-center bg-light"><small>0</small></td>'; 
             rowsHtml += '<td class="text-center bg-light"><small>0</small></td>'; 
-            rowsHtml += '<td class="text-center bg-light"><small>0</small></td>'; 
+            
+            // Observaciones
             rowsHtml += '<td><input type="text" class="form-control form-control-sm" disabled></td>'; 
             rowsHtml += '</tr>';
         }
@@ -1130,7 +1220,9 @@ foreach ($allowedEmails as $index => $email) {
     }
 
     async function guardarFormularioDinamico() {
-        const formName = document.getElementById('newFormName').value;
+        const previewNameInput = document.getElementById('previewFormNameInput');
+        const formName = previewNameInput ? previewNameInput.value : document.getElementById('newFormName').value;
+
         const maxScore = document.getElementById('newFormMaxScore').value;
         const acreditacion = document.getElementById('newFormAcreditacion').value;
         const rows = document.getElementById('newFormRows').value;
@@ -1144,10 +1236,8 @@ foreach ($allowedEmails as $index => $email) {
         const trs = document.querySelectorAll('#previewBody tr');
         trs.forEach(tr => {
             let rowVals = [];
-            rowVals.push(tr.querySelector('.row-activity').value);
             tr.querySelectorAll('.row-dynamic-val').forEach(input => rowVals.push(input.value));
             rowVals.push('0'); // Subtotal
-            rowVals.push('0'); // Puntaje a evaluar
             rowVals.push('0'); // Comision
             rowVals.push('');  // Obs
             tableData.push(rowVals);

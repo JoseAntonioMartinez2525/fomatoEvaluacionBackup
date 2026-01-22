@@ -16,6 +16,7 @@
         "laravel/telescope": "^5.15",
         "laravel/tinker": "^2.9.0",
         "laravel/ui": "^4.5.2",
+        "maatwebsite/excel": "^3.1",
         "meyfa/php-svg": "^0.16.1",
         "spatie/image": "^3.8",
         "spatie/laravel-permission": "^6.23"
