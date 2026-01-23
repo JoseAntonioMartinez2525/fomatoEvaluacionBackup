@@ -623,14 +623,14 @@ foreach ($allowedEmails as $index => $email) {
                             <!-- Card 7: Generar Reportes de todos los docentes (Redirección) -->
                             <div class="col-md-4">
                                 <a href="{{ route('users.export') }}" class="text-decoration-none">
-                                    <div class="card h-100 shadow-sm hover-card" style="border-left: 5px solid #9a96a3;">
+                                    <div class="card h-100 shadow-sm hover-card" style="border-left: 5px solid #285bb3;">
                                         <div class="card-body d-flex align-items-center p-4">
                                             <div class="bg-light rounded-circle p-3 me-3">
-                                                <i class="fa-solid fa-download" style="color: #9a96a3;"></i>
+                                                <i class="fa-solid fa-download" style="color: #285bb3;"></i>
                                             </div>
                                             <div>
                                                 <h5 class="card-title text-dark mb-1">Generar Reportes de todos los docentes</h5>
-                                                <p class="card-text text-muted small mb-0">listado de docentes en excel y pdf independientes en archivo zip</p>
+                                                <p class="card-text text-muted small mb-0">listado de docentes en excel (.xls) y pdf independientes en archivo descargable .zip</p>
                                             </div>
                                             <div class="ms-auto">
                                                 <i class="fa-solid fa-arrow-right text-secondary"></i>
