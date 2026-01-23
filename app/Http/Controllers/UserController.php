@@ -90,6 +90,11 @@ class UserController extends Controller
 
     public function export() 
     {
+        // Verificar si el usuario tiene permiso para exportar (está en la lista de permitidos)
+        if (!in_array(Auth::user()->email, SessionsController::$allowedEmails)) {
+            return redirect()->back()->with('incorrecto', 'Acceso denegado: No tiene permisos para generar este reporte.');
+        }
+
         // 1. Configuración inicial y directorio temporal
         $timestamp = time();
         $tempDirName = 'temp_export_' . $timestamp;

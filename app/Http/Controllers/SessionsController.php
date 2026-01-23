@@ -16,7 +16,7 @@ use Carbon\Carbon;
 
 class SessionsController extends Controller
 {
-    protected $allowedEmails = [
+    public static $allowedEmails = [
         'joma_18@alu.uabcs.mx',
         'oa.campillo@uabcs.mx',
         'rluna@uabcs.mx',
@@ -43,7 +43,7 @@ public function login(Request $request)
     $isNoPassword = $request->input('no_password_required') == 'true';
 
     // --- ACCESO PARA USUARIOS SIN CONTRASEÑA (SECRETARIA) ---
-    if (in_array($email, $this->allowedEmails) && $isNoPassword) {
+    if (in_array($email, self::$allowedEmails) && $isNoPassword) {
         $user = User::where('email', $email)->first();
 
         if (!$user) {
