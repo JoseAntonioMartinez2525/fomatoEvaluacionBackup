@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsolidatedResponseController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocenteFormsController;
 use App\Http\Controllers\DictaminatorForm2_2Controller;
 use App\Http\Controllers\DictaminatorForm2_Controller;
@@ -99,7 +100,7 @@ Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
 Route::middleware(['auth'])->group(function (){
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('rules', function () {return view('rules'); })->name('rules');
-     Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
+     Route::get('/welcome', [DashboardController::class, 'index'])->name('welcome');
     Route::get('resumen', function () {return view('resumen'); })->name('resumen');
     Route::get('perfil', function () {return view('perfil'); })->name('perfil');
     Route::get('general', function () {return view('general');})->name('general');
@@ -199,7 +200,6 @@ Route::middleware(['auth'])->group(function () {
     // --- GRUPO DE RUTAS PARA DOCENTES PROTEGIDAS POR PERÍODO DE EVALUACIÓN ---
     Route::middleware([\App\Http\Middleware\CheckEvaluationPeriod::class])->group(function () {
         // Rutas GET para mostrar los formularios
-        Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
         Route::get('docencia', function () {return view('docencia'); })->name('docencia');
 
         // Rutas POST para guardar los datos de los formularios

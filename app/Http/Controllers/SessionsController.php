@@ -131,7 +131,8 @@ private function redirectByUserType($user)
     }
 
     if ($user->user_type === 'dictaminador') {
-        return redirect()->route('docente.forms.index')
+        // Redirigir a welcome (DashboardController) para que evalúe si es rol dual y las fechas activas
+        return redirect()->route('welcome')
             ->header('Cache-Control', $noCache)
             ->header('Pragma', $pragmaNoCache)
             ->header('Expires', $expiresZero);

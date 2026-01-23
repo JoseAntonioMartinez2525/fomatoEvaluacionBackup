@@ -237,7 +237,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 <body class="font-sans antialiased">
 
     @auth
-        @if(Auth::user()->user_type === 'dictaminador')
+        @if(Auth::user()->user_type === 'dictaminador' || in_array(Auth::user()->email, config('dictaminadores.emails', [])))
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass" style="margin-left: 100px;"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
