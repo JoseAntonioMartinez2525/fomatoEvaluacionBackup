@@ -62,6 +62,13 @@ class DictaminatorForm3_2Controller extends TransferController
 
             $validatedData = $request->validate(self::getValidationRules());
 
+            // Actualizar el user_type del usuario si se proporciona
+            $user = \App\Models\User::find($validatedData['user_id']);
+            if ($user && isset($validatedData['user_type'])) {
+                $user->user_type = $validatedData['user_type'];
+                $user->save();
+            }
+
 
             if (!isset($validatedData['score3_2'])) {
                 $validatedData['score3_2'] = 0;

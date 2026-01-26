@@ -50,6 +50,13 @@ class DictaminatorForm2_Controller extends TransferController
              //4. validaciones propias del formulario
             $validatedData = $request->validate(self::getValidationRules());
 
+            // Actualizar el user_type del usuario si se proporciona
+            $user = \App\Models\User::find($validatedData['user_id']);
+            if ($user && isset($validatedData['user_type'])) {
+                $user->user_type = $validatedData['user_type'];
+                $user->save();
+            }
+
             $validatedData['form_type'] = 'form2';
             
             // Default values for optional fields

@@ -91,6 +91,13 @@ class DictaminatorForm3_1Controller extends TransferController
 
             $validatedData = $request->validate(self::getValidationRules());
 
+            // Actualizar el user_type del usuario si se proporciona
+            $user = \App\Models\User::find($validatedData['user_id']);
+            if ($user && isset($validatedData['user_type'])) {
+                $user->user_type = $validatedData['user_type'];
+                $user->save();
+            }
+
             \Log::info('Datos validados:', $validatedData);
 
             $validatedData['form_type'] = 'form3_1';

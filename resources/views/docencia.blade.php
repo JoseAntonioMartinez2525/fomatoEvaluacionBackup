@@ -1983,8 +1983,6 @@ $staticFormTypes = [
                             <br>
                             <div id="step17" style="display: none">  
                                 <form id="form3_16" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store316', 'form3_16');">
-                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
                                     {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
