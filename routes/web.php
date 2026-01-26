@@ -398,6 +398,9 @@ Route::middleware(['auth'])->group(function () {
 //Route::get('/get-form-data/{formType}', [DynamicFormController::class, 'getFormData']);
     Route::get('/formato-evaluacion/get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
 
+    // Ruta para mostrar un formulario dinámico genérico
+    Route::get('/formato-evaluacion/form/{form_name}', [DynamicFormController::class, 'showDynamicFormByName'])->name('dynamic.form.show');
+
 
 });
 

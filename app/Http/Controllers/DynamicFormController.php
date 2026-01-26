@@ -492,4 +492,19 @@ class DynamicFormController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Muestra una vista genérica para un formulario dinámico por su nombre.
+     */
+    public function showDynamicFormByName($form_name)
+    {
+        $form = DynamicForm::where('form_name', $form_name)->first();
+
+        if (!$form) {
+            abort(404, 'Formulario no encontrado.');
+        }
+
+        // Pasamos el formulario a una vista genérica que sabrá cómo renderizarlo.
+        return view('dynamic_form_display', ['form' => $form]);
+    }
 }

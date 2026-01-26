@@ -3,21 +3,6 @@
 if (typeof data === 'undefined' || data === null) {
     var data = {};
 }
-// let docencia = 0;
-// function //updateDocencia() {
-//     const keys = [];
-//     for (let i = 1; i <= 19; i++) keys.push(`score3_${i}`);
-//     let total = 0;
-//     keys.forEach(k => {
-//         const v = parseFloat(data[k]);
-//         if (!isNaN(v)) total += v;
-//     });
-//     // If we have a pre-calculated total from server, use the max
-//     if (window.data && window.//data.docencia && window.//data.docencia > total) {
-//         total = window.//data.docencia;
-//     }
-//     // Límite global
-//     docencia = Math.min(total, 700);
 
 //     // Actualiza ambos elementos si existen
 //     const els = document.querySelectorAll('#docencia, #docencia2');
@@ -31,6 +16,30 @@ if (typeof data === 'undefined' || data === null) {
 //     });
 //     //data.docencia = docencia;
 // }
+function updateTotalDocencia() {
+    let total = 0;
+    // Sumar score3_1 hasta score3_19
+    for (let i = 1; i <= 19; i++) {
+        const el = document.getElementById(`score3_${i}`);
+        if (el) {
+            total += parseFloat(el.innerText || el.textContent) || 0;
+        }
+    }
+    // Sumar score3_8_1 (caso especial por nombre de ID)
+    const el81 = document.getElementById('score3_8_1');
+    if (el81) {
+        total += parseFloat(el81.innerText || el81.textContent) || 0;
+    }
+
+    const finalScore = Math.min(total, 700);
+    const docenciaEl = document.getElementById('docencia');
+    if (docenciaEl) {
+        docenciaEl.innerHTML = finalScore.toFixed(2);
+    }
+}
+// Exponer la función globalmente
+window.updateTotalDocencia = updateTotalDocencia;
+
 function initializeDataFromDOM() {
     for (let i = 1; i <= 19; i++) {
         const id = `score3_${i}`;
@@ -268,6 +277,8 @@ if(docencia>=60){
 }
  console.log("docencia:", docencia);
  document.getElementById("docencia").innerHTML = docencia;
+ 
+ updateTotalDocencia();
  data.score3_1=score3_1;
  
  // asigna y recalcula el total (no acumular)
@@ -321,6 +332,7 @@ if (!isNaN(score3_2)) {
 }
    console.log("docencia:", docencia);
     document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_2=score3_2;
   data.score3_2 = isNaN(score3_2) ? 0 : score3_2;
   //updateDocencia();
@@ -376,6 +388,7 @@ if(docencia>=700){
   document.getElementById("docencia").innerHTML = 700;
 }
  document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_3=score3_3;
   data.score3_3 = isNaN(score3_3) ? 0 : score3_3;
   //updateDocencia();  
@@ -429,6 +442,7 @@ if(docencia>=700){
   document.getElementById("docencia").innerHTML = 700;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_4 = score3_4;
  data.score3_4 = isNaN(score3_4) ? 0 : score3_4;
  //updateDocencia();
@@ -472,6 +486,7 @@ if(docencia>=700){
   document.getElementById("docencia").innerHTML = 700;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_5 = score3_5;
  data.score3_5 = isNaN(score3_5) ? 0 : score3_5;
  //updateDocencia();
@@ -501,6 +516,7 @@ if (!isNaN(score3_6)) {
   document.getElementById("docencia").innerHTML = docencia;
 }
 }
+ updateTotalDocencia();
  data.score3_6 = score3_6;
 //data.docencia  = docencia;
 data.score3_6 = isNaN(score3_6) ? 0 : score3_6;
@@ -530,6 +546,7 @@ if (!isNaN(score3_7)) {
     //docencia += score3_7;
 }
  document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_7 = score3_7;
   if(docencia>=700){
 
@@ -565,6 +582,7 @@ if (!isNaN(score3_8)) {
     //docencia += score3_8;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_8 = score3_8;
   data.score3_8 = isNaN(score3_8) ? 0 : score3_8;
   //updateDocencia();
@@ -597,6 +615,7 @@ if (!isNaN(score3_8_1)) {
     //docencia += score3_8_1;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_8_1 = score3_8_1;
   data.score3_8_1 = isNaN(score3_8_1) ? 0 : score3_8_1;
   //updateDocencia();
@@ -740,6 +759,7 @@ function onActv3SubTotal3_9(componentIndex){
 if (!isNaN(score3_9)) {
     //docencia += score3_9;
   if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
   }else{
@@ -790,6 +810,7 @@ console.log("🚀 ~ onActv3SubTotal3_10 ~ evaluarGrupales:", evaluarGrupales)
 
     if (!isNaN(score3_10)) {
     //docencia += score3_10;
+  updateTotalDocencia();
 
     if(docencia>=700){
 
@@ -842,6 +863,7 @@ if (!isNaN(score3_11)) {
     //docencia += score3_11;
     
     if(docencia>=700){
+updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -949,6 +971,7 @@ console.log("Subtotal Diseño Web:", subtotalWeb);
     if (!isNaN(score3_12)) {
     //docencia += score3_12;
     if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -1019,6 +1042,7 @@ console.log("Subtotal Arbitraje Internacional: ",subtotalReporteInvInt );
     if (!isNaN(score3_13)) {
     //docencia += score3_13;
     if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -1090,6 +1114,7 @@ console.log("SubTotal Congreso Local: ", subtotalCongresoLoc) ;
       document.getElementById("docencia").innerHTML = docencia;
     }
 }
+  updateTotalDocencia();
  
   data.score3_14 = score3_14;
   //data.docencia  = docencia;
@@ -1136,6 +1161,7 @@ console.log("SubTotal Desarrollo de Prototipos: ", subtotalPrototipos);
     if (!isNaN(score3_15)) {
     //docencia += score3_15;
       if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -1230,6 +1256,7 @@ console.log("SubTotal Consejo editorial de revista, edición de revista: ", subt
    document.getElementById("docencia").innerHTML = docencia;
 }
 }
+  updateTotalDocencia();
    console.log("onActv3SubTotal3_16 ~ docencia:", docencia);
   data.score3_16 = score3_16;
   //data.docencia  = docencia;
@@ -1299,6 +1326,7 @@ console.log("Reporte cumplido del periodo anual de proyecto de extensión y difu
     
 }
  //document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_17 = score3_17;
   //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
@@ -1420,6 +1448,7 @@ console.log("l)  Ciclo de conferencias, simposio, coloquio, etc. Internacional, 
 
 }
 
+    updateTotalDocencia();
     data.score3_18 = isNaN(score3_18) ? 0 : score3_18;
     //updateDocencia();
     //data.docencia = //data.docencia || 0;
@@ -1597,6 +1626,7 @@ console.log("q2) Cuerpo académico registrado ante PRODEP Consolidado Integrante
 }
 
 
+  updateTotalDocencia();
   data.score3_19 = score3_19;
   document.getElementById("docencia").innerHTML = score3_19;
 

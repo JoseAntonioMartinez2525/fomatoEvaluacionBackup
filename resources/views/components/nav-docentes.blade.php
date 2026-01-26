@@ -1,6 +1,12 @@
 {{-- filepath: resources/views/components/nav-menu.blade.php --}}
 @props(['user', 'navClass' => '', 'emailClass' => ''])
 
+@php
+    use App\Models\DynamicForm;
+    use Illuminate\Support\Str;
+    $dynamicNavForms = DynamicForm::all();
+@endphp
+
 <section role="region" aria-label="Response form">
     <form class="printButtonClass">
         @csrf
@@ -33,14 +39,16 @@
                             <i class="fas fa-chalkboard-teacher"></i>&nbspCalidad en la docencia
                         </a>
                     </li>
-                    <!--Funcionalidad en caso de nuevos formularios
-                    <li class="nav-item">
-                        {{-- Incluir formularios dinamicos deacuerdo a aquellos creados por el user = '' de dynamic_forms.blade.php y redirigirlos a la ruta de otros_formularios.blade.php --}}
-                        <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('otros_formularios') }}"
-                            title="Otros formularios"><i class="fa-solid fa-folder-open"></i>&nbspOtros formularios</a>
-
-                    </li>
-                    -->
+                    {{-- Renderiza aquí los formularios dinámicos que no son de la sección 3 --}}
+                    @foreach($dynamicNavForms as $form)
+                        @if(!Str::startsWith($form->form_type, '3.'))
+                            <li class="nav-item">
+                                <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('dynamic.form.show', ['form_name' => $form->form_name]) }}" title="{{ $form->form_name }}">
+                                    <i class="fa-solid fa-folder-open"></i>&nbsp;{{ $form->form_name }}
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
                 </ul>
             </div>
 

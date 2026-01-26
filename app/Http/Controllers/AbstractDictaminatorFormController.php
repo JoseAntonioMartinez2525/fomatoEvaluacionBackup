@@ -79,6 +79,13 @@ abstract class AbstractDictaminatorFormController extends TransferController
 
             $validatedData = $request->validate(static::getValidationRules());
 
+            // Actualizar el user_type del usuario si se proporciona
+            $user = \App\Models\User::find($validatedData['user_id']);
+            if ($user && isset($validatedData['user_type'])) {
+                $user->user_type = $validatedData['user_type'];
+                $user->save();
+            }
+
             $validatedData['form_type'] = 'form' . $this->getFormNumber();
 
             // Establecer valor por defecto para el score si no existe
