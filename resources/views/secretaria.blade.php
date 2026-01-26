@@ -1279,7 +1279,7 @@ foreach ($allowedEmails as $index => $email) {
         };
 
         try {
-            const response = await fetch('/dynamic-form/store', {
+            const response = await fetch("{{ route('dynamic-form.store') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1287,17 +1287,27 @@ foreach ($allowedEmails as $index => $email) {
                 },
                 body: JSON.stringify(payload)
             });
-            
+
             const result = await response.json();
-            if(result.success) {
+
+            if (!response.ok) {
+                // Si la respuesta no es exitosa (ej. 422, 500), construye un mensaje de error detallado.
+                let serverMessage = result.message || 'Error del servidor';
+                if (result.errors) {
+                    serverMessage += ':\n' + Object.values(result.errors).flat().join('\n');
+                }
+                throw new Error(serverMessage);
+            }
+
+            if (result.success) {
                 alert('✅ Formulario guardado correctamente');
                 location.reload();
             } else {
-                alert('❌ Error: ' + result.message);
+                alert('❌ Error: ' + (result.message || 'Ocurrió un error inesperado.'));
             }
-        } catch(e) {
-            console.error(e);
-            alert('❌ Error de conexión');
+        } catch (e) {
+            console.error('Error al guardar el formulario:', e);
+            alert('❌ Error: ' + e.message);
         }
     }
     </script>

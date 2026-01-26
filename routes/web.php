@@ -367,7 +367,7 @@ Route::middleware(['auth'])->group(function () {
     // Ruta para cambiar el modo oscuro
     Route::post('/toggle-dark-mode', [ThemeController::class, 'toggleDarkMode'])->name('theme.toggle');
     //Route::resource('dynamic-forms', DynamicFormController::class);
-    Route::post('/dynamic-form/store', [DynamicFormController::class, 'store'])->name('dynamic-form.store');
+    Route::post('/formato-evaluacion/dynamic-form/store', [DynamicFormController::class, 'store'])->name('dynamic-form.store');
 
     Route::get('/formato-evaluacion/dynamic-form/{formName}', [DynamicFormController::class, 'getFormByName']);
         // Add this route with your other routes
@@ -386,8 +386,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    Route::get('/formato-evaluacion//dynamic-form/columns/{formId}', [DynamicFormController::class, 'getColumns'])->name('dynamic-form.columns');
-    Route::get('/formato-evaluacion//form/edit/{form_name}', [DynamicFormController::class, 'edit'])->name('form.edit');
+    Route::get('/formato-evaluacion/dynamic-form/columns/{formId}', [DynamicFormController::class, 'getColumns'])->name('dynamic-form.columns');
+    Route::get('/formato-evaluacion/form/edit/{form_name}', [DynamicFormController::class, 'edit'])->name('form.edit');
     Route::put('/forms/{id}', [DynamicFormController::class, 'update'])->name('forms.update');
 
     Route::delete('/forms/{id}', [DynamicFormController::class, 'destroy'])->name('forms.destroy');
