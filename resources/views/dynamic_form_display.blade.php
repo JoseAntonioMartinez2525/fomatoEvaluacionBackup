@@ -33,7 +33,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                 <x-nav-docentes :user="Auth::user()" />
             @endif
 
-            <main class="main-content flex-grow-1">
+            <main class="main-content grow">
                 <header>
                     <h3>{{ $form->form_name }}</h3>
                     <h4>Puntaje máximo: <label class="bg-black text-white px-4">{{ $form->puntaje_maximo }}</label></h4>
