@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\EvaluationDate;
@@ -64,6 +65,36 @@ public function login(Request $request)
     // if (in_array($email, $this->dictaminadorEmails) && $isNoPassword) {
     if (in_array($email, $this->dictaminadorEmails)) {
         $user = User::where('email', $email)->first();
+        
+        // --- Lógica para determinar rol activo por fechas ---
+        // 1. Por defecto asumimos rol de dictaminador (ya que entró por esta validación)
+        $activeRole = 'dictaminador';
+        
+        // 2. Verificamos si TAMBIÉN es docente consultando el archivo de configuración
+        $isAlsoDocente = in_array($email, config('docentes.emails', []));
+        $now = Carbon::now();
+
+        // 1. Buscar periodo de dictaminadores
+        $dictaminadorPeriod = DB::table('docentes_evaluation_dates')
+            ->where('type', 'dictaminadores_capturando_datos')
+            ->orderBy('id', 'desc')
+            ->first();
+        
+        // Fallback a tabla antigua si es necesario
+        if (!$dictaminadorPeriod) {
+            $dictaminadorPeriod = DB::table('evaluation_dates')
+                ->where('type', 'docentes_evaluacion')
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
+        // 3. Si es usuario DUAL y NO estamos en periodo de dictaminación, cambiamos a rol docente
+        $inDictaminatorPeriod = $dictaminadorPeriod && $now->between(Carbon::parse($dictaminadorPeriod->start_date)->startOfDay(), Carbon::parse($dictaminadorPeriod->end_date)->endOfDay());
+        
+        if ($isAlsoDocente && !$inDictaminatorPeriod) {
+            $activeRole = 'docente';
+        }
+        // ---------------------------------------------------
 
         if (!$user) {
             $index = array_search($email, $this->dictaminadorEmails);
@@ -72,7 +103,7 @@ public function login(Request $request)
 
             $user = User::create([
                 'name' => $name,
-                'user_type' => 'dictaminador',
+                'user_type' => $activeRole,
                 'is_dictaminador' => true,
                 'email' => $email,
                 'password' => Hash::make('defaultpassword'),
@@ -84,7 +115,7 @@ public function login(Request $request)
 
             // Asegurarse de que el tipo sea dictaminador, flag esté activado y departamento actualizado
             $user->update([
-                'user_type' => 'dictaminador',
+                'user_type' => $activeRole,
                 'is_dictaminador' => true,
                 'departamento' => $departamento,
             ]);

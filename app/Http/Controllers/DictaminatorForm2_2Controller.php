@@ -104,9 +104,9 @@ class DictaminatorForm2_2Controller extends TransferController
                 return response()->json([
                         'success' => true,
                         'message' => 'Formulario enviado',
-                        'data' => $validitatedData
+                        // 'data' => $validitatedData
                     ], 200);
-
+        
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
