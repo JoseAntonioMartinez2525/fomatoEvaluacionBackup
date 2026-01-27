@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\UsersResponseForm1; // Import UsersResponseForm1
 use Illuminate\Support\Facades\Log;
 use App\Models\EvaluationDate;
 use Carbon\Carbon;
@@ -65,7 +66,7 @@ public function login(Request $request)
     // if (in_array($email, $this->dictaminadorEmails) && $isNoPassword) {
     if (in_array($email, $this->dictaminadorEmails)) {
         $user = User::where('email', $email)->first();
-        
+
         // --- Lógica para determinar rol activo por fechas ---
         // 1. Por defecto asumimos rol de dictaminador (ya que entró por esta validación)
         $activeRole = 'dictaminador';
@@ -79,7 +80,7 @@ public function login(Request $request)
             ->where('type', 'dictaminadores_capturando_datos')
             ->orderBy('id', 'desc')
             ->first();
-        
+
         // Fallback a tabla antigua si es necesario
         if (!$dictaminadorPeriod) {
             $dictaminadorPeriod = DB::table('evaluation_dates')
@@ -121,6 +122,50 @@ public function login(Request $request)
             ]);
         }
 
+        // --- Asegurar que el usuario dual-role tenga un registro en UsersResponseForm1 ---
+        // Esto es crucial ya que el formulario 1 fue eliminado de la vista.
+        if ($isAlsoDocente) {
+            $userResponseForm1 = UsersResponseForm1::firstOrNew(['user_id' => $user->id]);
+
+            // Obtener datos desde docentes.php
+            $docenteEmails = array_values(config('docentes.emails', []));
+            $docenteNombres = array_values(config('docentes.nombres', []));
+            $docenteAreas = array_values(config('docentes.areas', []));
+            $docenteDeptos = array_values(config('docentes.departamentos', []));
+
+            // Buscar índice normalizando a minúsculas para evitar errores de coincidencia
+            $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
+            
+            $dNombre = ($dIndex !== false && isset($docenteNombres[$dIndex])) ? $docenteNombres[$dIndex] : $user->name;
+            $dArea = ($dIndex !== false && isset($docenteAreas[$dIndex])) ? $docenteAreas[$dIndex] : ($user->area ?? 'No definida');
+            $dDepto = ($dIndex !== false && isset($docenteDeptos[$dIndex])) ? $docenteDeptos[$dIndex] : ($user->departamento ?? 'No definido');
+
+            if (!$userResponseForm1->exists) {
+                $currentPeriod = UsersResponseForm1::calculateCurrentPeriod();
+                // Intentar obtener la última convocatoria asignada, si no, usar un valor por defecto
+                $latestForm1 = UsersResponseForm1::latest()->first();
+                $currentConvocatoria = $latestForm1->convocatoria ?? 'Convocatoria no asignada';
+                $userResponseForm1->periodo = $currentPeriod;
+                $userResponseForm1->convocatoria = $currentConvocatoria;
+            }
+            
+            // Actualizar siempre los datos desde config para mantenerlos sincronizados
+            $userResponseForm1->nombre = $dNombre;
+            $userResponseForm1->area = $dArea;
+            $userResponseForm1->departamento = $dDepto;
+            $userResponseForm1->save();
+            
+            Log::info('Dual-role docente login data saved', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'nombre' => $dNombre,
+                'area' => $dArea,
+                'departamento' => $dDepto,
+                'config_index' => $dIndex
+            ]);
+        }
+        // --------------------------------------------------------------------------------
+
         // Auth::login($user);
 
         // return $this->redirectByUserType($user);
@@ -129,6 +174,49 @@ public function login(Request $request)
     // --- LOGIN REGULAR CON CONTRASEÑA ---
     if (Auth::attempt(['email' => $email, 'password' => $password])) {
         $user = Auth::user();
+
+        // Si el usuario es un docente (o dual-role que entra como docente),
+        // asegurar que tenga un registro en UsersResponseForm1 si no lo tiene.
+        if (in_array($user->email, config('docentes.emails', [])) || $user->user_type === 'docente') {
+            $userResponseForm1 = UsersResponseForm1::firstOrNew(['user_id' => $user->id]);
+            
+            // Obtener datos desde docentes.php
+            $docenteEmails = array_values(config('docentes.emails', []));
+            $docenteNombres = array_values(config('docentes.nombres', []));
+            $docenteAreas = array_values(config('docentes.areas', []));
+            $docenteDeptos = array_values(config('docentes.departamentos', []));
+
+            // Buscar índice normalizando a minúsculas
+            $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
+            
+            $dNombre = ($dIndex !== false && isset($docenteNombres[$dIndex])) ? $docenteNombres[$dIndex] : $user->name;
+            $dArea = ($dIndex !== false && isset($docenteAreas[$dIndex])) ? $docenteAreas[$dIndex] : ($user->area ?? 'No definida');
+            $dDepto = ($dIndex !== false && isset($docenteDeptos[$dIndex])) ? $docenteDeptos[$dIndex] : ($user->departamento ?? 'No definido');
+
+            if (!$userResponseForm1->exists) {
+                $currentPeriod = UsersResponseForm1::calculateCurrentPeriod();
+                $latestForm1 = UsersResponseForm1::latest()->first();
+                $currentConvocatoria = $latestForm1->convocatoria ?? 'Convocatoria no asignada';
+                $userResponseForm1->periodo = $currentPeriod;
+                $userResponseForm1->convocatoria = $currentConvocatoria;
+            }
+            
+            // Actualizar siempre los datos desde config para mantenerlos sincronizados
+            $userResponseForm1->nombre = $dNombre;
+            $userResponseForm1->area = $dArea;
+            $userResponseForm1->departamento = $dDepto;
+            $userResponseForm1->save();
+            
+            Log::info('Docente login data saved', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'nombre' => $dNombre,
+                'area' => $dArea,
+                'departamento' => $dDepto,
+                'config_index' => $dIndex
+            ]);
+        }
+
         return $this->redirectByUserType($user);
     }
 
@@ -198,12 +286,45 @@ private function redirectByUserType($user)
     {
         $user = Auth::user();
         
-        // Obtener el periodo formateado (ej. "2025 I" o "2025-2026") directamente del modelo
-        // Esto asegura consistencia con lo que se guardará en la base de datos.
-        $periodo = \App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido';
+        // Obtener datos guardados en UsersResponseForm1 (creado al login)
+        $form1 = UsersResponseForm1::where('user_id', $user->id)->first();
 
-        // Pass the user's email to the view
-        return view('welcome', compact('user', 'periodo'));
+        $periodo = $form1 ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+        $convocatoria = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
+        
+        // Cargar datos directamente del archivo docentes.php si es posible
+        // Usamos array_values para asegurar que los índices sean numéricos y coincidan
+        $docenteEmails = array_values(config('docentes.emails', []));
+        $docenteNombres = array_values(config('docentes.nombres', []));
+        $docenteAreas = array_values(config('docentes.areas', []));
+        $docenteDeptos = array_values(config('docentes.departamentos', []));
+
+        // Buscar índice normalizando a minúsculas para asegurar que se encuentren los datos
+        $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
+
+        // 1. Priorizar datos de UsersResponseForm1 si existen (ya sincronizados en login)
+        $nombre = $form1 && $form1->nombre ? $form1->nombre : $user->name;
+        $area = $form1 && $form1->area ? $form1->area : ($user->area ?? 'No definida');
+        $departamento = $form1 && $form1->departamento ? $form1->departamento : ($user->departamento ?? 'No definido');
+
+        // 2. Sobrescribir con datos del archivo de configuración SOLO si existen y son válidos
+        if ($dIndex !== false) {
+            $nombre = isset($docenteNombres[$dIndex]) && !empty($docenteNombres[$dIndex]) ? $docenteNombres[$dIndex] : $nombre;
+            $area = isset($docenteAreas[$dIndex]) && !empty($docenteAreas[$dIndex]) ? $docenteAreas[$dIndex] : $area;
+            $departamento = isset($docenteDeptos[$dIndex]) && !empty($docenteDeptos[$dIndex]) ? $docenteDeptos[$dIndex] : $departamento;
+        }
+
+        Log::info('Welcome page data prepared', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'nombre' => $nombre,
+            'area' => $area,
+            'departamento' => $departamento,
+            'config_index' => $dIndex,
+            'has_form1' => $form1 ? true : false
+        ]);
+
+        return view('welcome', compact('user', 'periodo', 'convocatoria', 'nombre', 'area', 'departamento'));
     }
 
     public function showLoginForm()
