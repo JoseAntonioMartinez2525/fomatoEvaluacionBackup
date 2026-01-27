@@ -197,7 +197,7 @@ $formNumber = '2';
         <x-docente-search />
 
     @endif
-</div>
+</div> <br><br>
 
 
 <div class="mostrar">
@@ -206,30 +206,28 @@ $formNumber = '2';
     <form id="form2" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">            
             @csrf
             <div><br>
-            {{-- <div class="datosConvocatoria">
+               <div class="datosConvocatoria">
                 <div class="row">
                     <label for="convocatoria">Convocatoria:</label>
-                    <div class="valor"><span class="input-header" id="convocatoria2"></span></div>
+                    <div class="valor"><span class="input-header" id="convocatoria2">{{ $convocatoria2 ?? '' }}</span></div>
                 </div>
                 <div class="row">
                     <label for="periodo">Periodo de evaluación:</label>
-                    <div class="valor"><span id="periodo2" class="input-header"></span></div>
+                    <div class="valor"><span id="periodo2" class="input-header">{{ $periodo2 ?? '' }}</span></div>
                 </div>
                 <div class="row">
                     <label for="nombre">Nombre del personal académico:</label>
-                    <div class="valor"><span id="nombre2" class="input-header"></span></div>
+                    <div class="valor"><span id="nombre2" class="input-header">{{ $nombre2 ?? '' }}</span></div>
                 </div>
                 <div class="row">
                     <label for="area">Área de Conocimiento:</label>
-                    <div class="valor"><span id="area2" class="input-header"></span></div>
+                    <div class="valor"><span id="area2" class="input-header">{{ $area2 ?? '' }}</span></div>
                 </div>
                 <div class="row">
                     <label for="departamento">Departamento Académico:</label>
-                    <div class="valor"><span id="departamento2" class="input-header"></span></div>
+                    <div class="valor"><span id="departamento2" class="input-header">{{ $departamento2 ?? '' }}</span></div>
                 </div>
-            </div><br>    --}}
-            
-            
+            </div><br>
             <center class="printCenter"><h5>Instrucciones</h5></center>
             
             <div class="container flex">

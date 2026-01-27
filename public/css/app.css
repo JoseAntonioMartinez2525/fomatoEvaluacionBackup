@@ -1151,6 +1151,7 @@ body.dark-mode nav.nav.flex-column a:hover {
 
 .datosConvocatoria .row {
     display: contents;
+    
     /* Permite que los hijos usen el grid del padre */
 }
 
@@ -1158,9 +1159,11 @@ body.dark-mode nav.nav.flex-column a:hover {
     text-align: left;
     align-self: start;
     margin-bottom: 2px;
+
 }.datosConvocatoria .valor {
     display: flex;
     align-items: center;
+    width: 75%;
 }
 
 .datosConvocatoria .input-header {

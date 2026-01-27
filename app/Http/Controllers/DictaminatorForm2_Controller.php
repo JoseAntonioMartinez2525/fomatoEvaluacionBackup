@@ -285,10 +285,44 @@ public function getFormData2(Request $request)
             $hasData = DictaminatorsResponseForm2::where('email', $emailFromUrl)->exists();
         }
 
+        // Inicializar variables para la vista
+        $convocatoria2 = '';
+        $periodo2 = '';
+        $nombre2 = '';
+        $area2 = '';
+        $departamento2 = '';
+
+        if ($emailFromUrl) {
+            $user = \App\Models\User::where('email', $emailFromUrl)->first();
+            if ($user) {
+                // Obtener Convocatoria y Periodo desde UsersResponseForm1
+                $form1 = UsersResponseForm1::where('user_id', $user->id)->first();
+                $convocatoria2 = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
+                $periodo2 = $form1 ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+
+                // Obtener Nombre, Área y Departamento desde config/docentes.php
+                $docenteEmails = array_values(config('docentes.emails', []));
+                $docenteNombres = array_values(config('docentes.nombres', []));
+                $docenteAreas = array_values(config('docentes.areas', []));
+                $docenteDeptos = array_values(config('docentes.departamentos', []));
+
+                $dIndex = array_search(strtolower($emailFromUrl), array_map('strtolower', $docenteEmails));
+
+                $nombre2 = ($dIndex !== false && isset($docenteNombres[$dIndex])) ? $docenteNombres[$dIndex] : $user->name;
+                $area2 = ($dIndex !== false && isset($docenteAreas[$dIndex])) ? $docenteAreas[$dIndex] : ($user->area ?? 'No definida');
+                $departamento2 = ($dIndex !== false && isset($docenteDeptos[$dIndex])) ? $docenteDeptos[$dIndex] : ($user->departamento ?? 'No definido');
+            }
+        }
+
         return view('form2', [
             'teacherEmailFromUrl' => $emailFromUrl,
             'showSearch' => $showSearchComponent,
-            'hasData' => $hasData
+            'hasData' => $hasData,
+            'convocatoria2' => $convocatoria2,
+            'periodo2' => $periodo2,
+            'nombre2' => $nombre2,
+            'area2' => $area2,
+            'departamento2' => $departamento2,
         ]);
     }
 
