@@ -1,7 +1,17 @@
 @php
 $userType = Auth::user()->user_type;
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
+use App\Models\DynamicForm;
+use Illuminate\Support\Str;
 
+$dynamicForms = DynamicForm::all();
+$staticStepCount = 20; // La última actividad estática (3.19) corresponde al paso 20
+$dynamicFormIndex = 0;
+
+$staticFormTypes = [
+    '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.8.1', '3.9', 
+    '3.10', '3.11', '3.12', '3.13', '3.14', '3.15', '3.16', '3.17', '3.18', '3.19'
+];
 
 @endphp
 <!DOCTYPE html>
@@ -127,6 +137,13 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                 <li><a href="javascript:void(0);" onclick="showStep(19)">3.18 Organización de congresos o eventos institucionales del área de conocimiento de
                         la ó el Docente </a></li>
                 <li><a href="javascript:void(0);" onclick="showStep(20)">3.19 Participación en cuerpos colegiados</a></li>
+                {{-- Bucle para formularios dinámicos de la sección 3 --}}
+                @foreach($dynamicForms as $form)
+                    @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                        @php $dynamicFormIndex++; @endphp
+                        <li><a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $dynamicFormIndex }})">{{ $form->form_name }}</a></li>
+                    @endif
+                @endforeach
             </ul>
         </nav>
 
@@ -153,6 +170,15 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                  <li><a href="javascript:void(0);" onclick="showStep(18)">3.17 Proyectos académicos de extensión y difusión </a></li>
                  <li><a href="javascript:void(0);" onclick="showStep(19)">3.18 Organización de congresos o eventos institucionales del área de conocimiento de la ó el Docente </a></li>
                  <li><a href="javascript:void(0);" onclick="showStep(20)">3.19 Participación en cuerpos colegiados</a></li>
+                 
+                 {{-- Bucle para formularios dinámicos de la sección 3 (segundo menú) --}}
+                 @php $dynamicFormIndex = 0; @endphp
+                 @foreach($dynamicForms as $form)
+                    @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                        @php $dynamicFormIndex++; @endphp
+                        <li><a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $dynamicFormIndex }})">{{ $form->form_name }}</a></li>
+                    @endif
+                @endforeach
              </ul>
         </x-nav-docentes>
     @endif
@@ -177,7 +203,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     @csrf
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                    <input type="hidden" name="user_type" value="docente">
                                     <div>
                                         <!-- Actividad 3.1 Participación en actividades de diseño curricular -->
                                         <h4>Puntaje máximo
@@ -311,7 +337,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store32', 'form3_2');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!-- Actividad 3.2 Calidad del desempeño docente evaluada por el alumnado -->
@@ -400,7 +426,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_3" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store33', 'form3_3');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!-- Actividad 3.3 Publicaciones relacionadas con la docencia -->
@@ -526,7 +554,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_4" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store34', 'form3_4');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!-- 3.4 Distinciones académicas recibidas por el docente  -->
@@ -614,7 +642,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_5" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store35', 'form3_5');">
                                 <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                 
+                                <input type="hidden" name="user_type" value="docente">
+                                <input type="hidden" name="user_type" value="docente">
                                 @csrf
                                 <div>
                                     <!-- 3.5 Asistencia, puntualidad y permanencia en el desempeño docente, evaluada por el JD y por CAAC  -->
@@ -696,7 +726,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store36', 'form3_6');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                                                       
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!-- 3.6 Capacitación y actualización pedagógica recibida  -->
@@ -765,7 +797,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store37', 'form3_7');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!-- 3.7 Cursos de actualización disciplinaria recibidos dentro de su área de conocimiento  -->
@@ -835,7 +869,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store38', 'form3_8');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!--3.8 Impartición de cursos, diplomados, seminarios, talleres extracurriculares, de educación, continua o de formación y capacitación docente-->
@@ -909,7 +945,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_8_1" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store381', 'form3_8_1');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
                                         <!--3.8.1 RSU -->
@@ -985,7 +1023,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                     <form id="form3_9" method="POST"onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store39', 'form3_9');">
                                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                         <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                        <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                         
+                                        {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                        <input type="hidden" name="user_type" value="docente">
                                         @csrf
                                         <table class="table table-sm tutorias">
 
@@ -1252,7 +1292,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_10" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store310', 'form3_10');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                         <!--3.10 Trabajos dirigidos para la titulación de estudiantes-->
                                         <h4>Puntaje máximo
@@ -1337,7 +1379,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_11" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store311', 'form3_11');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <!--3.11 Trabajos dirigidos para la titulación de estudiantes-->
                                     <h4>Puntaje máximo
@@ -1436,7 +1480,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_12" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store312', 'form3_12');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                         <!--3.12 Trabajos dirigidos para la titulación de estudiantes-->
                                         <h4>Puntaje máximo
@@ -1636,7 +1682,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_13" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store313', 'form3_13');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <!--3.13 Proyectos académicos de investigación-->
                                     <h4>Puntaje máximo
@@ -1749,7 +1797,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_14" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store314', 'form3_14');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                 <!--3.14 Participación como ponente en congresos o eventos académicos del Área de Conocimiento o afines del docente-->
                                 <h4>Puntaje máximo
@@ -1846,7 +1896,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_15" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store315', 'form3_15');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                 @csrf
                                 <!--3.15 Registro de patentes y productos de investigación tecnológica y educativa -->
                                 <h4>Puntaje máximo
@@ -1931,9 +1983,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                             <br>
                             <div id="step17" style="display: none">  
                                 <form id="form3_16" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store316', 'form3_16');">
-                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                    <input type="hidden" name="user_type" value="docente">
                                 @csrf
                                 <!--3.16 Actividades de arbitraje, revisión, correción y edición -->
                                 <h4>Puntaje máximo
@@ -2092,8 +2144,10 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_17" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store317', 'form3_17');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
-                                        @csrf
+                                     
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                    <input type="hidden" name="user_type" value="docente">
+                                    @csrf
                                     <!--3.17 Proyectos académicos de extensión y difusión-->
                                     <h4>Puntaje máximo
                                         <label class="bg-black text-white px-4 mt-3" for="">50</label>
@@ -2217,7 +2271,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_18" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store318', 'form3_18');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                    <input type="hidden" name="user_type" value="docente">
                                 @csrf
                                 <!--3.18 Organización de congresos o eventos institucionales del área de conocimiento de la o el Docente-->
                                 <h4>Puntaje máximo
@@ -2461,7 +2515,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 <form id="form3_19" method="POST" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store319', 'form3_19');">
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                    <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}">
+                                     
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                    <input type="hidden" name="user_type" value="docente">
 
                                     @csrf
                                     <!--3.19 Participación en cuerpos colegiados-->
@@ -2812,6 +2868,39 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                             </div>        
                             <br>
 
+                            {{-- Contenedores para los formularios dinámicos --}}
+                            @php $dynamicFormIndex = 0; @endphp
+                            @foreach($dynamicForms as $form)
+                                @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                                    @php $dynamicFormIndex++; @endphp
+                                    <div id="step{{ $staticStepCount + $dynamicFormIndex }}" style="display: none">
+                                        <h4>Puntaje máximo
+                                            <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
+                                        </h4>
+                                        <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault();">
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                                            <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                                             
+                                            {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+                                            <input type="hidden" name="user_type" value="docente">
+                                            <input type="hidden" name="form_id" value="{{ $form->id }}">
+
+                                            <h3>{{ $form->form_name }}</h3>
+                                            <p class="text-muted">
+                                                Este es un formulario dinámico. Aquí se renderizaría la tabla basada en la estructura que creaste.
+                                                Para una implementación completa, necesitarías un componente de Blade que interprete y dibuje la tabla desde los datos JSON del formulario.
+                                            </p>
+                                            <p class="mt-3"><strong>Acreditación:</strong> {{ $form->acreditacion }}</p>
+                                            
+                                            {{-- Aquí iría la lógica para renderizar la tabla del formulario dinámico. --}}
+
+                                            <button type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                                        </form>
+                                    </div>
+                                @endif
+                            @endforeach
+
 </main>
 
 <footer>
@@ -2844,7 +2933,6 @@ for (let i = 40; i <= 55; i++) {
 const C56 = B56 * A40;
 const C57 = B57 * A40;
 console.log(variablesMultiplicadas);
-const elaboracion = document.getElementById('elaboracion').value;
 
 const rc1 = document.getElementById('rc1').value;
 const rc2 = document.getElementById('rc2').value;
@@ -2923,7 +3011,6 @@ let dataDocentes = {
     comision3_18: comision3_18,
     score3_19: score3_19,
     comision3_19: comision3_19,
-    docencia: docencia,
     obs3_1_1: obs3_1_1,
     obs3_1_2: obs3_1_2,
     obs3_1_3: obs3_1_3,
@@ -3945,6 +4032,7 @@ function onActv3SubTotal3_9(){
 //subtotal minimo resultante
     const score3_9 = minTutorias(tutorias1,tutorias2,tutorias3, tutorias4, tutorias5, tutorias6, tutorias7, tutorias8, tutorias9, tutorias10, tutorias11, tutorias12, tutorias13, tutorias14, tutorias15, tutorias16, tutorias17);
     scoreElement.textContent = score3_9.toFixed(2);
+    document.getElementById("score3_9").innerHTML = score3_9;
     console.log(`Puntaje tabla ${componentIndex}:`, score3_9);
  
 if (!isNaN(score3_9)) {
@@ -3957,6 +4045,9 @@ if (!isNaN(score3_9)) {
   }
      
 
+    if (typeof window.updateTotalDocencia === 'function') {
+        window.updateTotalDocencia();
+    }
 }
 }
 
