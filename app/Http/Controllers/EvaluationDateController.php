@@ -56,6 +56,33 @@ class EvaluationDateController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
+        $startDate = $request->start_date;
+    $endDate = $request->end_date;
+
+    // 1️⃣ Verificar si las fechas coinciden con alguna fecha de docentes
+    $conflicto = EvaluationDate::where('type', 'docentes_llenado')
+        ->where(function($query) use ($startDate, $endDate) {
+            $query->whereBetween('start_date', [$startDate, $endDate])
+                  ->orWhereBetween('end_date', [$startDate, $endDate])
+                  ->orWhere(function($q) use ($startDate, $endDate) {
+                      $q->where('start_date', '<=', $startDate)
+                        ->where('end_date', '>=', $endDate);
+                  });
+        })
+        ->exists();
+
+    if ($conflicto) {
+        // 2️⃣ Eliminar la fecha de dictaminadores que coincide
+        DB::table('docentes_evaluation_dates')
+            ->where('type', 'dictaminadores_capturando_datos')
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'La fecha de dictaminadores coincide con la de docentes y ha sido eliminada.'
+        ], 200);
+    }
+
         // Corregido: Guardar en la tabla docentes_evaluation_dates
         DB::table('docentes_evaluation_dates')->updateOrInsert(
             ['type' => 'dictaminadores_capturando_datos'],

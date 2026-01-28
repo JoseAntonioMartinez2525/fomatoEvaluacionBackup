@@ -2877,7 +2877,7 @@ $staticFormTypes = [
                                         <h4>Puntaje máximo
                                             <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
                                         </h4>
-                                        <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault();">
+                                        <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault(); submitDynamicForm('{{ url('/dynamic-forms/save-response') }}', 'dynamic-form-{{ $form->id }}', {{ $staticStepCount + $dynamicFormIndex }});">
                                             @csrf
                                             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                             <input type="hidden" name="email" value="{{ auth()->user()->email }}">
@@ -2887,13 +2887,52 @@ $staticFormTypes = [
                                             <input type="hidden" name="form_id" value="{{ $form->id }}">
 
                                             <h3>{{ $form->form_name }}</h3>
-                                            <p class="text-muted">
-                                                Este es un formulario dinámico. Aquí se renderizaría la tabla basada en la estructura que creaste.
-                                                Para una implementación completa, necesitarías un componente de Blade que interprete y dibuje la tabla desde los datos JSON del formulario.
-                                            </p>
-                                            <p class="mt-3"><strong>Acreditación:</strong> {{ $form->acreditacion }}</p>
                                             
-                                            {{-- Aquí iría la lógica para renderizar la tabla del formulario dinámico. --}}
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-bordered">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            @if(is_array($form->form_structure) || is_object($form->form_structure))
+                                                                @foreach($form->form_structure as $column)
+                                                                    <th class="text-center align-middle">{{ $column['name'] }}</th>
+                                                                @endforeach
+                                                            @endif
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if(is_array($form->form_data) || is_object($form->form_data))
+                                                            @foreach($form->form_data as $rowIndex => $row)
+                                                                <tr>
+                                                                    @foreach($form->form_structure as $colIndex => $column)
+                                                                        @php
+                                                                            $key = $column['key'];
+                                                                            $isActividad = ($key === 'actividad');
+                                                                            $isCommission = ($key === 'puntaje_de_la_comision_dictaminadora');
+                                                                            $value = $row[$key] ?? '';
+                                                                        @endphp
+                                                                        
+                                                                        <td>
+                                                                            @if($isActividad)
+                                                                                <span class="fw-bold">{{ $value }}</span>
+                                                                                <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
+                                                                            @elseif($isCommission)
+                                                                                <span class="text-muted text-center d-block">-</span>
+                                                                            @else
+                                                                                <input type="text" class="form-control form-control-sm text-center" 
+                                                                                    name="data[{{ $rowIndex }}][{{ $key }}]" 
+                                                                                    value="{{ $value }}"
+                                                                                >
+                                                                            @endif
+                                                                        </td>
+                                                                    @endforeach
+                                                                </tr>
+                                                            @endforeach
+                                                        @endif
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <p class="mt-3"><strong>Acreditación:</strong> {{ $form->acreditacion }}</p>
 
                                             <button type="submit" class="btn custom-btn printButtonClass">Enviar</button>
                                         </form>
@@ -3208,6 +3247,74 @@ const stepMap = {
         if (current) {
             current.style.display = "block";
         }
+    }
+
+    function submitDynamicForm(url, formId, currentStep) {
+        const form = document.getElementById(formId);
+        const formData = new FormData(form);
+        
+        // Construct JSON payload from FormData
+        const structuredData = {
+            user_id: formData.get('user_id'),
+            email: formData.get('email'),
+            user_type: formData.get('user_type'),
+            form_id: formData.get('form_id'),
+            data: []
+        };
+        
+        // Extract table data
+        const rows = form.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            const rowData = {};
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(input => {
+                const name = input.name; 
+                // Regex to extract key from name="data[rowIndex][key]"
+                const match = name.match(/\[(\w+)\]$/);
+                if (match) {
+                    const key = match[1];
+                    rowData[key] = input.value;
+                }
+            });
+            structuredData.data.push(rowData);
+        });
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(structuredData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ Formulario enviado correctamente');
+                
+                // Handle Step Transition
+                if (currentStep) {
+                    const nextStep = currentStep + 1;
+                    // Check if next step exists
+                    if (document.getElementById(`step${nextStep}`)) {
+                        showStep(nextStep);
+                        localStorage.setItem("ultimoStepDocencia", nextStep);
+                    } else {
+                        // End of forms
+                        localStorage.setItem("ultimoStepDocencia", "FIN");
+                        alert('Has completado todos los formularios.');
+                    }
+                }
+            } else {
+                alert('❌ Error: ' + (data.message || 'Error al enviar'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Error de conexión');
+        });
     }
 
 
