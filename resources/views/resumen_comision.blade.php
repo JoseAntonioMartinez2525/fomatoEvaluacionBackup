@@ -14,7 +14,14 @@ $docenteConfig = [
     'hiddenEmailId' => 'selectedDocenteEmail',
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'skipAutoFetch' => true, // Evita que el script de autocompletado global intente cargar datos.
+    'docentesEndpoint' => '/formato-evaluacion/get-docentes',
+
 ];
+
+// Si se recibe un email desde la URL, se lo pasamos a la configuración del autocompletado.
+if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
+    $docenteConfig['preselectedEmail'] = $teacherEmailFromUrl;
+}
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $newLocale }}">
@@ -224,7 +231,7 @@ body.dark-mode img.imgFirma{
                 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
             <div class="container mt-4" id="seleccionDocente">
-            @if($userType !== 'docente')
+            @if($userType !== 'docente' && empty($teacherEmailFromUrl))
             {{-- Componente de búsqueda de docente --}}
             <x-docente-search />
             @endif
@@ -704,13 +711,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dataContainer = document.getElementById('data');
     const formContainer = document.getElementById('formContainer');
     const userType = @json($userType);
+    const teacherEmailFromUrl = @json($teacherEmailFromUrl ?? '');
     
-    // Escuchar el evento personalizado 'docenteSelected' que dispara el componente de autocompletado
-    document.addEventListener('docenteSelected', async (event) => {
-        const docente = event.detail;
-        const email = docente.email;
-
-        if (!email) return;
+    async function loadDocenteData(email) {
+         if (!email) return;
 
         formContainer.style.display = 'none';
         dataContainer.innerHTML = '';
@@ -785,7 +789,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             pdfLink.innerHTML = `<i class="fa-solid fa-file-pdf"></i>&nbsp; Generar Reporte PDF`;
             pdfButtonContainer.appendChild(pdfLink);
         }
+    }
 
+    if (teacherEmailFromUrl) {
+        loadDocenteData(teacherEmailFromUrl);
+    }
+    
+    // Escuchar el evento personalizado 'docenteSelected' que dispara el componente de autocompletado
+    document.addEventListener('docenteSelected', async (event) => {
+        const docente = event.detail;
+        const email = docente.email;
+
+        await loadDocenteData(email);
     });
 });
 

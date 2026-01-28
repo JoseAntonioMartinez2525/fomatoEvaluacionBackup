@@ -426,8 +426,61 @@ class ResponseJson extends Controller
     }
 
 
+    public function buildDocenciaScores(int $userId): array
+    {
+        $scores = [];
+        $totalDocencia = 0;
 
-    
+        // Mapeo: form => [modelo, campo_score]
+        $map = [
+            'form3_1'  => [UsersResponseForm3_1::class,  'score3_1'],
+            'form3_2'  => [UsersResponseForm3_2::class,  'score3_2'],
+            'form3_3'  => [UsersResponseForm3_3::class,  'score3_3'],
+            'form3_4'  => [UsersResponseForm3_4::class,  'score3_4'],
+            'form3_5'  => [UsersResponseForm3_5::class,  'score3_5'],
+            'form3_6'  => [UsersResponseForm3_6::class,  'score3_6'],
+            'form3_7'  => [UsersResponseForm3_7::class,  'score3_7'],
+            'form3_8'  => [UsersResponseForm3_8::class,  'score3_8'],
+            'form3_8_1'=> [UsersResponseForm3_8_1::class,'score3_8_1'],
+            'form3_9'  => [UsersResponseForm3_9::class,  'score3_9'],
+            'form3_10' => [UsersResponseForm3_10::class, 'score3_10'],
+            'form3_11' => [UsersResponseForm3_11::class, 'score3_11'],
+            'form3_12' => [UsersResponseForm3_12::class, 'score3_12'],
+            'form3_13' => [UsersResponseForm3_13::class, 'score3_13'],
+            'form3_14' => [UsersResponseForm3_14::class, 'score3_14'],
+            'form3_15' => [UsersResponseForm3_15::class, 'score3_15'],
+            'form3_16' => [UsersResponseForm3_16::class, 'score3_16'],
+            'form3_17' => [UsersResponseForm3_17::class, 'score3_17'],
+            'form3_18' => [UsersResponseForm3_18::class, 'score3_18'],
+            'form3_19' => [UsersResponseForm3_19::class, 'score3_19'],
+        ];
+
+        foreach ($map as $formKey => [$model, $field]) {
+            $scoreValue = (float) ($model::where('user_id', $userId)->value($field) ?? 0);
+            $scores[$formKey] = [$field => $scoreValue]; // Anidar el score
+            $totalDocencia += $scoreValue;
+        }
+
+        // Suma total de docencia en la raíz del objeto
+        
+        $scores['docencia'] = min(round($totalDocencia, 2), 700);
+
+        return $scores;
+    }
+
+
+    public function getDocenciaScoresByUser(Request $request)
+{
+    $userId = $request->query('user_id');
+
+    if (!$userId) {
+        return response()->json(['error' => 'user_id requerido'], 400);
+    }
+
+    $scores = $this->buildDocenciaScores($userId);
+
+    return response()->json($scores);
+}
 
 
 

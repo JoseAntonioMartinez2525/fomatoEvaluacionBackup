@@ -1,7 +1,8 @@
-
 <script>
 (function () {
     const config = @json($config ?? []);
+    // Preferir window.ENDPOINTS si existe
+    const endpoints = window.ENDPOINTS || {};
 
     // util: leer propiedad segura por path "a.b.c"
     function readProp(obj, path) {
@@ -113,7 +114,9 @@
                 if (q.length < (config.minChars || 2)) { suggestionsBox.style.display = 'none'; return; }
                 debounceTimer = setTimeout(async () => {
                     try {
-                        const docentesResp = await fetch((config.docentesEndpoint) ? config.docentesEndpoint + '?search=' + encodeURIComponent(q) : `/formato-evaluacion/get-docentes?search=${encodeURIComponent(q)}`);
+                        // Usar endpoint global si existe, si no fallback
+                        // const docentesEndpoint = endpoints.getDictaminatorsResponses || config.docentesEndpoint || (config.baseUrl ? config.baseUrl + '/get-docentes' : '/get-docentes');
+                        const docentesResp = await fetch(docentesEndpoint + '?search=' + encodeURIComponent(q));
                         const docentes = await docentesResp.json();
                         suggestionsBox.innerHTML = '';
                         if (Array.isArray(docentes) && docentes.length) {
@@ -168,8 +171,46 @@
 
             const email = docente.email;
             selectedEmail = email; // actualizar variable global
+
+             // --- NUEVO BLOQUE: hidratar scores desde endpoint backend ---
+                try {
+                    // Tomar user_id si existe en un input oculto
+                    const userIdInput = document.querySelector(`input[name="user_id"]`);
+                    const userId = userIdInput ? userIdInput.value : null;
+
+                    if (userId) {
+                        const resp = await fetch(`/docencia-scores?user_id=${userId}`);
+                        if (!resp.ok) throw new Error('Error al obtener docencia-scores');
+
+                        const scoresData = await resp.json();
+
+                        // Hidratar window.data con scores reales
+                        window.data = window.data || {};
+                        for (let i = 1; i <= 19; i++) {
+                            const key = `score3_${i}`;
+                            window.data[key] = Number(scoresData[key]) || 0;
+                        }
+
+                        // docencia total
+                        window.data['docencia'] = Number(scoresData.docencia) || 0;
+                        window.data.__mode = 'edit';
+
+                        // Proyectar scores en el DOM
+                        renderScoresFromData(window.data);
+
+                        const docenciaEl = document.getElementById('docencia');
+                        const docencia2El = document.getElementById('docencia2');
+                        if (docenciaEl) docenciaEl.textContent = window.data['docencia'] || '0';
+                        if (docencia2El) docencia2El.textContent = window.data['docencia'] || '0';
+
+                    }
+                } catch (err) {
+                    console.error('Error cargando docencia-scores:', err);
+                }
+                // --- FIN BLOQUE NUEVO (solo scores) ---
             try {
-                const docenteDataEndpoint = config.docenteDataEndpoint || '/formato-evaluacion/get-docente-data';
+                // Usar endpoint global si existe, si no fallback
+                const docenteDataEndpoint = endpoints.getDocenteData || config.docenteDataEndpoint || (config.baseUrl ? config.baseUrl + '/get-docente-data' : '/get-docente-data');
                 // se usa axios (por preferencia del proyecto)
                 const axiosResp = await axios.get(docenteDataEndpoint, { params: { email } });
                 const docenteData = axiosResp.data;
@@ -229,7 +270,12 @@
                     // --- CARGA DE RESPUESTA DE DICTAMINADOR ---
                     if (config.dictEndpoint) {
                         try {
-                            const dictRespUrl = `${config.dictEndpoint}?email=${email}`;
+                            // Priorizar configuración específica del formulario, luego global, luego fallback
+                            // Usar endpoint global si existe, si no fallback
+                            // const dictEndpoint = endpoints.getDictaminatorsResponses || config.dictEndpoint || (config.baseUrl ? config.baseUrl + '/get-dictaminators-responses' : '/get-dictaminators-responses');
+                            // Priorizar configuración específica del formulario, luego global, luego fallback
+                            const dictEndpoint = config.dictEndpoint || endpoints.getDictaminatorsResponses || (config.baseUrl ? config.baseUrl + '/get-dictaminators-responses' : '/get-dictaminators-responses');
+                            const dictRespUrl = `${dictEndpoint}?email=${email}`;
                             const resp = await fetch(dictRespUrl);
                             const dictData = await resp.json();
 

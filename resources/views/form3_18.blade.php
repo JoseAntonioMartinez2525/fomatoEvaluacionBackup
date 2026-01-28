@@ -24,7 +24,7 @@ $docenteConfig = $docenteConfig ?? [
 
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-    'dictEndpoint'        => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data318',
 
     'dictCollectionKey'   => 'form3_18',
     'userTypeForDict'     => '',
@@ -201,7 +201,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
 
             .page-number:before {
-                content: "Página " counter(page) " de 33";
+                content: "Página " counter(page) " de 34";
             }
 
             .secretaria-style {
@@ -252,7 +252,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
             }
 
             .page-number:before {
-                content: "Página " counter(page) " de 33";
+                content: "Página " counter(page) " de 34";
             }
 
 
@@ -263,10 +263,25 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
             margin-top: 10rem;
         }
 
-        button#btn3_18 {
-            margin-inline-start:  88%;
-            MARGIN-top: 5%;
+
+
+        button#edit-btn-form3_18{
+            margin-left:67rem;
         }
+
+        button#btn3_18{
+            margin-left:60rem;
+        }
+
+        body.dark-mode input#obsComOrgInt, body.dark-mode input#obsComOrgNac, body.dark-mode input#obsComOrgReg, body.dark-mode input#obsComApoyoInt, body.dark-mode input#obsComApoyoNac, 
+        body.dark-mode input#obsComApoyoReg, body.dark-mode input#obsCicloComOrgInt, body.dark-mode input#obsCicloComOrgNac, body.dark-mode input#obsCicloComOrgReg, body.dark-mode input#obsCicloComApoyoInt,
+         body.dark-mode input#obsCicloComApoyoNac, body.dark-mode input#obsCicloComApoyoReg{
+        color: white!important;
+        font-size: .8rem;
+        font-weight: bold;
+        
+
+    }
     </style>
 
 </head>
@@ -284,7 +299,21 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     @php
 $user = Auth::user();
 $userType = $user->user_type;
-$user_identity = $user->id; 
+$user_identity = $user->id;
+
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_18'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_18';
+$formNumber = '318';
     @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo
@@ -299,12 +328,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_18 -->
-        <form id="form3_18" method="POST">
+        <form id="form3_18" action="/formato-evaluacion/store-form318" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.18 Organización de congresos o eventos institucionales del área de conocimiento de la o el Docente-->
             <h4>Puntaje máximo
@@ -332,7 +363,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsComOrgInt">
+                                <input class="table-header" type="text" name="obsComOrgInt" id="obsComOrgInt">
                             @else
                                 <span id="obsComOrgInt" name="obsComOrgInt" class="form3_18_dark"></span>
                             @endif
@@ -357,7 +388,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsComOrgNac">
+                                <input class="table-header" type="text" name="obsComOrgNac" id="obsComOrgNac">
                             @else
                                 <span id="obsComOrgNac" name="obsComOrgNac" class="form3_18_dark"></span>
                             @endif
@@ -382,7 +413,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsComOrgReg">
+                                <input class="table-header" type="text" name="obsComOrgReg" id="obsComOrgReg">
                             @else
                                 <span id="obsComOrgReg" name="obsComOrgReg" class="form3_18_dark"></span>
                             @endif
@@ -407,7 +438,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsComApoyoInt">
+                                <input class="table-header" type="text" name="obsComApoyoInt" id="obsComApoyoInt">
                             @else
                                 <span id="obsComApoyoInt" name="obsComApoyoInt" class="form3_18_dark"></span>
                             @endif
@@ -432,7 +463,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsComApoyoNac">
+                                <input class="table-header" type="text" name="obsComApoyoNac" id="obsComApoyoNac">
                             @else
                                 <span id="obsComApoyoNac" name="obsComApoyoNac" class="form3_18_dark"></span>
                             @endif
@@ -457,7 +488,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsComApoyoReg">
+                                <input class="table-header" type="text" name="obsComApoyoReg" id="obsComApoyoReg">
                             @else
                                 <span id="obsComApoyoReg" name="obsComApoyoReg" class="form3_18_dark"></span>
                             @endif
@@ -476,7 +507,7 @@ $user_identity = $user->id;
                 </div>
                 <div id="piedepagina1"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 26 de 33
+                    Página 26 de 34
                 </div>
             </div><br>
 
@@ -505,7 +536,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCicloComOrgInt">
+                                <input class="table-header" type="text" name="obsCicloComOrgInt" id="obsCicloComOrgInt">
                             @else
                                 <span id="obsCicloComOrgInt" name="obsCicloComOrgInt" class="form3_18_dark"></span>
                             @endif
@@ -532,7 +563,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCicloComOrgNac">
+                                <input class="table-header" type="text" name="obsCicloComOrgNac" id="obsCicloComOrgNac">
                             @else
                                 <span id="obsCicloComOrgNac" name="obsCicloComOrgNac" class="form3_18_dark"></span>
                             @endif
@@ -559,7 +590,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCicloComOrgReg">
+                                <input class="table-header" type="text" name="obsCicloComOrgReg" id="obsCicloComOrgReg">
                             @else
                                 <span id="obsCicloComOrgReg" name="obsCicloComOrgReg" class="form3_18_dark"></span>
                             @endif
@@ -587,7 +618,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCicloComApoyoInt">
+                                <input class="table-header" type="text" name="obsCicloComApoyoInt" id="obsCicloComApoyoInt">
                             @else
                                 <span id="obsCicloComApoyoInt" name="obsCicloComApoyoInt" class="form3_18_dark"></span>
                             @endif
@@ -615,7 +646,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCicloComApoyoNac">
+                                <input class="table-header" type="text" name="obsCicloComApoyoNac" id="obsCicloComApoyoNac">
                             @else
                                 <span id="obsCicloComApoyoNac" name="obsCicloComApoyoNac" class="form3_18_dark"></span>
                             @endif
@@ -643,7 +674,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCicloComApoyoReg">
+                                <input class="table-header" type="text" name="obsCicloComApoyoReg" id="obsCicloComApoyoReg">
                             @else
                                 <span id="obsCicloComApoyoReg" name="obsCicloComApoyoReg" class="form3_18_dark"></span>
                             @endif
@@ -656,6 +687,7 @@ $user_identity = $user->id;
                             de institución extranjera</th>
                         <th class="acreditacion" style="padding-left: 100px;">Acreditacion:</th>
                         <th class="descripcion"><b>Instancia que lo otorga</b></th>
+
                     </tr>
                 </tbody>
             </table>
@@ -665,7 +697,13 @@ $user_identity = $user->id;
                     
                 </thead>
             </table> --}}
-
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                @endif
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                <button type="submit" class="btn custom-btn printButtonClass" id="btn3_18">Enviar</button>
+                @endif
             <!--Convocatoria 2-->
             <div style="display: flex; justify-content: space-between;padding-top: 150px;">
                 <div id="convocatoria2">
@@ -680,33 +718,36 @@ $user_identity = $user->id;
 
                 <div id="piedepagina2"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 27 de 33
+                    Página 27 de 34
                 </div>
 
             </div>
-            <div>
+            {{-- <div>
                 @if ($userType != 'secretaria')
                 <button id="btn3_18" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
                 @endif
-            </div>
+            </div> --}}
         </form>
     </main>
 
     <script>
         
         window.onload = function () {
-            const footerHeight = document.querySelector('footer').offsetHeight;
-            const elements = document.querySelectorAll('.prevent-overlap');
+            const footer = document.querySelector('footer');
+            if (footer) {
+                const footerHeight = footer.offsetHeight;
+                const elements = document.querySelectorAll('.prevent-overlap');
 
-            elements.forEach(element => {
-                const rect = element.getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
+                elements.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
 
-                // Verifica si el elemento está demasiado cerca del footer y aplica page-break-before si es necesario
-                if (rect.bottom + footerHeight > viewportHeight) {
-                    element.style.pageBreakBefore = "always"; // Forzar salto antes
-                }
-            });
+                    // Verifica si el elemento está demasiado cerca del footer y aplica page-break-before si es necesario
+                    if (rect.bottom + footerHeight > viewportHeight) {
+                        element.style.pageBreakBefore = "always"; // Forzar salto antes
+                    }
+                });
+            }
 
         };
         let cant3_18 = ['cantComOrgInt', 'cantComOrgNac', 'cantComOrgReg', 'cantComApoyoInt', 'cantComApoyoNac', 'cantComApoyoReg', 'cantCicloComOrgInt', 'cantCicloComOrgNac', 'cantCicloComOrgReg', 'cantCicloComApoyoInt', 'cantCicloComApoyoNac', 'cantCicloComApoyoReg'];

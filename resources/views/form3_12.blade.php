@@ -9,7 +9,7 @@ $docenteConfig = $docenteConfig ?? [
     // Endpoints base
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-    'dictEndpoint'        => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data312',
 
     // Clave de colección dentro del JSON de dictaminadores
     'dictCollectionKey'   => 'form3_12',
@@ -298,7 +298,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
 
             .page-number:before {
-                content: "Página " counter(page) " de 33";
+                content: "Página " counter(page) " de 34";
             }
 
             .secretaria-style {
@@ -343,6 +343,10 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         td{
             font-size: 1rem;
         }
+
+        button#edit-btn-form3_12{
+            margin-left: 15rem;
+        }
     </style>
 </head>
 
@@ -360,8 +364,22 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
-    @endphp
 
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_12'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_12';
+$formNumber = '312';
+    @endphp
+{{-- @php dd($userType) @endphp --}}
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo
         Obscuro</button>
 
@@ -374,12 +392,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_1 -->
-        <form id="form3_12" method="POST">
+        <form id="form3_12" action="/formato-evaluacion/store-form312" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.12 Trabajos dirigidos para la titulación de estudiantes-->
             <h4>Puntaje máximo
@@ -408,7 +428,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsCientificos">
+                                <input class="table-header" type="text" id="obsCientificos" name="obsCientificos">
                             @else
                                 <span id="obsCientificos" name="obsCientificos" class="form3_19_dark"></span>
                             @endif
@@ -432,7 +452,7 @@ $user_identity = $user->id;
                             @endif                          </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsDivulgacion">
+                                <input class="table-header" type="text" id="obsDivulgacion" name="obsDivulgacion">
                             @else
                                 <span id="obsDivulgacion" name="obsDivulgacion" class="form3_19_dark"></span>
                             @endif
@@ -458,7 +478,7 @@ $user_identity = $user->id;
                      </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsTraduccion">
+                                <input class="table-header" type="text" id="obsTraduccion" name="obsTraduccion">
                             @else
                                 <span id="obsTraduccion" name="obsTraduccion" class="form3_19_dark"></span>
                             @endif
@@ -484,7 +504,7 @@ $user_identity = $user->id;
                     </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsArbitrajeInt">
+                                <input class="table-header" type="text" id="obsArbitrajeInt" name="obsArbitrajeInt">
                             @else
                                 <span id="obsArbitrajeInt" name="obsArbitrajeInt" class="form3_19_dark"></span>
                             @endif
@@ -510,7 +530,7 @@ $user_identity = $user->id;
                      </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsArbitrajeNac">
+                                <input class="table-header" type="text" id="obsArbitrajeNac" name="obsArbitrajeNac">
                             @else
                                 <span id="obsArbitrajeNac" name="obsArbitrajeNac" class="form3_19_dark"></span>
                             @endif
@@ -526,7 +546,7 @@ $user_identity = $user->id;
                             </div>
                         </td>
                         <td id="piedepagina1"
-                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">Página 18 de 33</td>
+                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">Página 18 de 34</td>
                     </tr>
                 </tbody>
             </table>
@@ -555,7 +575,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsSinInt">
+                                <input class="table-header" type="text" id="obsSinInt" name="obsSinInt">
                             @else
                                 <span id="obsSinInt" name="obsSinInt" class="form3_19_dark"></span>
                             @endif
@@ -582,7 +602,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsSinNac">
+                                <input class="table-header" type="text" id="obsSinNac" name="obsSinNac">
                             @else
                                 <span id="obsSinNac" name="obsSinNac" class="form3_19_dark"></span>
                             @endif
@@ -609,7 +629,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsAutor">
+                                <input class="table-header" type="text" id="obsAutor" name="obsAutor">
                             @else
                                 <span id="obsAutor" name="obsAutor" class="form3_19_dark"></span>
                             @endif
@@ -636,7 +656,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsEditor">
+                                <input class="table-header" type="text" id="obsEditor" name="obsEditor">
                             @else
                                 <span id="obsEditor" name="obsEditor" class="form3_19_dark"></span>
                             @endif
@@ -663,7 +683,7 @@ $user_identity = $user->id;
                         </td>
                         <td class="td_obs">
                             @if ($userType == 'dictaminador')
-                                <input class="table-header" type="text" id="obsWeb">
+                                <input class="table-header" type="text" id="obsWeb" name="obsWeb">
                             @else
                                 <span id="obsWeb" name="obsWeb" class="form3_19_dark"></span>
                             @endif
@@ -679,9 +699,13 @@ $user_identity = $user->id;
 
                         <th class="descripcion"><b>Instancia que la otorga</b> </th>
                         <th>
-                            @if ($userType != 'secretaria')
-                                <button id="btn3_12" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-                            @endif
+                        @if($userType != 'docente')
+                        <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                        @endif
+                        {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                        @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_12">Enviar</button>
+                        @endif
                         </th>
                     </tr>
                 </thead>
@@ -698,7 +722,7 @@ $user_identity = $user->id;
 
                 <div id="piedepagina2"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 19 de 33
+                    Página 19 de 34
                 </div>
             </div><br><br>
         </form>

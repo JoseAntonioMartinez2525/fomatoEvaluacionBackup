@@ -18,7 +18,7 @@ $commonFields = [
     'comisionIncisoD' => 'comisionIncisoD',
     'comisionIncisoE' => 'comisionIncisoE',
     'actv3Comision' => 'actv3Comision',
-    'score3_1' => 'score3_1',
+    // 'score3_1' => 'score3_1',
     'obs3_1_1' => 'obs3_1_1',
     'obs3_1_2' => 'obs3_1_2',
     'obs3_1_3' => 'obs3_1_3',
@@ -31,12 +31,16 @@ $docenteConfig = array_merge([
     'formKey' => 'form3_1',
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-    'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+    'dictEndpoint' => '/formato-evaluacion/get-form-data31',
     'dictCollectionKey' => 'form3_1',
     'userTypeForDict' => 'dictaminador',
 
     // --- Mappings ---
-    'docenteMappings' => array_merge(['elaboracion' => 'elaboracion'], $elaboracionMappings, ['score3_1' => 'score3_1']),
+    'docenteMappings' => array_merge(
+        ['elaboracion' => 'elaboracion'], 
+        $elaboracionMappings, 
+        ['score3_1' => 'score3_1']
+    ),
     'dictMappings' => array_merge(['elaboracion' => 'elaboracion'], $elaboracionMappings, $commonFields),
 
     // --- Campos ocultos ---
@@ -52,6 +56,7 @@ $docenteConfig = array_merge([
         'user_type' => 'user_type',
     ],
 
+    'excludeTargets' => [],
     // --- Comportamiento al no encontrar datos ---
     'resetOnNotFound' => false,
     'resetValues' => (function() {
@@ -67,7 +72,6 @@ $docenteConfig = array_merge([
             'comisionIncisoD' => '0',
             'comisionIncisoE' => '0',
             'actv3Comision_hidden' => '0',
-            'score3_1' => '0',
             'obs3_1_1' => '',
             'obs3_1_2' => '',
             'obs3_1_3' => '',
@@ -300,7 +304,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 }
 
 .table2 {
-    margin-top: 300px;
+    margin-top: 30px;
 }
 
 body.dark-mode #elaboracion,
@@ -353,11 +357,16 @@ body.dark-mode [id^="btn3_"]:hover {
     background-color: #6a5b9f;
 }
 
-.edit-button{
-    margin-top: 5rem!important;
-    margin-left: 65rem!important;
-    
+button#form3_1Button {
+    margin-top: 5rem !important;
+    margin-left: 61rem !important;
 }
+
+button.edit-button{
+    margin-left: 67rem !important;
+}
+
+
 </style>
 
 <script>
@@ -391,6 +400,7 @@ $user_identity = $user->id;
     }
 
 $formId = $docenteConfigForm['formId'] ?? 'form3_1';
+$formNumber = '31';
 @endphp
 
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -428,7 +438,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
                             <td></td>
                         </tr>
                         <!-- Sub-encabezados -->
-                        <x-sub-headers-form3_1 />
+                        <x-sub-headers-form3_1 :canonical="true"/>
 
                         <!-- Contenido Incisos a) y b) -->
                         <tbody data-page="3">
@@ -500,7 +510,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
                         </div>
                         <div id="piedepagina1"
                             class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                            Página 3 de 33
+                            Página 3 de 34
                         </div>
                     </div><br>
 
@@ -598,7 +608,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
                         </thead>
                                 </table>
                             {{-- Lógica de botones --}}
-                            <x-edit-button formId="{{ $formId }}" :has-data="$hasData" :user-type="$userType" />
+                            <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                             {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
                             @if(!$hasData && $userType != 'secretaria')
                                 <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
@@ -617,7 +627,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
 
                                     <div id="piedepagina2"
                                         class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                                        Página 4 de 33
+                                        Página 4 de 34
                                     </div>
                                 </div>
 
@@ -625,6 +635,15 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
             </div>
     </main>
     <script>
+
+//         document.addEventListener('evaluationDataLoaded', () => {
+//     const visible = document.getElementById('score3_1');
+//     const hidden = document.getElementById('score3_1_hidden');
+
+//     if (visible && hidden) {
+//         hidden.value = visible.textContent?.trim() || '0';
+//     }
+// });
 
     window.onload = function () {
 
@@ -666,6 +685,20 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_1';
 
                 toggleDarkMode();
             });
+
+            console.log('DOM score3_1 antes init:', document.getElementById('score3_1')?.value || document.getElementById('score3_1')?.textContent);
+
+        // initializeDataFromDOM();
+        document.addEventListener('form3_1:modelHydrated', () => {
+            console.log('Modelo listo:', window.data);
+        });
+
+        console.log('data.score3_1 despues init:', data.score3_1);
+        console.log('docencia despues init:', docencia);
+    </script>
+    <script>
+        console.log('Form3_1 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
     </script>
 
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])

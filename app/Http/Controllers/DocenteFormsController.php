@@ -14,11 +14,16 @@ class DocenteFormsController extends Controller
     public function index()
     {
         // Get all docentes assigned to current dictaminador
-        $docentes = DB::table('dictaminador_docente')
-            ->where('dictaminador_id', Auth::id())
-            ->join('users', 'dictaminador_docente.docente_id', '=', 'users.id')
-            ->select('users.id', 'users.name', 'users.email')
-            ->distinct()
+        // $docentes = DB::table('dictaminador_docente')
+        //     ->where('dictaminador_id', Auth::id())
+        //     ->join('users', 'dictaminador_docente.docente_id', '=', 'users.id')
+        //     ->select('users.id', 'users.name', 'users.email')
+        //     ->distinct()
+        // Se modifica para listar todos los docentes del sistema, permitiendo evaluar a cualquiera
+        $docentes = DB::table('users')
+            ->where('user_type', 'docente')
+            ->select('id', 'name', 'email')
+            ->orderBy('name')
             ->get();
 
         return view('dictaminador.docentes_list', compact('docentes'));
@@ -30,14 +35,20 @@ class DocenteFormsController extends Controller
     public function show($docenteEmail)
     {
         // Verify this docente is assigned to current dictaminador
-        $isAssigned = DB::table('dictaminador_docente')
-            ->where('dictaminador_id', Auth::id())
-            ->where('docente_email', $docenteEmail)
-            ->exists();
 
-        if (!$isAssigned) {
-            abort(403, 'No tiene permiso para ver los formularios de este docente.');
-        }
+        // $isAssigned = DB::table('dictaminador_docente')
+        //     ->where('dictaminador_id', Auth::id())
+        //     ->where('docente_email', $docenteEmail)
+        //     ->exists();
+        // // Se elimina la restricción de asignación previa para permitir que el dictaminador
+        // // pueda acceder a los formularios de cualquier docente listado.
+
+        // if (!$isAssigned) {
+        //     abort(403, 'No tiene permiso para ver los formularios de este docente.');
+        // }
+
+        // Se elimina la restricción de asignación previa para permitir que el dictaminador
+        // pueda acceder a los formularios de cualquier docente listado.
 
         // Get docente information
         $docente = DB::table('users')
@@ -177,6 +188,13 @@ class DocenteFormsController extends Controller
                 'name' => '3.19 Participación en cuerpos colegiados',
                 'route' => 'getData319',
                 'view_route' => 'form3_19'
+            ],
+            //Resumen
+                'form4' => [
+                'table' => 'users_final_resume',
+                'name' => 'Resumen comision',
+                'route' => 'getDictaminadorFinalData',
+                'view_route' => 'form4'
             ]
         ];
 

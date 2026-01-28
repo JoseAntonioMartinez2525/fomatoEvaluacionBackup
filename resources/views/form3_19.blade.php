@@ -34,7 +34,7 @@ $docenteConfig = $docenteConfig ?? array_merge([
     'formKey' => 'form3_19',
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-    'dictEndpoint'        => '/formato-evaluacion/get-dictaminators-responses',
+    'dictEndpoint' => '/formato-evaluacion/get-form-data319',
     'dictCollectionKey'   => 'form3_19',
     'userTypeForDict'     => '',
 
@@ -229,7 +229,7 @@ if (!isset($docenteConfigForm)) {
 
 
         .page-number:before {
-            content: "Página " counter(page) " de 33";
+            content: "Página " counter(page) " de 34";
         }
 
         .secretaria-style {
@@ -249,10 +249,16 @@ if (!isset($docenteConfigForm)) {
 
         .dictaminador-style {
             font-weight: normal;
-            font-size: 16px;
-            margin-top: 10px;
+            font-size: 14px;
+            margin-top: 8px;
             text-align: center;
         }
+
+        /* .dictaminador-style #piedepagina1{
+            display: flex;
+            justify-content: flex-end;
+            
+        } */
 
         .dictaminador-style #piedepagina2 {
             display: flex;
@@ -284,7 +290,7 @@ if (!isset($docenteConfigForm)) {
     }
 
     .page-number:before {
-        content: "Página " counter(page) " de 33";
+        content: "Página " counter(page) " de 34";
     }
 
     #convocatoria2{
@@ -295,6 +301,14 @@ if (!isset($docenteConfigForm)) {
 
     td{
         font-size: 1rem;
+    }
+
+    button#edit-btn-form3_19{
+        margin-left:67rem;
+    }
+
+    button#btn3_19{
+        margin-left:60rem;
     }
 
 </style>
@@ -314,6 +328,20 @@ $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id;
 $page_counter = 28;
+
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_19'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_19';
+$formNumber = '319';
     @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo
@@ -328,12 +356,14 @@ $page_counter = 28;
 
     <main class="container">
         <!-- Form for Part 3_19 -->
-        <form id="form3_19" method="POST">
+        <form id="form3_19" action="/formato-evaluacion/store-form319" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.19 Participación en cuerpos colegiados-->
             <h4>Puntaje máximo
@@ -469,7 +499,9 @@ $page_counter = 28;
                     </tr>
                 </tbody>
             </table>
-            <div style="display: flex; justify-content: space-between;padding-top: 80px;">
+            
+                
+            <div style="display: flex; justify-content: space-between; padding-top: {{ $userType == 'secretaria' ? '80px' : '50px' }};">
                 <div id="convocatoria">
                     <!-- Mostrar convocatoria -->
                     @if(isset($convocatoria))
@@ -480,9 +512,9 @@ $page_counter = 28;
                 </div>
                 <div id="piedepagina1"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 28 de 33
+                    Página 28 de 34
                 </div>
-            </div><br><br>
+            </div>
             <!--Siguiente tabla-->
             <table class="table table-sm tutorias">
                 <x-sub-headers-form3_19 :componentIndex="1" />
@@ -727,7 +759,7 @@ $page_counter = 28;
 
                 <div id="piedepagina2"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 29 de 33
+                    Página 29 de 34
                 </div>
             </div><br><br><br>
 
@@ -902,11 +934,15 @@ $page_counter = 28;
                     </tr>
                 </thead>
             </table>
-            @if ($userType != 'secretaria')
-                <button id="btn3_19" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                @endif
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                <button type="submit" class="btn custom-btn printButtonClass" id="btn3_19">Enviar</button>
+                @endif
 
-            @endif
-            <div style="display: flex; justify-content: space-between;padding-top: 200px;">
+            <div style="display: flex; justify-content: space-between;padding-top: 150px;">
                 <div id="convocatoria3">
                     <!-- Mostrar convocatoria -->
                     @if(isset($convocatoria))
@@ -916,11 +952,9 @@ $page_counter = 28;
                         </div>
                     @endif
                 </div>
-
-
                 <div id="piedepagina3"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                    Página 30 de 33
+                    Página 30 de 34
                 </div>
             </div>
         </form>
@@ -1161,6 +1195,10 @@ $page_counter = 28;
 
             toggleDarkMode();
         });    
+    </script>
+    <script>
+        console.log('Form3_19 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
     </script>
     
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])

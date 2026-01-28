@@ -26,7 +26,7 @@ nav {
 
 .actv3 {
     margin-left: -15px;
-    height: 70vh;
+    height: 60vh;
     overflow-y: auto;
     background-color: transparent;
     color: white;
@@ -383,6 +383,8 @@ input#comisionIndividual, input#comisionGrupal, input#comisionIndividual, input#
 input#comisionCientificos, input#comisionDivulgacion, input#comisionTraduccion, input#comisionArbitrajeInt, input#comisionArbitrajeNac, input#comisionSinInt, input#comisionSinNac, input#comisionAutor, input#comisionEditor, input#comisionWeb{
     border: hidden;
 }
+
+
 
 
 

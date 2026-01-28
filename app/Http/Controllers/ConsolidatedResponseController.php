@@ -4,10 +4,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class ConsolidatedResponseController extends Controller
 {
-    public function showResumen()
+    public function showResumen(Request $request, $teacherEmail = null)
     {
         // Recuperar los datos de comisiones
         $consolidatedResponses = DB::table('consolidated_responses')->get();
@@ -105,6 +106,7 @@ class ConsolidatedResponseController extends Controller
             'minimaCalidad' => $minimaCalidad,
             'minimaTotal' => $minimaTotal,
             'totalComisionRepetido' => $totalComisionRepetido,
+            'teacherEmailFromUrl' => $teacherEmail,
         ]);
 
         
@@ -232,4 +234,3 @@ class ConsolidatedResponseController extends Controller
 
 
 }
-

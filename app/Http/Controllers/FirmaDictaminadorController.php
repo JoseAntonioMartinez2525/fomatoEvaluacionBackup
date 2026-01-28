@@ -117,6 +117,53 @@ public function showResumen(Request $request)
         ]);
     }
 
+    public function storeFirmaSecretaria(Request $request)
+    {
+        // Recuperación robusta: Si user_id no llega, buscarlo por el email (que viene de la lista de configuración)
+        if (!$request->filled('user_id') && $request->filled('email')) {
+            $userByEmail = User::where('email', $request->email)->first();
+            if ($userByEmail) {
+                $request->merge(['user_id' => $userByEmail->id]);
+            }
+        }
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'firma1' => 'required|image|max:2048|mimes:png,jpg,jpeg',
+            'evaluator_name' => 'required|string',
+        ]);
+
+        $user = User::find($request->user_id);
+        $file = $request->file('firma1');
+
+        // Crear manager con driver GD
+        $manager = new ImageManager(new Driver());
+
+        // Leer la imagen subida
+        $image = $manager->read($file->getPathname());
+
+        // Convertir/cachear en GD y quitar fondo blanco
+        $pngBytes = $this->removeBackgroundAndReturnPngBytes($image);
+
+        // Base64
+        $imageData = base64_encode($pngBytes);
+
+        // Guardar o actualizar
+        DictaminadorSignature::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'evaluator_name' => $request->evaluator_name,
+                'signature_image' => $imageData,
+                'mime' => 'image/png',
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Firma guardada correctamente.',
+        ]);
+    }
+
     /**
      * Recibe un objeto Intervention Image (v3), quita fondo casi blanco
      * y devuelve los bytes PNG (string) resultantes.
@@ -127,21 +174,32 @@ public function showResumen(Request $request)
     private function removeBackgroundAndReturnPngBytes($image)
     {
         $gd = $image->core()->native();
+        
+        // Asegurar que la imagen es TrueColor para manejar transparencia correctamente (necesario para JPG)
+        if (!imageistruecolor($gd)) {
+            imagepalettetotruecolor($gd);
+        }
 
         $width = imagesx($gd);
         $height = imagesy($gd);
+        
+        // Configurar para guardar canal alfa y no mezclar al editar
+        imagealphablending($gd, false);
         imagesavealpha($gd, true);
 
         $threshold = 240; // nivel de blanco a eliminar
+        $transparent = imagecolorallocatealpha($gd, 255, 255, 255, 127);
 
         for ($x = 0; $x < $width; $x++) {
             for ($y = 0; $y < $height; $y++) {
                 $rgb = imagecolorat($gd, $x, $y);
-                $colors = imagecolorsforindex($gd, $rgb);
+                // Extraer componentes RGB usando operadores bit a bit (más rápido y compatible con TrueColor)
+                $r = ($rgb >> 16) & 0xFF;
+                $g = ($rgb >> 8) & 0xFF;
+                $b = $rgb & 0xFF;
 
-                if ($colors['red'] >= $threshold && $colors['green'] >= $threshold && $colors['blue'] >= $threshold) {
-                    $alphaColor = imagecolorallocatealpha($gd, 255, 255, 255, 127);
-                    imagesetpixel($gd, $x, $y, $alphaColor);
+                if ($r >= $threshold && $g >= $threshold && $b >= $threshold) {
+                    imagesetpixel($gd, $x, $y, $transparent);
                 }
             }
         }
@@ -149,7 +207,7 @@ public function showResumen(Request $request)
         ob_start();
         imagepng($gd);
         $pngData = ob_get_clean();
-        imagedestroy($gd);
+        // imagedestroy($gd);
 
         return $pngData;
     }

@@ -8,7 +8,7 @@ $docenteConfig = [
         'formKey' => 'form3_5',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
         'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-        'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data35',
         'dictCollectionKey' => 'form3_5',
         'userTypeForDict' => '',
         'docenteMappings' => [
@@ -149,6 +149,17 @@ body.dark-mode [id^="btn3_"]:hover {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+    $hasData = false;
+    $checkFields = ['comision3_5'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_5';
+$formNumber = '35';
     @endphp
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
@@ -161,12 +172,14 @@ $user_identity = $user->id;
     </div>
     <main class="container">
         <!-- Form for Part 3_5 -->
-        <form id="form3_5" action="/formato-evaluacion/store-form35" method="POST">
+        <form id="form3_5" action="/formato-evaluacion/store-form35" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
                 <!-- 3.5 Asistencia, puntualidad y permanencia en el desempeño docente, evaluada por el JD y por CAAC  -->
@@ -264,9 +277,14 @@ $user_identity = $user->id;
                     </tr>
                 </thead>
             </table>
-            @if($userType != 'secretaria')
-                <button id="btn3_5" type="submit" class="btn custom-btn printButtonClass">Enviar
-            @endif
+                {{-- Lógica de botones --}}
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                @endif
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_5">Enviar</button>
+                @endif
             </form>
     </main>
     <center>

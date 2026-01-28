@@ -148,6 +148,61 @@ public function getFirmasYResumen(Request $request)
     ]);
 }
 
+    /**
+     * Actualiza el campo 'periodo' de todos los registros de UsersResponseForm1
+     * con el periodo vigente configurado.
+     */
+    public function updatePeriods()
+    {
+        try {
+            $periodo = \App\Models\UsersResponseForm1::calculateCurrentPeriod();
+            
+            if (!$periodo) {
+                return response()->json(['success' => false, 'message' => 'No se ha configurado un periodo válido en Fechas.'], 400);
+            }
 
+            // Actualizar todos los registros existentes
+            \App\Models\UsersResponseForm1::query()->update(['periodo' => $periodo]);
 
+            return response()->json(['success' => true, 'message' => "Periodo '$periodo' asignado a todos los docentes correctamente."]);
+        } catch (\Exception $e) {
+            \Log::error('Error actualizando periodos: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al actualizar periodos.'], 500);
+        }
+    }
+
+    /**
+     * Actualiza el campo 'convocatoria' de todos los registros de UsersResponseForm1.
+     */
+    public function updateConvocatoria(Request $request)
+    {
+        try {
+            $convocatoria = $request->input('convocatoria');
+            
+            if (!$convocatoria) {
+                return response()->json(['success' => false, 'message' => 'El nombre de la convocatoria es obligatorio.'], 400);
+            }
+
+            // Actualizar todos los registros existentes
+            \App\Models\UsersResponseForm1::query()->update(['convocatoria' => $convocatoria]);
+
+            return response()->json(['success' => true, 'message' => "Convocatoria '$convocatoria' asignada a todos los docentes correctamente."]);
+        } catch (\Exception $e) {
+            \Log::error('Error actualizando convocatoria: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al actualizar la convocatoria.'], 500);
+        }
+    }
+
+    /**
+     * Obtiene el historial de fechas de evaluación para docentes.
+     */
+    public function getEvaluationDatesHistory()
+    {
+        $history = DB::table('evaluation_dates')
+            ->where('type', 'docentes_llenado')
+            ->orderBy('id', 'desc')
+            ->get();
+            
+        return response()->json($history);
+    }
 }

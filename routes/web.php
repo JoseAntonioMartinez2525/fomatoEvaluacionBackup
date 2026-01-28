@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConsolidatedResponseController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocenteFormsController;
 use App\Http\Controllers\DictaminatorForm2_2Controller;
 use App\Http\Controllers\DictaminatorForm2_Controller;
@@ -32,6 +33,7 @@ use App\Http\Controllers\FormContentController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\ResponseForm3_8_1Controller;
 use App\Http\Controllers\ResumeController;
+use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ResumenComisionController;
 use App\Http\Controllers\SecretariaController;
 use App\Http\Controllers\ThemeController;
@@ -98,7 +100,7 @@ Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
 Route::middleware(['auth'])->group(function (){
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('rules', function () {return view('rules'); })->name('rules');
-     Route::get('/welcome', [HomeController::class, 'showWelcome'])->name('welcome');
+     Route::get('/welcome', [DashboardController::class, 'index'])->name('welcome');
     Route::get('resumen', function () {return view('resumen'); })->name('resumen');
     Route::get('perfil', function () {return view('perfil'); })->name('perfil');
     Route::get('general', function () {return view('general');})->name('general');
@@ -131,7 +133,7 @@ Route::middleware(['auth'])->group(function (){
     // Route::get('form3_17', function () {return view('form3_17'); })->name('form3_17');
     // Route::get('form3_18', function () {return view('form3_18'); })->name('form3_18');
     // Route::get('form3_19', function () {return view('form3_19'); })->name('form3_19');
-    Route::get('form4', function () {return view('form4'); })->name('form4');
+    // Route::get('form4', function () {return view('form4'); })->name('form4');
     Route::get('form5', function () {return view('form5'); })->name('form5');
     Route::get('resumen_comision', function () {return view('resumen_comision'); })->name('resumen_comision');
 
@@ -180,7 +182,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/docente-formularios/{docenteEmail}', [DocenteFormsController::class, 'show'])->name('docente.forms.show');
     //Route::get('/get-form-content/{form}', [FormContentController::class, 'getFormContent']);
     Route::get('/get-dictaminadores', [FormsController::class, 'getdictaminadores'])->name('getdictaminadores');
-    Route::get('/form4', [ConsolidatedResponseController::class, 'showResumen'])->name('form4');
+    Route::get('/form4/{teacher?}', [ConsolidatedResponseController::class, 'showResumen'])->name('form4');
     Route::get('/get-dictaminador-data', [FormsController::class, 'getDictaminadorData'])->name('getDictaminadorData');
     Route::get('otros_formularios', function () {return view('otros_formularios'); })->name('otros_formularios');
         Route::get('/get-docentes-otros-form', [DynamicFormController::class, 'getDocentesOtrosForm'])->name('get-docentes-otros-form');
@@ -198,7 +200,6 @@ Route::middleware(['auth'])->group(function () {
     // --- GRUPO DE RUTAS PARA DOCENTES PROTEGIDAS POR PERÍODO DE EVALUACIÓN ---
     Route::middleware([\App\Http\Middleware\CheckEvaluationPeriod::class])->group(function () {
         // Rutas GET para mostrar los formularios
-        Route::get('/welcome', [App\Http\Controllers\WelcomeController::class, 'index'])->name('welcome');
         Route::get('docencia', function () {return view('docencia'); })->name('docencia');
 
         // Rutas POST para guardar los datos de los formularios
@@ -254,7 +255,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store-form317', [DictaminatorForm3_17Controller::class, 'storeform317'])->name('form3_17.store_17')->withoutMiddleware('auth');
     Route::post('/store-form318', [DictaminatorForm3_18Controller::class, 'storeform318'])->name('form3_18.store_18')->withoutMiddleware('auth');
     Route::post('/store-form319', [DictaminatorForm3_19Controller::class, 'storeform319'])->name('form3_19.store_19')->withoutMiddleware('auth');
-    Route::post('/store-dictaminator_signatures', [FirmaDictaminadorController::class, 'storeFirma'])->name('firmaDictaminador.store');
+    Route::post('/store-dictaminator_signatures', [FirmaDictaminadorController::class, 'storeFirma'])->name('firmaDictaminador.store');    // Route::post('/formato-evaluacion/store-dictaminator-signature-secretaria', [FirmaDictaminadorController::class, 'storeFirmaSecretaria'])->name('store.dictaminator.signature.secretaria');
+    Route::post('/store-signature-secretaria', [FirmaDictaminadorController::class, 'storeFirmaSecretaria'])->name('store.signature.secretaria');
     
 
         // 
@@ -262,6 +264,10 @@ Route::middleware(['auth'])->group(function () {
     // El JavaScript ya construye la URL correctamente (ej: /update-form31)
     Route::put('/update-form{formIdentifier}', [DictaminatorController::class, 'updateForm'])
         ->name('dictaminator.form.update')
+        ->withoutMiddleware('auth');
+    
+    Route::post('/update-form32', [DictaminatorForm3_2Controller::class, 'updateform32'])
+        ->name('dictaminator.form.update32')
         ->withoutMiddleware('auth');
 
     Route::get('/formato-evaluacion/get-signatures', [FirmaDictaminadorController::class, 'getSignatures'])
@@ -281,7 +287,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/get-dictaminators-responses', [ResponseJson::class, 'getDictaminatorResponses']);
     Route::get('/get-dictaminators-responses-id', [ResponseJson::class, 'getDictaminatorResponsesId']);
-    Route::get('/get-docentes-by-dictaminador', [DictaminatorForm2_Controller::class, 'getDocentesByDictaminador']);
+    Route::get('/get-docentes-by-dictaminador', [DictaminatorController::class, 'getDocentesByDictaminador']);
     Route::get('/comision_dictaminadora', [FirmaDictaminadorController::class, 'showForm'])->name('comision_dictaminadora');
     Route::get('/get-user-id', [DictaminatorController::class, 'getUserId']);
 
@@ -361,7 +367,7 @@ Route::middleware(['auth'])->group(function () {
     // Ruta para cambiar el modo oscuro
     Route::post('/toggle-dark-mode', [ThemeController::class, 'toggleDarkMode'])->name('theme.toggle');
     //Route::resource('dynamic-forms', DynamicFormController::class);
-    Route::post('/dynamic-form/store', [DynamicFormController::class, 'store'])->name('dynamic-form.store');
+    Route::post('/formato-evaluacion/dynamic-form/store', [DynamicFormController::class, 'store'])->name('dynamic-form.store');
 
     Route::get('/formato-evaluacion/dynamic-form/{formName}', [DynamicFormController::class, 'getFormByName']);
         // Add this route with your other routes
@@ -380,30 +386,82 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    Route::get('/formato-evaluacion//dynamic-form/columns/{formId}', [DynamicFormController::class, 'getColumns'])->name('dynamic-form.columns');
-    Route::get('/formato-evaluacion//form/edit/{form_name}', [DynamicFormController::class, 'edit'])->name('form.edit');
+    Route::get('/formato-evaluacion/dynamic-form/columns/{formId}', [DynamicFormController::class, 'getColumns'])->name('dynamic-form.columns');
+    Route::get('/formato-evaluacion/form/edit/{form_name}', [DynamicFormController::class, 'edit'])->name('form.edit');
     Route::put('/forms/{id}', [DynamicFormController::class, 'update'])->name('forms.update');
 
     Route::delete('/forms/{id}', [DynamicFormController::class, 'destroy'])->name('forms.destroy');
 
 
-    Route::get('/formato-evaluacion//get-form-content/{formId}', [DynamicFormController::class, 'showDynamicForm'])->name('get-form-content');
+    Route::get('/formato-evaluacion/get-form-content/{formId}', [DynamicFormController::class, 'showDynamicForm'])->name('get-form-content');
 
 //Route::get('/get-form-data/{formType}', [DynamicFormController::class, 'getFormData']);
-    Route::get('/formato-evaluacion//get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
+    Route::get('/formato-evaluacion/get-form-data/{formName}', [DynamicFormController::class, 'getFormData'])->where('formName', '.*');
+
+    // Ruta para mostrar un formulario dinámico genérico
+    Route::get('/formato-evaluacion/form/{form_name}', [DynamicFormController::class, 'showDynamicFormByName'])->name('dynamic.form.show');
 
 
 });
 
-Route::get('/formato-evaluacion/get-form31', 
-    [DictaminatorForm3_1Controller::class, 'getFormData31']
-)->name('formato-evaluacion.get-form31');
 
+// --- CORRECCIÓN DE RUTA ---
+// Se cambia el nombre de la ruta para que coincida con la URL que el cliente construye: /get-form-data31
+Route::get('/get-form-data31', [DictaminatorForm3_1Controller::class, 'getFormData31'])
+    ->name('formato-evaluacion.get-form-data31');
+
+Route::get('/get-form-data32', [DictaminatorForm3_2Controller::class, 'getFormData32']);
+
+Route::get('/get-form-data33', [DictaminatorForm3_3Controller::class, 'getFormData33']);
+
+Route::get('/get-form-data34', [DictaminatorForm3_4Controller::class, 'getFormData34']);
+
+Route::get('/get-form-data35', [DictaminatorForm3_5Controller::class, 'getFormData35']);
+
+Route::get('/get-form-data36', [DictaminatorForm3_6Controller::class, 'getFormData36']);
+
+Route::get('/get-form-data37', [DictaminatorForm3_7Controller::class, 'getFormData37']);
+
+Route::get('/get-form-data38', [DictaminatorForm3_8Controller::class, 'getFormData38']);
+
+// Route::get('/get-form-data313', [DictaminatorForm3_13Controller::class, 'getFormData313']);
+
+Route::get('/get-form-data381', [DictaminatorForm3_8_1Controller::class, 'getFormData381'])
+    ->name('formato-evaluacion.get-form-data381');
+
+Route::get('/get-form-data39', [DictaminatorForm3_9Controller::class, 'getFormData39']);
+Route::get('/get-form-data310', [DictaminatorForm3_10Controller::class, 'getFormData310']);
+Route::get('/get-form-data311', [DictaminatorForm3_11Controller::class, 'getFormData311']);
+Route::get('/get-form-data312', [DictaminatorForm3_12Controller::class, 'getFormData312']);
+Route::get('/get-form-data313', [DictaminatorForm3_13Controller::class, 'getFormData313']);
+Route::get('/get-form-data314', [DictaminatorForm3_14Controller::class, 'getFormData314']);
+Route::get('/get-form-data315', [DictaminatorForm3_15Controller::class, 'getFormData315']);
+Route::get('/get-form-data316', [DictaminatorForm3_16Controller::class, 'getFormData316']);
+Route::get('/get-form-data317', [DictaminatorForm3_17Controller::class, 'getFormData317']);
+Route::get('/get-form-data318', [DictaminatorForm3_18Controller::class, 'getFormData318']);
+Route::get('/get-form-data319', [DictaminatorForm3_19Controller::class, 'getFormData319']);
+
+    // Route::prefix('formato-evaluacion')
+    // ->name('formato-evaluacion.')
+    // ->group(function () {
+
+    //     foreach ([2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] as $n) {
+
+    //         $controller = "App\\Http\\Controllers\\DictaminatorForm3_{$n}Controller";
+
+    //         Route::get("/get-form-data3{$n}", function (\Illuminate\Http\Request $request) use ($controller) {
+    //             $controller = app($controller);
+    //             return $controller->getForm3Data($request);
+    //         })->name("get-form-data3{$n}");
+    //     }
+    // });
+
+Route::get('/docencia-scores?user_id=${userId}', [ResponseJson::class, 'getDocenciaScoresByUser']);
 
 // Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get');
 Route::post('/logout', action: [SessionsController::class, 'logout'])->name('logout');
 
-Route::get('/formato-evaluacion//test-dompdf', function () {
+Route::get('/formato-evaluacion/test-dompdf', function () {
     try {
         $dompdf = new Dompdf();
         return 'Dompdf está disponible y funcionando.';
@@ -433,6 +491,9 @@ Route::post('/evaluation-dates/docentes-llenado', [EvaluationDateController::cla
 Route::post('/evaluation-dates/docentes-evaluacion', [EvaluationDateController::class, 'storeDocentesEvaluacion']);
 Route::post('/evaluation-dates/evaluadores-captura', [EvaluationDateController::class, 'storeEvaluadoresCaptura']);
 Route::get('/evaluation-dates', [EvaluationDateController::class, 'getFechas']);
+Route::post('/formato-evaluacion/update-periods', [ResumenComisionController::class, 'updatePeriods'])->middleware('auth');
+Route::post('/formato-evaluacion/update-convocatoria', [ResumenComisionController::class, 'updateConvocatoria'])->middleware('auth');
+Route::get('/evaluation-dates/history', [ResumenComisionController::class, 'getEvaluationDatesHistory'])->middleware('auth');
 
 for ($i = 1; $i <= 19; $i++) {
     Route::get("/get-form3{$i}", [ 
@@ -440,3 +501,6 @@ for ($i = 1; $i <= 19; $i++) {
         'getFormData3'.$i
     ])->name("form3_{$i}.get")->withoutMiddleware('auth');
 }
+
+//Excel
+Route::get('users/export/', [UserController::class, 'export'])->name('users.export');

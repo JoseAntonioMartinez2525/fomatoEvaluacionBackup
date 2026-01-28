@@ -9,7 +9,7 @@ $docenteConfig = $docenteConfig ?? [
     // Endpoints base
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-    'dictEndpoint'        => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data313',
 
     // Clave de colección dentro del JSON de dictaminadores
     'dictCollectionKey'   => 'form3_13',
@@ -61,7 +61,7 @@ $docenteConfig = $docenteConfig ?? [
 
         // totales
         'score3_13'                     => 'score3_13',
-        'comision3_13'                 => 'comision3_13',
+        '#comision3_13'                 => 'comision3_13',
     ],
 
     // ---- Inputs ocultos que se llenan desde docenteData.form3_13 ----
@@ -150,6 +150,31 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <x-head-resources />
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
+    <style>
+
+#edit-btn-form3_13{
+    margin-left: 67rem;
+}
+
+#btn3_13{
+    margin-left: 60rem;
+}
+
+input#obsInicioFinancimientoExt, input#obsInicioInvInterno, input#obsReporteFinanciamExt, input#obsReporteInvInt{
+    padding: 1px 2px;
+}
+
+body.light-mode td.td_obsInicioFinancimientoExt, body.light-mode td.td_obsInicioInvInterno, body.light-mode td.td_obsReporteInvInt, body.light-mode td.td_obsReporteFinanciamExt{
+        background-color: #d6fff7;
+        border-width: thin;
+        border-color: white;
+}
+
+body.dark-mode td.td_obsInicioFinancimientoExt, body.dark-mode td.td_obsInicioInvInterno, body.dark-mode td.td_obsReporteInvInt, body.dark-mode td.td_obsReporteFinanciamExt{
+        background-color: #82bdb2 !important;
+}
+
+    </style>
 </head>
 
 <body class="bg-gray-50 text-black/50">
@@ -166,6 +191,22 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+
+    $hasData = false;
+    $checkFields = ['comision3_13'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_13';
+$formNumber = '313';
+
 @endphp
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -179,12 +220,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_13 -->
-        <form id="form3_13" method="POST">
+        <form id="form3_13" action="/formato-evaluacion/store-form313" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.13 Proyectos académicos de investigación-->
             <h4>Puntaje máximo
@@ -240,9 +283,9 @@ $user_identity = $user->id;
                     @endif
                         
                     </td>
-                    <td class="obsInicioFinancimientoExt">
+                    <td class="td_obsInicioFinancimientoExt">
                     @if ($userType == 'dictaminador')
-                        <input class="table-header" type="text" id="obsInicioFinancimientoExt" name="obsInicioFinancimientoExt">
+                        <input class="table-header" type="text" name="obsInicioFinancimientoExt" id="obsInicioFinancimientoExt">
                     @else
                         <span id="obsInicioFinancimientoExt" name="obsInicioFinancimientoExt" class="obsBackground"></span>
                     @endif                    
@@ -259,10 +302,10 @@ $user_identity = $user->id;
                      @if ($userType == 'dictaminador')   
                         <input type="number" step="0.01" id="comisionInicioInvInterno" name="comisionInicioInvInterno" value="{{ oldValueOrDefault('comisionInicioInvInterno') }}" oninput="onActv3Comision3_13()">
                     @else
-                        <span id="comisionInicioInvInterno" name="comisionInicioInvInterno" ></span>
+                        <span id="comisionInicioInvInterno"name="comisionInicioInvInterno" ></span>
                     @endif
                     </td>
-                    <td class="obsInicioInvInterno">
+                    <td class="td_obsInicioInvInterno">
                     @if ($userType == 'dictaminador')
                         <input class="table-header" type="text" id="obsInicioInvInterno" name="obsInicioInvInterno">
                     @else
@@ -276,18 +319,18 @@ $user_identity = $user->id;
                         financiamiento externo
                     </td>
                     <td id="puntajeReporteFinanciamExt">100</td>
-                    <td id="cantReporteFinanciamExt" class="cantidad" name="cantReporteFinanciamExt"></td>
+                    <td id="cantReporteFinanciamExt" class="cantidad"></td>
                     <td colspan="3"></td>
 
-                    <td id="subtotalReporteFinanciamExt" name="subtotalReporteFinanciamExt"></td>
+                    <td id="subtotalReporteFinanciamExt"></td>
                     <td class="comision3_13">
                      @if ($userType == 'dictaminador')     
-                        <input type="number" step="0.01" id="comisionReporteFinanciamExt" name="comisionReporteFinanciamExt" value="{{ oldValueOrDefault('comisionReporteFinanciamExt') }}" oninput="onActv3Comision3_13()">
+                        <input type="number" step="0.01" name="comisionReporteFinanciamExt" id="comisionReporteFinanciamExt" value="{{ oldValueOrDefault('comisionReporteFinanciamExt') }}" oninput="onActv3Comision3_13()">
                     @else
                     <span id="comisionReporteFinanciamExt" name="comisionReporteFinanciamExt"></span>
                     @endif
                     </td>
-                    <td class="obsReporteFinanciamExt">
+                    <td class="td_obsReporteFinanciamExt">
                     @if ($userType == 'dictaminador')      
                         <input class="table-header" type="text" id="obsReporteFinanciamExt"  name="obsReporteFinanciamExt">
                     @else
@@ -301,18 +344,18 @@ $user_identity = $user->id;
                         aprobado por CAAC
                     </td>
                     <td id="puntajeReporteInvInt">50</td>
-                    <td id="cantReporteInvInt" class="cantidad" name="cantReporteInvInt"></td>
+                    <td id="cantReporteInvInt" class="cantidad"></td>
                     <td colspan="3"></td>
 
-                    <td id="subtotalReporteInvInt" name="subtotalReporteInvInt"></td>
+                    <td id="subtotalReporteInvInt"></td>
                     <td class="comision3_13">
                     @if ($userType == 'dictaminador')      
-                        <input type="number" step="0.01" id="comisionReporteInvInt" name="comisionReporteInvInt" value="{{ oldValueOrDefault('comisionReporteInvInt') }}" oninput="onActv3Comision3_13()">
+                        <input type="number" step="0.01" name="comisionReporteInvInt" id="comisionReporteInvInt" value="{{ oldValueOrDefault('comisionReporteInvInt') }}" oninput="onActv3Comision3_13()">
                     @else
                         <span id="comisionReporteInvInt" name="comisionReporteInvInt" class="obsBackground"></span>
                     @endif
                     </td>
-                    <td class="obsReporteInvInt">
+                    <td class="td_obsReporteInvInt">
                     @if ($userType == 'dictaminador')      
                         <input class="table-header" type="text" id="obsReporteInvInt" name="obsReporteInvInt">
                     @else
@@ -330,11 +373,14 @@ $user_identity = $user->id;
         
                     <th class="descripcion"><b>CAAC, DIIP</b> </th>
         
-                    <th>
-                    @if ($userType != 'secretaria')
-                        <button id="btn3_13" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                    {{-- Lógica de botones --}}
+                    @if($userType != 'docente')
+                    <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                     @endif
-                    </th>
+                    {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                    @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_13">Enviar</button>
+                    @endif
                 </tr>
             </thead>
         </table>

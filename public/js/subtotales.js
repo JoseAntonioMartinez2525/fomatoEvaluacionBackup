@@ -3,30 +3,42 @@
 if (typeof data === 'undefined' || data === null) {
     var data = {};
 }
-let docencia = 0;
-function updateDocencia() {
-    const keys = [];
-    for (let i = 1; i <= 19; i++) keys.push(`score3_${i}`);
-    let total = 0;
-    keys.forEach(k => {
-        const v = parseFloat(data[k]);
-        if (!isNaN(v)) total += v;
-    });
-    // Límite global
-    docencia = Math.min(total, 700);
 
-    // Actualiza ambos elementos si existen
-    const els = document.querySelectorAll('#docencia, #docencia2');
-    els.forEach(el => {
-        // si es un input, usar value; si es span/td, usar innerText
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-            el.value = docencia.toFixed(2);
-        } else {
-            el.innerText = docencia.toFixed(2);
+//     // Actualiza ambos elementos si existen
+//     const els = document.querySelectorAll('#docencia, #docencia2');
+//     els.forEach(el => {
+//         // si es un input, usar value; si es span/td, usar innerText
+//         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+//             el.value = docencia.toFixed(2);
+//         } else {
+//             el.innerText = docencia.toFixed(2);
+//         }
+//     });
+//     //data.docencia = docencia;
+// }
+function updateTotalDocencia() {
+    let total = 0;
+    // Sumar score3_1 hasta score3_19
+    for (let i = 1; i <= 19; i++) {
+        const el = document.getElementById(`score3_${i}`);
+        if (el) {
+            total += parseFloat(el.innerText || el.textContent) || 0;
         }
-    });
-    data.docencia = docencia;
+    }
+    // Sumar score3_8_1 (caso especial por nombre de ID)
+    const el81 = document.getElementById('score3_8_1');
+    if (el81) {
+        total += parseFloat(el81.innerText || el81.textContent) || 0;
+    }
+
+    const finalScore = Math.min(total, 700);
+    const docenciaEl = document.getElementById('docencia');
+    if (docenciaEl) {
+        docenciaEl.innerHTML = finalScore.toFixed(2);
+    }
 }
+// Exponer la función globalmente
+window.updateTotalDocencia = updateTotalDocencia;
 
 function initializeDataFromDOM() {
     for (let i = 1; i <= 19; i++) {
@@ -68,7 +80,7 @@ function initializeDataFromDOM() {
         }
     }
 
-    updateDocencia();
+    // //updateDocencia();
 }
 
 // Debounce para evitar recalcular muy frecuentemente
@@ -133,7 +145,7 @@ function startGlobalMutationObserver() {
 
 // Exponer funciones globales para llamadas desde vistas (form2.blade.php llama scheduleInitializeFromDOM)
 window.scheduleInitializeFromDOM = scheduleInitializeFromDOM;
-window.updateDocencia = updateDocencia;
+window.//updateDocencia = //updateDocencia;
 window.initializeDataFromDOM = initializeDataFromDOM;
 
 // Inicialización al cargar la página
@@ -257,7 +269,7 @@ const subtotal5 = subtotal(s5,q5);
  console.log("onActv3Subtotal ~ minimoResultante:", score3_1);
 
 if (!isNaN(score3_1)) {
-    docencia += score3_1;
+    //docencia += score3_1;
 }
 if(docencia>=60){
 
@@ -265,11 +277,13 @@ if(docencia>=60){
 }
  console.log("docencia:", docencia);
  document.getElementById("docencia").innerHTML = docencia;
+ 
+ updateTotalDocencia();
  data.score3_1=score3_1;
  
  // asigna y recalcula el total (no acumular)
   data.score3_1 = isNaN(score3_1) ? 0 : score3_1;
-  updateDocencia();
+  //updateDocencia();
 
 }
 
@@ -314,13 +328,14 @@ function onActv3Puntaje() {
   console.log("Puntaje promedio del Puntaje a Evaluar :", score3_2);
 
 if (!isNaN(score3_2)) {
-    docencia += score3_2;
+    //docencia += score3_2;
 }
    console.log("docencia:", docencia);
     document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_2=score3_2;
   data.score3_2 = isNaN(score3_2) ? 0 : score3_2;
-  updateDocencia();
+  //updateDocencia();
   
 }
 
@@ -365,7 +380,7 @@ function onActv3SubTotal3(){
  console.log("Suma Puntaje a Evaluar:", score3_3);
 
 if (!isNaN(score3_3)) {
-    docencia += score3_3;
+    //docencia += score3_3;
 }
 
 if(docencia>=700){
@@ -373,9 +388,10 @@ if(docencia>=700){
   document.getElementById("docencia").innerHTML = 700;
 }
  document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_3=score3_3;
   data.score3_3 = isNaN(score3_3) ? 0 : score3_3;
-  updateDocencia();  
+  //updateDocencia();  
 }
 
 
@@ -418,7 +434,7 @@ function onActv3SubTotal3_4(){
  console.log("Suma Puntaje a Evaluar:", score3_4);
 
 if (!isNaN(score3_4)) {
-    docencia += score3_4;
+    //docencia += score3_4;
 }
 
 if(docencia>=700){
@@ -426,9 +442,10 @@ if(docencia>=700){
   document.getElementById("docencia").innerHTML = 700;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_4 = score3_4;
  data.score3_4 = isNaN(score3_4) ? 0 : score3_4;
- updateDocencia();
+ //updateDocencia();
 
 }
 
@@ -461,7 +478,7 @@ function onActv3SubTotal3_5(){
  console.log("Suma Puntaje a Evaluar:", score3_5);
 
 if (!isNaN(score3_5)) {
-    docencia += score3_5;
+    //docencia += score3_5;
 }
 
 if(docencia>=700){
@@ -469,9 +486,10 @@ if(docencia>=700){
   document.getElementById("docencia").innerHTML = 700;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_5 = score3_5;
  data.score3_5 = isNaN(score3_5) ? 0 : score3_5;
- updateDocencia();
+ //updateDocencia();
 
 }
 
@@ -490,7 +508,7 @@ const puntajeHoras3_6 = puntaje3_6 * pMedio;
  document.getElementById("score3_6").innerHTML= score3_6;
 
 if (!isNaN(score3_6)) {
-    docencia += score3_6;
+    //docencia += score3_6;
     if(docencia>=700){
 
   document.getElementById("docencia").innerHTML = 700;
@@ -498,10 +516,11 @@ if (!isNaN(score3_6)) {
   document.getElementById("docencia").innerHTML = docencia;
 }
 }
+ updateTotalDocencia();
  data.score3_6 = score3_6;
-data.docencia  = docencia;
+//data.docencia  = docencia;
 data.score3_6 = isNaN(score3_6) ? 0 : score3_6;
-updateDocencia();
+//updateDocencia();
 console.log("docencia 3:", docencia);
 
 }
@@ -524,18 +543,19 @@ const puntajeHoras3_7 = puntaje3_7 * pMedio2;
  document.getElementById("score3_7").innerHTML= score3_7;
 
 if (!isNaN(score3_7)) {
-    docencia += score3_7;
+    //docencia += score3_7;
 }
  document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_7 = score3_7;
   if(docencia>=700){
 
   document.getElementById("docencia").innerHTML = 700;
 }
 
-data.docencia  = docencia;
+//data.docencia  = docencia;
 data.score3_7 = isNaN(score3_7) ? 0 : score3_7;
-updateDocencia();
+//updateDocencia();
 console.log("docencia 3:", docencia);
 }
 
@@ -559,12 +579,13 @@ const puntajeHoras3_8 = puntaje3_8 * p3_8;
  document.getElementById("score3_8").innerHTML= score3_8;
 
 if (!isNaN(score3_8)) {
-    docencia += score3_8;
+    //docencia += score3_8;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_8 = score3_8;
   data.score3_8 = isNaN(score3_8) ? 0 : score3_8;
-  updateDocencia();
+  //updateDocencia();
 }
 
 function onActv3SubTotal3_8_1(){
@@ -591,12 +612,13 @@ const puntajeMaximoElement = document.getElementById("puntajeMaximo");
 
 if (!isNaN(score3_8_1)) {
 
-    docencia += score3_8_1;
+    //docencia += score3_8_1;
 }
  document.getElementById("docencia").innerHTML = docencia;
+ updateTotalDocencia();
  data.score3_8_1 = score3_8_1;
   data.score3_8_1 = isNaN(score3_8_1) ? 0 : score3_8_1;
-  updateDocencia();
+  //updateDocencia();
 }
 
 
@@ -735,8 +757,9 @@ function onActv3SubTotal3_9(componentIndex){
     console.log(`Puntaje tabla ${componentIndex}:`, score3_9);
  
 if (!isNaN(score3_9)) {
-    docencia += score3_9;
+    //docencia += score3_9;
   if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
   }else{
@@ -747,11 +770,11 @@ if (!isNaN(score3_9)) {
 }
 
   data[`score3_9_${componentIndex}`] = score3_9;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
 
   // syncScore39Headers();
-  updateDocencia();
+  //updateDocencia();
 }
 
 // function syncScore39Headers() {
@@ -786,7 +809,8 @@ console.log("🚀 ~ onActv3SubTotal3_10 ~ evaluarGrupales:", evaluarGrupales)
   console.log("🚀 ~ Puntaje a Evaluar minimo Resultante ~ score3_10:", score3_10)
 
     if (!isNaN(score3_10)) {
-    docencia += score3_10;
+    //docencia += score3_10;
+  updateTotalDocencia();
 
     if(docencia>=700){
 
@@ -798,10 +822,10 @@ console.log("🚀 ~ onActv3SubTotal3_10 ~ evaluarGrupales:", evaluarGrupales)
 
 
   data.score3_10 = score3_10;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_10 = isNaN(score3_10) ? 0 : score3_10;
-  updateDocencia();
+  //updateDocencia();
 }
 
 function onActv3SubTotal3_11(){
@@ -836,9 +860,10 @@ const score3_11 =  Math.min(sumaScore3_11,95);
 document.getElementById("score3_11").innerHTML = score3_11;
 
 if (!isNaN(score3_11)) {
-    docencia += score3_11;
+    //docencia += score3_11;
     
     if(docencia>=700){
+updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -847,10 +872,10 @@ if (!isNaN(score3_11)) {
 }
 
 data.score3_11 = score3_11;
-data.docencia  = docencia;
+//data.docencia  = docencia;
 console.log("docencia 3:", docencia);
 data.score3_11 = isNaN(score3_11) ? 0 : score3_11;
-updateDocencia();
+//updateDocencia();
 
 }
 
@@ -944,8 +969,9 @@ console.log("Subtotal Diseño Web:", subtotalWeb);
   console.log ("Puntaje de las Evaluaciones 3-12: "), score3_12;
 
     if (!isNaN(score3_12)) {
-    docencia += score3_12;
+    //docencia += score3_12;
     if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -955,10 +981,10 @@ console.log("Subtotal Diseño Web:", subtotalWeb);
 
 
   data.score3_12 = score3_12;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_12 = isNaN(score3_12) ? 0 : score3_12;
-  updateDocencia();
+  //updateDocencia();
 
 }
 
@@ -1014,8 +1040,9 @@ console.log("Subtotal Arbitraje Internacional: ",subtotalReporteInvInt );
   console.log ("Puntaje de las Evaluaciones 3.13: "), score3_13;
 
     if (!isNaN(score3_13)) {
-    docencia += score3_13;
+    //docencia += score3_13;
     if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -1024,10 +1051,10 @@ console.log("Subtotal Arbitraje Internacional: ",subtotalReporteInvInt );
 }
 
   data.score3_13 = score3_13;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_13 = isNaN(score3_13) ? 0 : score3_13;
-  updateDocencia();
+  //updateDocencia();
 
 
 
@@ -1078,7 +1105,7 @@ console.log("SubTotal Congreso Local: ", subtotalCongresoLoc) ;
   console.log ("Puntaje de las Evaluaciones 3.14: "), score3_14;
 
     if (!isNaN(score3_14)) {
-    docencia += score3_14;
+    //docencia += score3_14;
       if(docencia>=700){
 
   document.getElementById("docencia").innerHTML = 700;
@@ -1087,12 +1114,13 @@ console.log("SubTotal Congreso Local: ", subtotalCongresoLoc) ;
       document.getElementById("docencia").innerHTML = docencia;
     }
 }
+  updateTotalDocencia();
  
   data.score3_14 = score3_14;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_14 = isNaN(score3_14) ? 0 : score3_14;
-  updateDocencia();
+  //updateDocencia();
 
 }
 
@@ -1131,8 +1159,9 @@ console.log("SubTotal Desarrollo de Prototipos: ", subtotalPrototipos);
   console.log ("Puntaje 3.15: "), score3_15;
 
     if (!isNaN(score3_15)) {
-    docencia += score3_15;
+    //docencia += score3_15;
       if(docencia>=700){
+  updateTotalDocencia();
 
   document.getElementById("docencia").innerHTML = 700;
 }else{
@@ -1145,10 +1174,10 @@ console.log("SubTotal Desarrollo de Prototipos: ", subtotalPrototipos);
 
  console.log("onActv3SubTotal3_15 ~ docencia:", docencia);
   data.score3_15 = score3_15;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_15 = isNaN(score3_15) ? 0 : score3_15;
-  updateDocencia();
+  //updateDocencia();
 
 }
 
@@ -1219,7 +1248,7 @@ console.log("SubTotal Consejo editorial de revista, edición de revista: ", subt
   console.log ("Puntaje de las Evaluaciones 3.16: "), score3_16;
 
     if (!isNaN(score3_16)) {
-    docencia += score3_16;
+    //docencia += score3_16;
     if(docencia>=700){
 
   document.getElementById("docencia").innerHTML = 700;
@@ -1227,12 +1256,13 @@ console.log("SubTotal Consejo editorial de revista, edición de revista: ", subt
    document.getElementById("docencia").innerHTML = docencia;
 }
 }
+  updateTotalDocencia();
    console.log("onActv3SubTotal3_16 ~ docencia:", docencia);
   data.score3_16 = score3_16;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_16 = isNaN(score3_16) ? 0 : score3_16;
-  updateDocencia();
+  //updateDocencia();
 
 }
 
@@ -1288,7 +1318,7 @@ console.log("Reporte cumplido del periodo anual de proyecto de extensión y difu
 
  
   if (!isNaN(score3_17)) {
-    docencia += score3_17;
+    //docencia += score3_17;
     if(docencia>=700){
 
   document.getElementById("docencia").innerHTML = 700;
@@ -1296,11 +1326,12 @@ console.log("Reporte cumplido del periodo anual de proyecto de extensión y difu
     
 }
  //document.getElementById("docencia").innerHTML = docencia;
+  updateTotalDocencia();
   data.score3_17 = score3_17;
-  data.docencia  = docencia;
+  //data.docencia  = docencia;
   console.log("docencia 3:", docencia);
   data.score3_17 = isNaN(score3_17) ? 0 : score3_17;
-  updateDocencia();
+  //updateDocencia();
 
 
 }
@@ -1410,16 +1441,17 @@ console.log("l)  Ciclo de conferencias, simposio, coloquio, etc. Internacional, 
   console.log ("Puntaje de las Evaluaciones 3.18: ", score3_18);
 
     if (!isNaN(score3_18)) {
-    docencia += score3_18;
+    //docencia += score3_18;
     if(docencia>=700){
 
   document.getElementById("docencia").innerHTML = 700;
 
 }
 
+    updateTotalDocencia();
     data.score3_18 = isNaN(score3_18) ? 0 : score3_18;
-    updateDocencia();
-    data.docencia = data.docencia || 0;
+    //updateDocencia();
+    //data.docencia = //data.docencia || 0;
     console.log("docencia 3:", docencia);
 }
 
@@ -1589,11 +1621,12 @@ console.log("q2) Cuerpo académico registrado ante PRODEP Consolidado Integrante
   console.log ("Puntaje de las Evaluaciones 3.19: ", score3_19);
 
     if (!isNaN(score3_19)) {
-    docencia += score3_19;
+    //docencia += score3_19;
     
 }
 
 
+  updateTotalDocencia();
   data.score3_19 = score3_19;
   document.getElementById("docencia").innerHTML = score3_19;
 
@@ -1601,10 +1634,10 @@ console.log("q2) Cuerpo académico registrado ante PRODEP Consolidado Integrante
 
   document.getElementById("docencia").innerHTML = 700;
 }
-data.docencia  = docencia;
+//data.docencia  = docencia;
 data.score3_19 = isNaN(score3_19) ? 0 : score3_19;
-updateDocencia();
-data.docencia = data.docencia || 0;
+//updateDocencia();
+//data.docencia = //data.docencia || 0;
 console.log("docencia 3:", docencia);
 
 

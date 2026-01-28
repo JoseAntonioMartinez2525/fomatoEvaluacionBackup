@@ -39,6 +39,24 @@ return [
 
     ],
 
+    /*Departamentos y/o areas */
+    'departamentos' => [
+        'Ciencias Sociales y Juridicas',
+        'Ciencias Sociales y Juridicas',
+        'Sistemas Computacionales',
+        'Ciencias Sociales y Juridicas',
+        'Ciencias Sociales y Juridicas',
+        'Ciencia animal y Conservación del habitat', 
+        'Ciencias de la tierra', 
+        'Ciencias Marinas y Costeras',
+        'Humanidades',
+        'Humanidades',
+        'Ingenieria en Pesquerias',
+        'Sistemas Computacionales',
+        'Ingenieria en Pesquerias',
+        'Ciencias Sociales y Juridicas', // Ejemplo para el último email (brendaran@uabcs.mx)
+
+    ],
 ];
 
 

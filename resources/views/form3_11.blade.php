@@ -9,7 +9,7 @@ $docenteConfig = $docenteConfig ?? [
     // Endpoints base
     'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data',
     'docentesEndpoint'    => '/formato-evaluacion/get-docentes',
-    'dictEndpoint'        => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data311',
 
     // Clave de colección dentro del JSON de dictaminadores
     'dictCollectionKey'   => 'form3_11',
@@ -156,7 +156,21 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+$baseUrl = url('/formato-evaluacion');
+$docenteConfig['baseUrl'] = $baseUrl;
+$docenteConfigForm['baseUrl'] = $baseUrl;
+$hasData = false;
+$checkFields = ['comision3_11'];
+foreach($checkFields as $f) {
+    if (!empty($docenteConfig[$f] ?? null)) {
+        $hasData = true;
+        break;
+    }
+}
+$formId = $docenteConfigForm['formId'] ?? 'form3_11';
+$formNumber = '311';
 @endphp
+{{-- @php dd($userType) @endphp --}}
 
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
@@ -168,13 +182,15 @@ $user_identity = $user->id;
     </div>
 
     <main class="container">
-        <!-- Form for Part 3_1 -->
-        <form id="form3_11" method="POST">
+        <!-- Form for Part 3_11 -->
+        <form id="form3_11" action="/formato-evaluacion/store-form311" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <!--3.11 Trabajos dirigidos para la titulación de estudiantes-->
             <h4>Puntaje máximo
@@ -226,14 +242,14 @@ $user_identity = $user->id;
                         <td id="cantAsesoria"></td>
                         <td colspan="3"></td>
                         <td id="subtotalAsesoria"></td>
-                        <td id="comisionAsesoria">
+                        <td id="td_comisionAsesoria">
                             @if ($userType == 'dictaminador')
                                 <input type="number" step="0.01" id="comisionAsesoria" name="comisionAsesoria" oninput="onActv3Comision3_11()" value="{{ oldValueOrDefault('comisionAsesoria') }}">   
                             @else
                                 <span  id="comisionAsesoria" name="comisionAsesoria" ></span>                      
                             @endif
                         </td>
-                        <td id="obsAsesoria">
+                        <td id="td_obsAsesoria">
                             @if ($userType == 'dictaminador')
                                 <input class="table-header" type="text" id="obsAsesoria" name="obsAsesoria">
                             @else
@@ -250,7 +266,7 @@ $user_identity = $user->id;
                         <td id="cantServicio"></td>
                         <td colspan="3"></td>
                         <td id="subtotalServicio"></td>
-                        <td id="comisionServicio">
+                        <td id="td_comisionServicio">
                         @if ($userType == 'dictaminador')   
                             <input type="number" step="0.01" id="comisionServicio" name="comisionServicio" placeholder="0" oninput="onActv3Comision3_11()" value="{{ oldValueOrDefault('comisionServicio') }}">
                         @else
@@ -258,7 +274,7 @@ $user_identity = $user->id;
                         @endif
 
                         </td>
-                        <td id="obsServicio">
+                        <td id="td_obsServicio">
                         @if ($userType == 'dictaminador')   
                             <input class="table-header" type="text" id="obsServicio" name="obsServicio"></td>
                         @else
@@ -274,7 +290,7 @@ $user_identity = $user->id;
                         <td id="cantPracticas"></td>
                         <td colspan="3"></td>
                         <td id="subtotalPracticas"></td>
-                        <td  id="comisionPracticas">
+                        <td  id="td_comisionPracticas">
                         @if ($userType == 'dictaminador')  
                             <input type="number" step="0.01" id="comisionPracticas"  name="comisionPracticas" oninput="onActv3Comision3_11()" value="{{ oldValueOrDefault('comisionPracticas') }}">
                         @else
@@ -282,7 +298,7 @@ $user_identity = $user->id;
                         @endif  
                             
                         </td>
-                        <td id="obsPracticas">
+                        <td id="td_obsPracticas">
                         @if ($userType == 'dictaminador')  
                             <input class="table-header" type="text" id="obsPracticas" name="obsPracticas">
                         @else
@@ -301,11 +317,14 @@ $user_identity = $user->id;
                         <th class="acreditacion" scope="col">Acreditacion: </th>
             
                         <th class="descripcion"><b>JD, *DSEs</b> </th>
-                        <th>
-                            @if ($userType != 'secretaria') 
-                            <button id="btn3_11" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-                            @endif
-                        </th>
+                        {{-- Lógica de botones --}}
+                        @if($userType != 'docente')
+                        <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                        @endif
+                        {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                        @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                        <button type="submit" class="btn custom-btn printButtonClass" id="btn3_11Button">Enviar</button>
+                        @endif
                     </tr>
                 </thead>
             </table>

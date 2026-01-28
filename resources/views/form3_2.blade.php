@@ -7,7 +7,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         'formKey' => 'form3_2',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
         'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-        'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data32',
         'dictCollectionKey' => 'form3_2',
         'userTypeForDict' => '',
         'docenteMappings' => [
@@ -59,7 +59,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     ],
         'printPagePairs' => [[3,4]],
     ],
-    (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) ? ['preselectedEmail' => $teacherEmailFromUrl] : []
+
 );
 
     if (!isset($docenteConfigForm)) {
@@ -84,6 +84,11 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         'selectedEmailInputId' => 'selectedDocenteEmail',
         'searchInputId' => 'docenteSearch',
     ];
+}
+
+// Si se recibe un email desde la URL, se lo pasamos a la configuración del autocompletado.
+if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
+    $docenteConfig['preselectedEmail'] = $teacherEmailFromUrl;
 }
 @endphp
 <!DOCTYPE html>
@@ -199,6 +204,15 @@ body.dark-mode [id^="btn3_"]:hover {
     
 }
 
+button#edit-btn-form3_2{
+    margin-left: 0rem;
+}
+
+button#form3_2Button {
+    margin-top: 5rem !important;
+    margin-left: -7rem !important;
+}
+
 </style>
 <script>
     window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
@@ -219,6 +233,16 @@ body.dark-mode [id^="btn3_"]:hover {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+    $hasData = false;
+    $checkFields = ['comision3_2'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_2';
+$formNumber = '32';
 @endphp
 
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -232,12 +256,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_1 -->
-        <form id="form3_2" action="/formato-evaluacion/store-form32" method="POST">
+        <form id="form3_2" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
             <!-- Actividad 3.2 Calidad del desempeño docente evaluada por el alumnado -->
@@ -288,7 +314,7 @@ $user_identity = $user->id;
                             <td id="cant1" name="cant1">0</td>
                             <td class="td_obs">
                             @if($userType == 'dictaminador')
-                                <input id="prom90_100" type="number" step="0.01"
+                                <input id="prom90_100" name="prom90_100" placeholder="0" type="number" step="0.01"
                                     oninput="onActv3_2Comision()" value="{{ oldValueOrDefault('prom90_100') }}">
                             @else
                             <span id="prom90_100" name="prom90_100"></span>
@@ -314,7 +340,7 @@ $user_identity = $user->id;
 
                             <td class="td_obs">
                              @if($userType == 'dictaminador')   
-                                <input id="prom80_90" type="number" step="0.01"
+                                <input id="prom80_90" name="prom80_90" placeholder="0" type="number" step="0.01"
                                     oninput="onActv3_2Comision()" value="{{ oldValueOrDefault('prom80_90') }}">
                             @else
                                 <span id="prom80_90" name="prom80_90"></span>
@@ -340,7 +366,7 @@ $user_identity = $user->id;
                             <td id="cant3">0</td>
                             <td class="td_obs">
                             @if($userType == 'dictaminador')  
-                                <input id="prom70_80" placeholder="0" type="number" step="0.01"
+                                <input id="prom70_80" name="prom70_80" placeholder="0" type="number" step="0.01"
                                         oninput="onActv3_2Comision()" value="{{ oldValueOrDefault('prom70_80') }}">
                             @else
                             <span id="prom70_80" name="prom70_80"></span>
@@ -364,8 +390,13 @@ $user_identity = $user->id;
 
                             <th class="descripcionDDIE"><b>DDIE</b>
                             <th> 
-                            @if($userType != 'secretaria')     
-                                <button id="btn3_2" type="submit" class="btn custom-btn printButtonClass">Enviar
+                            {{-- Lógica de botones --}}
+                            @if($userType != 'docente')
+                            <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                            @endif
+                            {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                            @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                                <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
                             @endif
                             </th>
                         </tr>
@@ -413,6 +444,10 @@ $user_identity = $user->id;
 
         toggleDarkMode();
     });
+    </script>
+    <script>
+        console.log('Form3_2 Blade Loaded');
+        console.log('Docente Config:', @json($docenteConfig));
     </script>
 
     {{-- partial blade para autocompletar datos--}}

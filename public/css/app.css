@@ -776,10 +776,26 @@ margin-bottom: 20px;
             border: none !important; /* Oculta el borde */
             height: auto !important; /* Permite que el textarea se expanda verticalmente para mostrar todo el contenido */
             overflow: visible !important; /* Asegura que todo el contenido sea visible y no se recorte */
+            field-sizing: content !important; /* Standard in 2026 for auto-height */
             resize: none !important; /* Evita que aparezcan los controladores de redimensionamiento */
             scrollbar-width: none !important; /* Oculta la barra de desplazamiento en Firefox */
             -ms-overflow-style: none !important; /* Oculta la barra de desplazamiento en IE/Edge */
         }
+
+        /* Modern browsers (Chrome 121+, Safari 18.2+, Firefox) */
+        @supports (scrollbar-width: none) {
+            textarea.textAreaForms {
+                scrollbar-width: none !important;
+            }
+        }
+
+        /* Legacy WebKit browsers (older Chrome, Safari, and iOS) */
+        @supports not (scrollbar-width: none) {
+            textarea.textAreaForms::-webkit-scrollbar {
+                display: none !important;
+            }
+        }
+        
         textarea.textAreaForms::-webkit-scrollbar {
             display: none !important; /* Oculta la barra de desplazamiento en navegadores WebKit (Chrome, Safari) */
         }
@@ -814,7 +830,7 @@ form[id^="form3_"] {
     margin-bottom: 200px;
 }
 
-#form2_2Button{
+#form2_2Button, #form3_1Button, #form3_2Button{
     margin-left: 260px;
     width: 200px;
     border-radius: 90px 90px 90px 90px;
@@ -827,24 +843,24 @@ form[id^="form3_"] {
     border-radius: 90px 90px 90px 90px;
 }
 
-body.light-mode #form2_1Button, body.light-mode #form2_2Button, body.light-mode #btn1{
+body.light-mode #form2_1Button, body.light-mode #form2_2Button, body.light-mode #btn1, body.light-mode #form3_1Button, body.light-mode #form3_2Button{
         background-color: #72aaca;
         color: whitesmoke;
 }
 
-body.light-mode #form2_1Button:hover, body.light-mode #form2_2Button:hover, body.light-mode #btn1:hover{
+body.light-mode #form2_1Button:hover, body.light-mode #form2_2Button:hover, body.light-mode #btn1:hover, body.light-mode #form3_1Button:hover, body.light-mode #form3_2Button:hover{
     background-color: #7ac1ca;
     color: floralwhite;
     font-weight: bold;
 
 }
-body.dark-mode #btn1, body.dark-mode #form2_1Button, body.dark-mode #form2_2Button, body.dark-mode #btn1{
+body.dark-mode #btn1, body.dark-mode #form2_1Button, body.dark-mode #form2_2Button, body.dark-mode #btn1, body.dark-mode #form3_1Button, body.dark-mode #form3_2Button{
     background-color: #456483;
     color: floralwhite;
 }
 
 body.dark-mode #btn1:hover, body.dark-mode #form2_1Button:hover,
-body.dark-mode #form2_2Button:hover{
+body.dark-mode #form2_2Button:hover, body.dark-mode #form3_1Button:hover, body.dark-mode #form3_2Button:hover{
     background-color: #6a5b9f;
     font-weight: bold;
 }
@@ -1135,6 +1151,7 @@ body.dark-mode nav.nav.flex-column a:hover {
 
 .datosConvocatoria .row {
     display: contents;
+    
     /* Permite que los hijos usen el grid del padre */
 }
 
@@ -1142,9 +1159,11 @@ body.dark-mode nav.nav.flex-column a:hover {
     text-align: left;
     align-self: start;
     margin-bottom: 2px;
+
 }.datosConvocatoria .valor {
     display: flex;
     align-items: center;
+    width: 75%;
 }
 
 .datosConvocatoria .input-header {
@@ -1655,16 +1674,13 @@ input #obsAsesoria:focus, input[id^="obs"]:focus, input[id^="comisionInicio"]:fo
 outline: none;
 }
 
-body.light-mode td.obsInicioFinancimientoExt, body.light-mode td.obsInicioInvInterno, body.light-mode td.obsReporteInvInt, body.light-mode td.obsReporteFinanciamExt{
-        background-color: #d6fff7;
-        border-width: thin;
-        border-color: white;
-}
 
-body.dark-mode td.obsInicioFinancimientoExt, body.dark-mode td.obsInicioInvInterno, body.dark-mode td.obsReporteInvInt, body.dark-mode td.obsReporteFinanciamExt{
-        background-color: #82bdb2 !important;
-}
 
 .obsBackground{
     background-color: #d6fff7;
 }
+
+
+ button#btn3_11Button{
+    margin-left: 60rem;
+  }

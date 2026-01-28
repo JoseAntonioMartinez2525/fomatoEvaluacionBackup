@@ -9,40 +9,27 @@ class DynamicForm extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
-        'form_name',
-        'puntaje_maximo',
         'user_id',
         'email',
         'user_type',
-        'table_data',
+        'form_name',
+        'form_type',
+        'puntaje_maximo',
         'acreditacion',
-        'filas', 
-        'columnas', 
+        'filas',
+        'columnas',
+        'form_structure',
+        'form_data',
     ];
 
     protected $casts = [
-        'table_data' => 'array',  // Convierte la columna JSON en un array al obtenerla
+        'form_structure' => 'array', // Codifica/decodifica automáticamente a/desde JSON
+        'form_data' => 'array',      // Codifica/decodifica automáticamente a/desde JSON
     ];
-
-    public function fields()
-    {
-        return $this->hasMany(DynamicFormField::class, 'user_id');
-    }
-
-    public function items()
-    {
-        return $this->hasMany(DynamicFormItem::class, 'dynamic_form_id');
-    }
-
-    public function columns()
-    {
-        return $this->hasMany(DynamicFormColumn::class, 'dynamic_form_id');
-    }
-
-    public function values()
-    {
-        return $this->hasMany(DynamicFormValue::class, 'dynamic_form_id');
-    }
 }
-

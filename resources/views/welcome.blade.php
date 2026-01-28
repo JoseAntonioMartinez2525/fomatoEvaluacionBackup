@@ -59,7 +59,7 @@ button#edit-form-btn{
           <li class="nav-item">
             <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="javascript:void(0);" onclick="showStep(1)" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Evaluación</a>
           </li>
-          <ul class="actv3"><i class="fa-solid fa-clipboard-user"></i>&nbsp;Convocatoria:
+          <ul class="actv3"><i class="fa-solid fa-clipboard-user"></i>&nbsp;Actividades/Apartados:
             <li><a href="javascript:void(0);" onclick="showStep(2)">1. Permanencia en las actividades de la docencia</a></li>
             <li><a href="javascript:void(0);" onclick="showStep(3)">2. Dedicación en el desempeño docente</a></li>
           </ul>
@@ -82,31 +82,24 @@ button#edit-form-btn{
   <div id="timer">   
 
         <div id="step1" style="display:block; margin-inline-start:10rem;">
-            <form id="form1" method="POST" onsubmit="event.preventDefault(); submitForm('store', 'form1');">
+            <div id="form1_readonly">
 
             <br>
             <label for="convocatoria" class="label">Convocatoria</label>
-            <input name="convocatoria" type="text" class="input-header mb-3" id="convocatoria"></input>
+            <input name="convocatoria" type="text" class="input-header mb-3" id="convocatoria" value="{{ $convocatoria ?? '' }}" readonly>
 
             <label for="periodo" class="label">Periodo de evaluación:</label>
-            <input name="periodo" id="periodo" type="text" class="input-header mb-3"></input>
+            <input name="periodo" id="periodo" type="text" class="input-header mb-3" value="{{ $periodo ?? '' }}" readonly>
 
-            <label for="nombre" class="label">Nombre del personal académico:</label> <input name="nombre" type="text"
-            class="input-header mb-3"></input>
+            <label for="nombre" class="label">Nombre del personal académico:</label> 
+            <input name="nombre" type="text" class="input-header mb-3" value="{{ $nombre ?? Auth::user()->name }}" readonly>
 
             <label for="area" class="label">Área de Conocimiento:</label>
-            <select name="area" id="area" class="form-select input-header" aria-label="Default select example" required>
-            @foreach ($areaOptions as $option)
-            <option value="{{ $option }}">{{ $option }}</option>
-            @endforeach
-            </select>
+            <input name="area" type="text" class="input-header mb-3" value="{{ $area ?? 'No definida' }}" readonly>
+
             <label for="departamento" class="label">Departamento Académico:</label>
-            <select name="departamento" id="departamento" class="input-header" aria-label="Default select example"
-            required>
-            @foreach ($departamentoOptions as $option)
-            <option option value="{{ $option }}">{{ $option }}</option>
-            @endforeach
-            </select><br><br>
+            <input name="departamento" type="text" class="input-header mb-3" value="{{ $departamento ?? 'No definido' }}" readonly>
+            <br><br>
 
             <center class="printCenter"><h5>Instrucciones</h5></center>
 
@@ -123,11 +116,11 @@ button#edit-form-btn{
             definiciones. <br>
             5 La Comisión Dictaminadora no tomará en cuenta documentación que no esté contemplada dentro del
             formato de evaluación, asimismo no se aceptará documentación presentada de forma extemporánea.
-            <center><button type="submit" class="btn custom-btn" id="btn1">Enviar</button>
+            <center><button type="button" class="btn custom-btn" id="btn1" onclick="showStep(2)">Continuar</button>
             </center>
             </div>
 
-          </form>
+          </div>
         </div>
 
         </header>
@@ -328,11 +321,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    const convocatoria = document.querySelector('nav a').textContent.trim();
-    const periodo = document.getElementById('periodo').textContent;
-    const nombre = document.querySelector('input[name="nombre"]').value;
-    const area = document.querySelector('select[name="area"]').value;
-    const departamento = document.querySelector('select[name="departamento"]').value;
+    // const convocatoria = document.querySelector('nav a').textContent.trim();
+    // const periodo = document.getElementById('periodo').textContent;
+    // const nombre = document.querySelector('input[name="nombre"]').value;
+    // const area = document.querySelector('select[name="area"]').value;
+    // const departamento = document.querySelector('select[name="departamento"]').value;
     const horasPosgrado = document.getElementById('horasPosgrado').value;
     const horasSemestre = document.getElementById('horasSemestre').value;
 
@@ -557,14 +550,6 @@ function onChange() {
 
       // Recoge los datos dependiendo del formulario actual
       switch (formId) {
-        case 'form1':
-          formData['convocatoria'] = form.querySelector('input[name="convocatoria"]').value;
-          formData['periodo'] = form.querySelector('input[name="periodo"]').value;
-          formData['nombre'] = form.querySelector('input[name="nombre"]').value;
-          formData['area'] = form.querySelector('select[name="area"]').selectedOptions[0].textContent;
-          formData['departamento'] = form.querySelector('select[name="departamento"]').selectedOptions[0].textContent;
-          break;
-
         case 'form2':
           formData['user_id'] = form.querySelector('input[name="user_id"]').value;
           formData['email'] = form.querySelector('input[name="email"]').value;
@@ -762,13 +747,11 @@ function onChange() {
 
     // MAPA DE RUTAS Y STEPS (similar a docencia.blade.php)
     const routeMap = {
-        form1: { store: '/formato-evaluacion/store', fetch: '/formato-evaluacion/get-data1' },
         form2: { store: '/formato-evaluacion/store2', fetch: '/formato-evaluacion/get-data2' },
         form2_2: { store: '/formato-evaluacion/store3', fetch: '/formato-evaluacion/get-data22' },
     };
 
     const stepMap = {
-        form1: 1,
         form2: 2,
         form2_2: 3, // Usamos 3 para diferenciarlo
     };
@@ -819,27 +802,6 @@ function onChange() {
 
 
 
-    // Función para actualizar el label en el footer con la convocatoria y periodo de evaluación
-      function actualizarLabelConvocatoriaPeriodo(convocatoria, periodo) {
-        const label = document.getElementById('convocatoriaPeriodoLabel');
-        label.textContent = `Convocatoria: ${convocatoria}, Período: ${periodo}`;
-      }
-
-      // Captura la convocatoria y periodo de evaluación al enviar el formulario form1
-      document.addEventListener('DOMContentLoaded', function () {
-        const form1 = document.getElementById('form1');
-        form1.addEventListener('submit', function (event) {
-          event.preventDefault(); // Evita el envío del formulario para manejarlo con JavaScript
-
-          // Captura los valores del formulario form1
-          const convocatoria = document.getElementById('convocatoria').value;
-          const periodo = document.getElementById('periodo').value;
-
-          // Actualiza el label en el footer con los valores capturados
-          actualizarLabelConvocatoriaPeriodo(convocatoria, periodo);
-          console.log (label);
-        });
-      });
    
   document.addEventListener('DOMContentLoaded', function () {
     // Get the canvas element
@@ -865,7 +827,7 @@ function onChange() {
     var convocatoriaInput = document.getElementById('convocatoria');
     if (convocatoriaInput) {
       // Update the canvas initially with the placeholder value or empty
-      updateCanvas(convocatoriaInput.placeholder);
+      updateCanvas(convocatoriaInput.value || convocatoriaInput.placeholder);
 
       // Listen for input events to dynamically update the canvas
       convocatoriaInput.addEventListener('input', function () {

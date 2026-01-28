@@ -7,7 +7,7 @@ $docenteConfig =  $docenteConfig ?? [
         'formKey' => 'form3_7',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
         'docentesEndpoint' => '/formato-evaluacion/get-docentes',
-        'dictEndpoint' => '/formato-evaluacion/get-dictaminators-responses',
+        'dictEndpoint' => '/formato-evaluacion/get-form-data37',
         'dictCollectionKey' => 'form3_7', // Ensure this matches the key in dictaminator responses
         'userTypeForDict' => '',
         'docenteMappings' => [
@@ -96,7 +96,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
 <style>
 #btn3_7{
-    margin-left: 1250px;
+    margin-left: 60rem;
 }
 
 body.dark-mode [id^="btn3_"]{
@@ -125,6 +125,18 @@ body.dark-mode [id^="btn3_"]:hover {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
+    $hasData = false;
+    $checkFields = ['comision3_7'];
+    foreach($checkFields as $f) {
+        if (!empty($docenteConfig[$f] ?? null)) {
+            $hasData = true;
+            break;
+        }
+    }
+$formId = $docenteConfigForm['formId'] ?? 'form3_7';
+$formNumber = '37';
+
 @endphp
 
 <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -138,12 +150,14 @@ $user_identity = $user->id;
 
     <main class="container">
         <!-- Form for Part 3_1 -->
-        <form id="form3_7" method="POST">
+        <form id="form3_7" action="/formato-evaluacion/store-form37" method="POST" data-teacher-email="{{ $teacherEmailFromUrl ?? '' }}" data-custom-url="true">
             @csrf
+            @if($userType == 'dictaminador')
             <input type="hidden" name="dictaminador_email" value="{{ Auth::user()->email }}">
             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+            @endif
             <input type="hidden" name="user_id" value="">
-            <input type="hidden" name="email" value="">
+            <input type="hidden" name="email" value="{{ $teacherEmailFromUrl ?? '' }}">
             <input type="hidden" name="user_type" value="">
             <div>
                 <!-- 3.7 Cursos de actualización disciplinaria recibidos dentro de su área de conocimiento  -->
@@ -218,9 +232,14 @@ $user_identity = $user->id;
                     </table>
                 </tbody>
             </table>
-            @if ($userType != 'secretaria')
-                <button id="btn3_7" type="submit" class="btn custom-btn printButtonClass">Enviar</button>
-            @endif
+                {{-- Lógica de botones --}}
+                @if($userType != 'docente')
+                <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
+                @endif
+                {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
+                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                    <button type="submit" class="btn custom-btn printButtonClass" id="btn3_7">Enviar</button>
+                @endif
             </form>
 
     </main>

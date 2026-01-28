@@ -23,7 +23,7 @@ class CheckEvaluationPeriod
 
         // Aplicar la lógica solo para los docentes
         if ($user && $user->user_type === 'docente') {
-            $evaluationDates = EvaluationDate::where('type', 'docentes_llenado')->first();
+            $evaluationDates = EvaluationDate::where('type', 'docentes_llenado')->latest('id')->first();
             $now = Carbon::now();
 
             if ($evaluationDates) {

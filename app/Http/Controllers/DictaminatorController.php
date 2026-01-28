@@ -98,6 +98,29 @@ public function adminResetTimer(Request $request)
     return response()->json($docentes);
 }
 
+    public function getDocentesByDictaminador(Request $request)
+    {
+        $dictaminadorId = $request->input('dictaminador_id') ?? \Auth::id();
+        $includeOthers = $request->input('include_others') === 'true';
+
+        if ($includeOthers) {
+            // Traer TODOS los docentes registrados en el sistema (tabla users)
+            $docentes = \App\Models\User::where('user_type', 'docente')
+                ->select('id', 'name', 'email')
+                ->orderBy('name')
+                ->get();
+            return response()->json($docentes);
+        }
+
+        // Consultar la tabla pivote (historial de evaluaciones) solo para el dictaminador actual
+        $query = DB::table('dictaminador_docente')
+            ->join('users', 'dictaminador_docente.docente_id', '=', 'users.id')
+            ->where('dictaminador_docente.dictaminador_id', $dictaminadorId)
+            ->select('users.id', 'users.name', 'users.email')
+            ->distinct();
+
+        return response()->json($query->get());
+    }
 
     public function getDocenteData(Request $request)
     {
@@ -505,6 +528,27 @@ public function adminResetTimer(Request $request)
 
         $validatedData = $validator->validated();
 
+        // Normalize observation fields to avoid NULL values that break DB constraints.
+        // Instantiate the form controller to access its observation field list.
+        try {
+            $formControllerInstance = new $controllerClass();
+            if (method_exists($formControllerInstance, 'getObservationFields')) {
+                $reflectionMethod = new \ReflectionMethod($formControllerInstance, 'getObservationFields');
+                
+                // REMOVED: $reflectionMethod->setAccessible(true);
+                
+                $obsFields = $reflectionMethod->invoke($formControllerInstance);
+
+                foreach ($obsFields as $campo) {
+                    if (!array_key_exists($campo, $validatedData) || $validatedData[$campo] === null || trim((string)($validatedData[$campo] ?? '')) === '') {
+                        $validatedData[$campo] = 'sin comentarios';
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::warning("Normalization failed for form_{$formIdentifier}: " . $e->getMessage());
+        }
+
         try {
             // 4. Usar updateOrCreate para actualizar o crear el registro
             $record = $modelClass::updateOrCreate(
@@ -565,8 +609,9 @@ public function adminResetTimer(Request $request)
         $i = $matches[1];
         if ($i >= 1 && $i <= 19) {
             return [
-                'controller' => "\\App\\Http\\Controllers\\DictaminatorForm3_{$i}Controller",
-                'model' => "\\App\\Models\\DictaminatorsResponseForm3_{$i}",
+                'controller' => "App\\Http\\Controllers\\DictaminatorForm3_{$i}Controller",
+                'model' => "App\\Models\\DictaminatorsResponseForm3_{$i}",
+                'form_type' => "form3_{$i}",
             ];
         }
     }

@@ -237,7 +237,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 <body class="font-sans antialiased">
 
     @auth
-        @if(Auth::user()->user_type === 'dictaminador')
+        @if(Auth::user()->user_type === 'dictaminador' || in_array(Auth::user()->email, config('dictaminadores.emails', [])))
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass" style="margin-left: 100px;"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
@@ -248,54 +248,11 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 <div id="firmaSection">
      @if(!$tieneFirma)
      <!-- Mostrar formulario SOLO si no hay firma -->
-    <form id="firmasDict" 
-      method="POST" 
-      action="{{ route('firmaDictaminador.store') }}" 
-      enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
-        <input type="hidden" name="email" id="email" value="{{ auth()->user()->email }}">
-        <input type="hidden" name="user_type" id="user_type" value="{{ auth()->user()->user_type }}">
-
-        <table>
-            <thead>
-                <tr id="eva1">
-                    <th class="evaluadores">
-                        <span><strong>Evaluador:</strong> {{ $personaEvaluadora }}</span>
-                        <input type="hidden" name="evaluator_name" value="{{ $personaEvaluadora }}">
-
-                    </th>
-                    <th>
-                        @if(empty($firma))
-                            <button type="button" class="btnFile"
-                                    onclick="document.getElementById('firma1').click()">Subir firma electrónica</button>
-                            <input type="file" class="d-none files" id="firma1" name="firma1" accept="image/*">
-                            <small class="text-muted">(solo formatos .png, .jpg, .jpeg)</small>
-                        @else
-                            <span>Ya se ha registrado una firma.</span>
-                        @endif
-                    </th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <span id="firmaTexto"></span>
-                        <small class="text-muted">Tamaño máximo: 2MB</small>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding-left: 600px;">
-                        <button type="submit" id="submitButton"
-                                class="btn custom-btn buttonSignature2">Enviar</button>
-                    </td>
-                </tr>
-            </thead>
-        </table>
-    </form>
-        <!-- Contador invisible -->
-       <div id="timerContainer" class="mt-3" style="display: none">
-            <span>Tiempo transcurrido: <strong id="timer">0</strong> segundos</span>
-        </div>
+    <div class="alert alert-warning text-center mt-5">
+        <h4><i class="fa-solid fa-triangle-exclamation"></i> Firma Electrónica Requerida</h4>
+        <p>Su firma electrónica no ha sido registrada en el sistema.</p>
+        <p>Por favor, contacte a la <strong>Secretaría Académica</strong> o al administrador del sistema para que realicen la carga de su firma y pueda proceder con las evaluaciones.</p>
+    </div>
 </div>
     @endif
         {{-- tabla de formularios --}}
@@ -1262,66 +1219,6 @@ function guardarDatosComision(formId, docenteEmail) {
         window.location.href = route;
       }
 
-
-            // Solo iniciar el timer si no existe firma
-// Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-    // Caso 1: Usuario sin firma (muestra el formulario + timer de segundos)
-    const timerElement = document.getElementById('timer');
-    if (timerElement && !{{ $tieneFirma ? 'true' : 'false' }}) {
-        let seconds = 0;
-        window.timerInterval = setInterval(() => {
-            seconds++;
-            timerElement.textContent = seconds;
-        }, 1000);
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const formFirmas = document.getElementById('firmasDict');
-    const firmaSection = document.getElementById('firmaSection');
-    const mainSection = document.getElementById('mainSection');
-
-    if (formFirmas) {
-        formFirmas.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const response = await fetch(`{{ url('/store-dictaminator_signatures') }}`, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                // Mostrar mensaje local (sin flash, sin redirect)
-                firmaSection.innerHTML = `
-                    <div class="alert alert-success text-center mt-3" id="successMsg">
-                        ✅ ${data.message}<br>
-                        <small>Mostrando formularios en <span id="countdown2">5</span> segundos...</small>
-                    </div>
-                `;
-
-                let countdown = 5;
-                const countdownSpan = document.getElementById('countdown2');
-                const interval = setInterval(() => {
-                    countdown--;
-                    countdownSpan.textContent = countdown;
-                    if (countdown <= 0) {
-                        clearInterval(interval);
-                        const msg = document.getElementById('successMsg');
-                        if (msg) msg.remove();
-                        if (mainSection) mainSection.style.display = 'block';
-                    }
-                }, 1000);
-            } else {
-                alert('❌ Error al guardar la firma.');
-            }
-        });
-    }
-    });
 
     document.addEventListener("docenteSelected", function(e) {
     const docente = e.detail;

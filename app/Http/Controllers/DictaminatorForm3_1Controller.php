@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\ResponseJson;
 use App\Events\EvaluationCompleted;
 use App\Models\DictaminatorsResponseForm3_1;
 use App\Models\UsersResponseForm3_1;
@@ -31,6 +32,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ValidatesDictaminatorPeriod;
+use Illuminate\Support\Facades\Auth;
 
 class DictaminatorForm3_1Controller extends TransferController
 {
@@ -88,6 +90,13 @@ class DictaminatorForm3_1Controller extends TransferController
              $this->validarFormularioUnico($request, 'dictaminators_response_form3_1');
 
             $validatedData = $request->validate(self::getValidationRules());
+
+            // Actualizar el user_type del usuario si se proporciona
+            $user = \App\Models\User::find($validatedData['user_id']);
+            if ($user && isset($validatedData['user_type'])) {
+                $user->user_type = $validatedData['user_type'];
+                $user->save();
+            }
 
             \Log::info('Datos validados:', $validatedData);
 
@@ -170,30 +179,53 @@ class DictaminatorForm3_1Controller extends TransferController
         }
     }
 
-    public function getFormData31(Request $request)
-    {
-        try {
-            $data = DictaminatorsResponseForm3_1::where('user_id', $request->query('user_id'))->first();
-            if (!$data) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data not found',
-                ], 404);
-            }
+public function getFormData31(Request $request)
+{
+    try {
+            \Log::info('DictaminatorForm3_1Controller::getFormData31 - Inicio', ['request' => $request->all()]);
 
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ], 200);
+            $query = DictaminatorsResponseForm3_1::query();
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while retrieving data: ' . $e->getMessage(),
-            ], 800);
+        if ($request->has('user_id')) {
+            $query->where('user_id', $request->query('user_id'));
+        } elseif ($request->has('email')) {
+            $query->where('email', $request->query('email'));
         }
 
+            $dictaminadorId = $request->query('dictaminador_id');
+
+            // Intentar obtener primero el registro del dictaminador actual
+            $data = $dictaminadorId ? (clone $query)->where('dictaminador_id', $dictaminadorId)->first() : null;
+
+            // Si no se encuentra, buscar cualquier registro existente (de otro dictaminador)
+            if (!$data) {
+                $data = $query->first();
+            }
+
+        if (!$data) {
+            \Log::info('DictaminatorForm3_1Controller::getFormData31 - Data not found');
+            return response()->json([
+                'success' => false,
+                'message' => 'Data not found',
+                'form3_1' => [],
+            ], 200);
+        }
+
+        \Log::info('DictaminatorForm3_1Controller::getFormData31 - Data found', ['id' => $data->id]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'form3_1' => [$data]
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('DictaminatorForm3_1Controller::getFormData31 - Error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
     }
+}
     private function updateUserResponseComision($userId, $comisionValue)
     {
         // Buscar el registro de UsersResponseForm2 correspondiente y actualizar comision1
@@ -231,7 +263,7 @@ class DictaminatorForm3_1Controller extends TransferController
         // Definir el número de páginas (ajústalo según sea necesario)
         $currentPage = 3;  // La página actual para este formulario
         $totalPages = 2;   // Total de páginas en el formulario form3_1 (ajústalo según corresponda)
-
+        
         // Pasar los valores de paginación a la vista
         return view('form3_1', compact('currentPage', 'totalPages'));
     }
@@ -376,15 +408,35 @@ class DictaminatorForm3_1Controller extends TransferController
     return response()->json(['totalDocencia' => $total]);
 }
 
-    public function showForm31NoSearch($teacherEmail = null)
+    public function showForm31NoSearch(Request $request, $teacherEmail = null)
     {
         // Si se proporciona un email de docente en la URL, no necesitamos mostrar el buscador.
         // El script de autocompletado cargará los datos automáticamente.
         $showSearchComponent = is_null($teacherEmail);
 
+        $hasData = false;
+        $docencia = 0;
+        $score3_1 = 0;
+
+        if ($teacherEmail) {
+            $user = \App\Models\User::where('email', $teacherEmail)->first();
+            if ($user) {
+                $hasData = DictaminatorsResponseForm3_1::where('email', $teacherEmail)
+                    ->exists();
+
+                // Reutilizar la lógica para obtener los puntajes
+                $responseJsonController = new ResponseJson();
+                $scores = $responseJsonController->buildDocenciaScores($user->id);
+                $docencia = $scores['docencia'] ?? 0;
+                $score3_1 = $scores['score3_1'] ?? 0;
+            }
+        }
         return view('form3_1', [
             'teacherEmailFromUrl' => $teacherEmail,
-            'showSearch' => $showSearchComponent
+            'showSearch' => $showSearchComponent,
+            'hasData' => $hasData,
+            'docencia' => $docencia,
+            'score3_1' => $score3_1,
         ]);
     }
 
