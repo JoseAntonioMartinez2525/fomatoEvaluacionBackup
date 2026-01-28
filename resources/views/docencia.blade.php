@@ -3292,7 +3292,7 @@ const stepMap = {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('✅ Formulario enviado correctamente');
+                showMessage('✅ Formulario enviado correctamente', 'green');
                 
                 // Handle Step Transition
                 if (currentStep) {
@@ -3304,16 +3304,16 @@ const stepMap = {
                     } else {
                         // End of forms
                         localStorage.setItem("ultimoStepDocencia", "FIN");
-                        alert('Has completado todos los formularios.');
+                        showMessage('Has completado todos los formularios.', 'blue');
                     }
                 }
             } else {
-                alert('❌ Error: ' + (data.message || 'Error al enviar'));
+                showMessage('❌ Error: ' + (data.message || 'Error al enviar'), 'red');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('❌ Error de conexión');
+            showMessage('❌ Error de conexión', 'red');
         });
     }
 
@@ -3837,7 +3837,8 @@ const stepMap = {
                                 showStep(nextStep);
                                 localStorage.setItem("ultimoStepDocencia", nextStep);
                             } else {
-                                // showMessage("Proceso completado", "green");
+                                // Si no hay paso siguiente (ni fijo ni dinámico)
+                                showMessage("Has completado todos los formularios disponibles.", "blue");
                                 
                                 localStorage.setItem("ultimoStepDocencia", "FIN");
                             }

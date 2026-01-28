@@ -504,7 +504,17 @@ class DynamicFormController extends Controller
             abort(404, 'Formulario no encontrado.');
         }
 
-        // Pasamos el formulario a una vista genérica que sabrá cómo renderizarlo.
-        return view('dynamic_form_display', ['form' => $form]);
+ // Cargar todos los formularios de sección 3
+    $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
+    $staticFormTypes = [ '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.8.1', '3.9', 
+    '3.10', '3.11', '3.12', '3.13', '3.14', '3.15', '3.16', '3.17', '3.18', '3.19'];
+    $staticStepCount = 20; // igual que en tu blade
+
+    return view('docencia', [
+        'currentForm' => $form,
+        'dynamicForms' => $dynamicForms,
+        'staticFormTypes' => $staticFormTypes,
+        'staticStepCount' => $staticStepCount
+    ]);
     }
 }
