@@ -2887,14 +2887,41 @@ $staticFormTypes = [
                                             <input type="hidden" name="form_id" value="{{ $form->id }}">
 
                                             <h3>{{ $form->form_name }}</h3>
-                                            <p class="text-muted">
-                                                Este es un formulario dinámico. Aquí se renderizaría la tabla basada en la estructura que creaste.
-                                                Para una implementación completa, necesitarías un componente de Blade que interprete y dibuje la tabla desde los datos JSON del formulario.
-                                            </p>
+                                            
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-sm">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            @foreach($form->form_structure as $column)
+                                                                <th class="text-center align-middle">{{ $column['name'] }}</th>
+                                                            @endforeach
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($form->form_data as $rowIndex => $row)
+                                                            <tr>
+                                                                @foreach($form->form_structure as $column)
+                                                                    @php
+                                                                        $key = $column['key'];
+                                                                        $isCommission = in_array($key, ['puntaje_de_la_comision_dictaminadora', 'observaciones']);
+                                                                        $value = $row[$key] ?? '';
+                                                                    @endphp
+                                                                    <td>
+                                                                        @if($isCommission)
+                                                                            <input type="text" class="form-control form-control-sm" disabled>
+                                                                        @else
+                                                                            <input type="text" class="form-control form-control-sm" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
+                                                                        @endif
+                                                                    </td>
+                                                                @endforeach
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
                                             <p class="mt-3"><strong>Acreditación:</strong> {{ $form->acreditacion }}</p>
                                             
-                                            {{-- Aquí iría la lógica para renderizar la tabla del formulario dinámico. --}}
-
                                             <button type="submit" class="btn custom-btn printButtonClass">Enviar</button>
                                         </form>
                                     </div>

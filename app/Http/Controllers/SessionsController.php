@@ -302,27 +302,17 @@ private function redirectByUserType($user)
         // Buscar índice normalizando a minúsculas para asegurar que se encuentren los datos
         $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
 
-        // 1. Priorizar datos de UsersResponseForm1 si existen (ya sincronizados en login)
-        $nombre = $form1 && $form1->nombre ? $form1->nombre : $user->name;
-        $area = $form1 && $form1->area ? $form1->area : ($user->area ?? 'No definida');
-        $departamento = $form1 && $form1->departamento ? $form1->departamento : ($user->departamento ?? 'No definido');
+        // 1. Establecer valores por defecto (desde DB o User)
+        $nombre = $form1 ? $form1->nombre : $user->name;
+        $area = $form1 ? $form1->area : ($user->area ?? 'No definida');
+        $departamento = $form1 ? $form1->departamento : ($user->departamento ?? 'No definido');
 
-        // 2. Sobrescribir con datos del archivo de configuración SOLO si existen y son válidos
+        // 2. Sobrescribir con datos del archivo de configuración SOLO si existen
         if ($dIndex !== false) {
-            $nombre = isset($docenteNombres[$dIndex]) && !empty($docenteNombres[$dIndex]) ? $docenteNombres[$dIndex] : $nombre;
-            $area = isset($docenteAreas[$dIndex]) && !empty($docenteAreas[$dIndex]) ? $docenteAreas[$dIndex] : $area;
-            $departamento = isset($docenteDeptos[$dIndex]) && !empty($docenteDeptos[$dIndex]) ? $docenteDeptos[$dIndex] : $departamento;
+            $nombre = $docenteNombres[$dIndex] ?? $nombre;
+            $area = $docenteAreas[$dIndex] ?? $area;
+            $departamento = $docenteDeptos[$dIndex] ?? $departamento;
         }
-
-        Log::info('Welcome page data prepared', [
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'nombre' => $nombre,
-            'area' => $area,
-            'departamento' => $departamento,
-            'config_index' => $dIndex,
-            'has_form1' => $form1 ? true : false
-        ]);
 
         return view('welcome', compact('user', 'periodo', 'convocatoria', 'nombre', 'area', 'departamento'));
     }
