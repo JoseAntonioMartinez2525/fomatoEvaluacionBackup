@@ -1,6 +1,7 @@
 const mix = require('laravel-mix');
 
 // Indica que los archivos estarán en /formato-evaluacion/
+// mix.setResourceRoot('/Programa de estimulos al desempeño docente/')
 mix.setResourceRoot('/formato-evaluacion/')
    .setPublicPath('public');
    
