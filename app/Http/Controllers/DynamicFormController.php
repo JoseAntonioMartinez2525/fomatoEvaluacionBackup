@@ -82,8 +82,8 @@ class DynamicFormController extends Controller
                 'acreditacion' => $validatedData['acreditacion'] ?? null,
                 'filas' => $validatedData['filas'],
                 'columnas' => $validatedData['columnas'],
-                'form_structure' => json_encode($formStructure), // Forzar JSON
-                'form_data' => json_encode($formData),           // Forzar JSON
+                'form_structure' => $formStructure, // Pasar array directo (el modelo hace cast)
+                'form_data' => $formData,           // Pasar array directo (el modelo hace cast)
             ]);
 
             return response()->json([
@@ -223,10 +223,12 @@ class DynamicFormController extends Controller
             $form->acreditacion = $validatedData['acreditacion'] ?? $form->acreditacion;
 
             // Actualizar los datos JSON
+            $form->form_data = $validatedData['form_data'];
             $form->form_data = json_encode($validatedData['form_data']);
             
             // Opcionalmente, actualizar la estructura si se proporciona
             if (isset($validatedData['form_structure'])) {
+                $form->form_structure = $validatedData['form_structure'];
                 $form->form_structure = json_encode($validatedData['form_structure']);
             }
 
