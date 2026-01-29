@@ -4,7 +4,6 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 use App\Models\DynamicForm;
 use Illuminate\Support\Str;
 
-$dynamicForms = DynamicForm::all();
 $staticStepCount = 20; // La última actividad estática (3.19) corresponde al paso 20
 $dynamicFormIndex = 0;
 
@@ -12,6 +11,19 @@ $staticFormTypes = [
     '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.8.1', '3.9', 
     '3.10', '3.11', '3.12', '3.13', '3.14', '3.15', '3.16', '3.17', '3.18', '3.19'
 ];
+
+  $renderDataByForm = $renderDataByForm ?? [];
+
+  // Si la variable no viene del controlador, la obtenemos aquí para evitar "Undefined variable"
+  if (!isset($dynamicForms)) {
+      $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
+  }
+
+  // Aseguramos que los campos JSON sean arrays (decodificando si son strings)
+  foreach ($dynamicForms as $df) {
+      if (is_string($df->form_structure)) $df->form_structure = json_decode($df->form_structure, true) ?? [];
+      if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true) ?? [];
+  }
 
 @endphp
 <!DOCTYPE html>
@@ -140,7 +152,8 @@ $staticFormTypes = [
                 {{-- Bucle para formularios dinámicos de la sección 3 --}}
                 @foreach($dynamicForms as $form)
                     @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                        @php $dynamicFormIndex++; @endphp
+                        @php $dynamicFormIndex++; 
+                        $renderData = $renderDataByForm[$form->id] ?? $form->form_data;@endphp
                         <li><a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $dynamicFormIndex }})">{{ $form->form_name }}</a></li>
                     @endif
                 @endforeach
@@ -175,7 +188,9 @@ $staticFormTypes = [
                  @php $dynamicFormIndex = 0; @endphp
                  @foreach($dynamicForms as $form)
                     @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                        @php $dynamicFormIndex++; @endphp
+                        @php $dynamicFormIndex++; 
+                        $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
+                        @endphp
                         <li><a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $dynamicFormIndex }})">{{ $form->form_name }}</a></li>
                     @endif
                 @endforeach
@@ -2872,7 +2887,22 @@ $staticFormTypes = [
                             @php $dynamicFormIndex = 0; @endphp
                             @foreach($dynamicForms as $form)
                                 @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                                    @php $dynamicFormIndex++; @endphp
+                                    @php $dynamicFormIndex++;
+                                    $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
+                                    // Asegurar que renderData sea un array (decodificar si es string)
+                                    if (is_string($renderData)) {
+                                        $renderData = json_decode($renderData, true) ?? [];
+                                    }
+                                    // Asegurar que form_structure sea un array
+                                    $structure = $form->form_structure;
+                                    if (is_string($structure)) {
+                                        $structure = json_decode($structure, true) ?? [];
+                                    }
+                                    // Fallback para evitar errores si structure es null
+                                    if (!is_array($structure)) {
+                                        $structure = [];
+                                    }
+                                    @endphp
                                     <div id="step{{ $staticStepCount + $dynamicFormIndex }}" style="display: none">
                                         <h4>Puntaje máximo
                                             <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
@@ -2892,18 +2922,18 @@ $staticFormTypes = [
                                                 <table class="table table-sm table-bordered">
                                                     <thead class="table-light">
                                                         <tr>
-                                                            @if(is_array($form->form_structure) || is_object($form->form_structure))
-                                                                @foreach($form->form_structure as $column)
+                                                            @if(is_array($structure) || is_object($structure))
+                                                                @foreach($structure as $column)
                                                                     <th class="text-center align-middle">{{ $column['name'] }}</th>
                                                                 @endforeach
                                                             @endif
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if(is_array($form->form_data) || is_object($form->form_data))
-                                                            @foreach($form->form_data as $rowIndex => $row)
+                                                        @if(!empty($renderData) && (is_array($renderData) || is_object($renderData)))
+                                                            @foreach($renderData as $rowIndex => $row)
                                                                 <tr>
-                                                                    @foreach($form->form_structure as $colIndex => $column)
+                                                                    @foreach($structure as $colIndex => $column)
                                                                         @php
                                                                             $key = $column['key'];
                                                                             $isActividad = ($key === 'actividad');
@@ -2927,6 +2957,10 @@ $staticFormTypes = [
                                                                     @endforeach
                                                                 </tr>
                                                             @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="100%" class="text-center text-muted">No hay datos disponibles para este formulario.</td>
+                                                            </tr>
                                                         @endif
                                                     </tbody>
                                                 </table>

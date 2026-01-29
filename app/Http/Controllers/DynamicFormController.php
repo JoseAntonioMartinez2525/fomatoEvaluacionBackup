@@ -15,6 +15,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;// Corrected line without extraneous character
+use App\Models\DynamicFormResponse;
 
 class DynamicFormController extends Controller
 {
@@ -81,8 +82,8 @@ class DynamicFormController extends Controller
                 'acreditacion' => $validatedData['acreditacion'] ?? null,
                 'filas' => $validatedData['filas'],
                 'columnas' => $validatedData['columnas'],
-                'form_structure' => $formStructure, // Laravel codifica a JSON automáticamente
-                'form_data' => $formData,           // Laravel codifica a JSON automáticamente
+                'form_structure' => json_encode($formStructure), // Forzar JSON
+                'form_data' => json_encode($formData),           // Forzar JSON
             ]);
 
             return response()->json([
@@ -160,7 +161,7 @@ class DynamicFormController extends Controller
         // Check if there are any forms
         if ($forms->isEmpty()) {
             return redirect()->route('secretaria')
-                > with('message', 'No hay formularios disponibles. Por favor, cree un nuevo formulario.');
+                ->with('message', 'No hay formularios disponibles. Por favor, cree un nuevo formulario.');
 
         }
 
@@ -222,11 +223,11 @@ class DynamicFormController extends Controller
             $form->acreditacion = $validatedData['acreditacion'] ?? $form->acreditacion;
 
             // Actualizar los datos JSON
-            $form->form_data = $validatedData['form_data'];
+            $form->form_data = json_encode($validatedData['form_data']);
             
             // Opcionalmente, actualizar la estructura si se proporciona
             if (isset($validatedData['form_structure'])) {
-                $form->form_structure = $validatedData['form_structure'];
+                $form->form_structure = json_encode($validatedData['form_structure']);
             }
 
             // Actualizar contadores de filas/columnas
@@ -496,25 +497,101 @@ class DynamicFormController extends Controller
     /**
      * Muestra una vista genérica para un formulario dinámico por su nombre.
      */
-    public function showDynamicFormByName($form_name)
-    {
-        $form = DynamicForm::where('form_name', $form_name)->first();
+//     public function showDynamicFormByName($form_name)
+//     {
+//         $form = DynamicForm::where('form_name', $form_name)->first();
 
-        if (!$form) {
-            abort(404, 'Formulario no encontrado.');
+//         if (!$form) {
+//             abort(404, 'Formulario no encontrado.');
+//         }
+
+//  // Cargar todos los formularios de sección 3
+//     $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
+//     $staticFormTypes = [ '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.8.1', '3.9', 
+//     '3.10', '3.11', '3.12', '3.13', '3.14', '3.15', '3.16', '3.17', '3.18', '3.19'];
+//     $staticStepCount = 20; // igual que en tu blade
+
+//     return view('docencia', [
+//         'currentForm' => $form,
+//         'dynamicForms' => $dynamicForms,
+//         'staticFormTypes' => $staticFormTypes,
+//         'staticStepCount' => $staticStepCount
+//     ]);
+//     }
+
+/** @var \App\Models\User $user */
+
+public function showDynamicFormByName(Request $request, $form_name)
+{
+    $form = DynamicForm::where('form_name', $form_name)->firstOrFail();
+    
+    // Ensure structure and data are arrays (handle missing casts in model)
+    if (is_string($form->form_structure)) {
+        $form->form_structure = json_decode($form->form_structure, true) ?? [];
+    }
+    if (is_string($form->form_data)) {
+        $form->form_data = json_decode($form->form_data, true) ?? [];
+    }
+
+    $user = Auth::user();
+
+    // ✅ Respuesta del formulario actual (vista single)
+    $currentResponse = DynamicFormResponse::where('dynamic_form_id', $form->id)
+        ->where('user_id', $user->id)
+        ->first();
+
+    $renderData = $currentResponse ? $currentResponse->data : $form->form_data;
+    if (is_string($renderData)) {
+        $renderData = json_decode($renderData, true) ?? [];
+    }
+
+    // ✅ Formularios dinámicos sección 3 (docencia)
+    $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
+
+    // ✅ Datos por formulario (docencia)
+    $renderDataByForm = [];
+
+    foreach ($dynamicForms as $df) {
+        // Ensure structure and data are arrays for the list
+        if (is_string($df->form_structure)) {
+            $df->form_structure = json_decode($df->form_structure, true) ?? [];
+        }
+        if (is_string($df->form_data)) {
+            $df->form_data = json_decode($df->form_data, true) ?? [];
         }
 
- // Cargar todos los formularios de sección 3
-    $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
-    $staticFormTypes = [ '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.8.1', '3.9', 
-    '3.10', '3.11', '3.12', '3.13', '3.14', '3.15', '3.16', '3.17', '3.18', '3.19'];
-    $staticStepCount = 20; // igual que en tu blade
+        $dfResponse = DynamicFormResponse::where('dynamic_form_id', $df->id)
+            ->where('user_id', $user->id)
+            ->first();
 
-    return view('docencia', [
-        'currentForm' => $form,
-        'dynamicForms' => $dynamicForms,
-        'staticFormTypes' => $staticFormTypes,
-        'staticStepCount' => $staticStepCount
-    ]);
+        $data = $dfResponse ? $dfResponse->data : $df->form_data;
+        if (is_string($data)) {
+            $data = json_decode($data, true) ?? [];
+        }
+        $renderDataByForm[$df->id] = $data;
     }
+
+    $staticFormTypes = [
+        '3.1','3.2','3.3','3.4','3.5','3.6','3.7','3.8','3.8.1','3.9',
+        '3.10','3.11','3.12','3.13','3.14','3.15','3.16','3.17','3.18','3.19'
+    ];
+
+    $staticStepCount = 20;
+
+    $view = $request->query('view') === 'single'
+        ? 'dynamic_form_display'
+        : 'docencia';
+
+    return view($view, compact(
+        'form',
+        'dynamicForms',
+        'staticFormTypes',
+        'staticStepCount',
+        'renderData',
+        'renderDataByForm'
+    ));
+}
+
+
+
 }

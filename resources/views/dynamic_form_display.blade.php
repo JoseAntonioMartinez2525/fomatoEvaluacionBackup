@@ -56,7 +56,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($form->form_data as $row)
+                                @foreach($renderData as $rowIndex => $row)
                                     <tr>
                                         @foreach($form->form_structure as $column)
                                             @php
