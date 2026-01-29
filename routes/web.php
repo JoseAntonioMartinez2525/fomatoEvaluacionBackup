@@ -85,10 +85,10 @@ Route::get('/forzar-error', function () {
 });
 
 Route::get('/', function () {
-    return view('login');
+    return redirect()->route('login');
 });
 
-Route::get('/formato-evaluacion/', [SessionsController::class, 'index'])->name('login');
+Route::get('/login', [SessionsController::class, 'index'])->name('login');
 Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
 
 // // Rutas para restablecer contraseña
