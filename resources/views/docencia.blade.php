@@ -5,7 +5,7 @@ use App\Models\DynamicForm;
 use Illuminate\Support\Str;
 
 $staticStepCount = 20; // La última actividad estática (3.19) corresponde al paso 20
-$dynamicFormIndex = 0;
+// $dynamicFormIndex = 0;
 
 $staticFormTypes = [
     '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.8.1', '3.9', 
@@ -150,13 +150,19 @@ $staticFormTypes = [
                         la ó el Docente </a></li>
                 <li><a href="javascript:void(0);" onclick="showStep(20)">3.19 Participación en cuerpos colegiados</a></li>
                 {{-- Bucle para formularios dinámicos de la sección 3 --}}
-                @foreach($dynamicForms as $form)
-                    @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                        @php $dynamicFormIndex++; 
-                        $renderData = $renderDataByForm[$form->id] ?? $form->form_data;@endphp
-                        <li><a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $dynamicFormIndex }})">{{ $form->form_name }}</a></li>
-                    @endif
-                @endforeach
+            @foreach($dynamicForms as $form)
+                @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                    @php
+                        $stepNumber = $staticStepCount + $loop->iteration;
+                    @endphp
+
+                    <li>
+                        <a href="javascript:void(0);" onclick="showStep({{ $stepNumber }})">
+                            {{ $form->form_name }}
+                        </a>
+                    </li>
+                @endif
+            @endforeach
             </ul>
         </nav>
 
@@ -185,13 +191,14 @@ $staticFormTypes = [
                  <li><a href="javascript:void(0);" onclick="showStep(20)">3.19 Participación en cuerpos colegiados</a></li>
                  
                  {{-- Bucle para formularios dinámicos de la sección 3 (segundo menú) --}}
-                 @php $dynamicFormIndex = 0; @endphp
-                 @foreach($dynamicForms as $form)
+                
+                @foreach($dynamicForms as $form)
                     @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                        @php $dynamicFormIndex++; 
-                        $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
-                        @endphp
-                        <li><a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $dynamicFormIndex }})">{{ $form->form_name }}</a></li>
+                        <li>
+                            <a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $loop->iteration }})">
+                                {{ $form->form_name }}
+                            </a>
+                        </li>
                     @endif
                 @endforeach
              </ul>
@@ -2884,11 +2891,16 @@ $staticFormTypes = [
                             <br>
 
                             {{-- Contenedores para los formularios dinámicos --}}
-                            @php $dynamicFormIndex = 0; @endphp
+                            <h1>DEBUG dynamicForms count: {{ count($dynamicForms) }}</h1>
                             @foreach($dynamicForms as $form)
+                            <h2>DEBUG FORM: {{ $form->form_name }}</h2>
+                            
                                 @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                                    @php $dynamicFormIndex++;
+                                <div id="step{{ $staticStepCount + $loop->iteration }}" style="display:none;">
+                                    @php 
                                     $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
+                                    $stepNumber = $staticStepCount + $loop->iteration;
+                                    
                                     // Asegurar que renderData sea un array (decodificar si es string)
                                     if (is_string($renderData)) {
                                         $renderData = json_decode($renderData, true) ?? [];
@@ -2903,7 +2915,9 @@ $staticFormTypes = [
                                         $structure = [];
                                     }
                                     @endphp
-                                    <div id="step{{ $staticStepCount + $dynamicFormIndex }}" style="display: none">
+                                            <div id="step{{ $stepNumber }}" style="display:none;">
+                                            <h2>DEBUG STEP REAL: {{ $stepNumber }}</h2>
+                                    
                                         <h4>Puntaje máximo
                                             <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
                                         </h4>

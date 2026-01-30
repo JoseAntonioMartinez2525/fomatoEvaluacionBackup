@@ -527,7 +527,6 @@ public function showDynamicFormByName(Request $request, $form_name)
 {
     $form = DynamicForm::where('form_name', $form_name)->firstOrFail();
     
-    // Ensure structure and data are arrays (handle missing casts in model)
     if (is_string($form->form_structure)) {
         $form->form_structure = json_decode($form->form_structure, true) ?? [];
     }
@@ -537,24 +536,39 @@ public function showDynamicFormByName(Request $request, $form_name)
 
     $user = Auth::user();
 
-    // ✅ Respuesta del formulario actual (vista single)
     $currentResponse = DynamicFormResponse::where('dynamic_form_id', $form->id)
         ->where('user_id', $user->id)
         ->first();
 
     $renderData = $currentResponse ? $currentResponse->data : $form->form_data;
+
     if (is_string($renderData)) {
         $renderData = json_decode($renderData, true) ?? [];
     }
+    if (!is_array($renderData)) $renderData = [];
 
-    // ✅ Formularios dinámicos sección 3 (docencia)
+    // ✅ Normalizar formulario actual
+    $normalizedData = [];
+
+    foreach ($renderData as $row) {
+        $normalizedRow = [];
+
+        foreach ($form->form_structure as $column) {
+            $key = $column['key'];
+            $normalizedRow[$key] = $row[$key] ?? '';
+        }
+
+        $normalizedData[] = $normalizedRow;
+    }
+
+    $renderData = $normalizedData;
+
+    // ✅ Formularios dinámicos sección 3
     $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
 
-    // ✅ Datos por formulario (docencia)
     $renderDataByForm = [];
 
     foreach ($dynamicForms as $df) {
-        // Ensure structure and data are arrays for the list
         if (is_string($df->form_structure)) {
             $df->form_structure = json_decode($df->form_structure, true) ?? [];
         }
@@ -567,10 +581,27 @@ public function showDynamicFormByName(Request $request, $form_name)
             ->first();
 
         $data = $dfResponse ? $dfResponse->data : $df->form_data;
+
         if (is_string($data)) {
             $data = json_decode($data, true) ?? [];
         }
-        $renderDataByForm[$df->id] = $data;
+        if (!is_array($data)) $data = [];
+
+        // ✅ Normalizar formularios dinámicos
+        $normalizedDynamicData = [];
+
+        foreach ($data as $row) {
+            $normalizedRow = [];
+
+            foreach ($df->form_structure as $column) {
+                $key = $column['key'];
+                $normalizedRow[$key] = $row[$key] ?? '';
+            }
+
+            $normalizedDynamicData[] = $normalizedRow;
+        }
+
+        $renderDataByForm[$df->id] = $normalizedDynamicData;
     }
 
     $staticFormTypes = [

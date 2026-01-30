@@ -1129,7 +1129,7 @@ foreach ($allowedEmails as $index => $email) {
         // Actividad (colspan = 1 (Activity Name) + cols (Dynamic))
         const thActividad = document.createElement('th');
         thActividad.className = 'bg-light text-center dynamic-th';
-        thActividad.colSpan = cols;
+        thActividad.colSpan = cols + 1; // +1 for the Description column
         thActividad.textContent = 'Actividad';
         tr1.appendChild(thActividad);
 
@@ -1157,7 +1157,7 @@ foreach ($allowedEmails as $index => $email) {
 
         // Form Name / Section Title
         const thSection = document.createElement('th');
-        thSection.colSpan = cols;
+        thSection.colSpan = cols + 1;
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
         nameInput.className = 'form-control form-control-sm fw-bold';
@@ -1191,6 +1191,11 @@ foreach ($allowedEmails as $index => $email) {
         // --- Row 3: Column Headers ---
         const tr3 = document.createElement('tr');
         
+        // Fixed: Description/Activity Name
+        const thDesc = document.createElement('th');
+        thDesc.textContent = 'Descripción';
+        thDesc.className = 'text-center';
+        tr3.appendChild(thDesc);
 
         // Dynamic Columns Headers
         for(let i=0; i<cols; i++) {
@@ -1223,6 +1228,9 @@ foreach ($allowedEmails as $index => $email) {
         for(let i=0; i<rows; i++) {
             rowsHtml += '<tr>';
             
+            // Description Value
+            rowsHtml += `<td><input type="text" class="form-control form-control-sm row-desc-val" placeholder="Descripción de la actividad"></td>`;
+
             // Dynamic Values
             for(let j=0; j<cols; j++) {
                 rowsHtml += `<td><input type="text" class="form-control form-control-sm row-dynamic-val text-center" placeholder="Valor"></td>`;
@@ -1258,6 +1266,7 @@ foreach ($allowedEmails as $index => $email) {
         const trs = document.querySelectorAll('#previewBody tr');
         trs.forEach(tr => {
             let rowVals = [];
+            rowVals.push(tr.querySelector('.row-desc-val').value); // Actividad (Description)
             tr.querySelectorAll('.row-dynamic-val').forEach(input => rowVals.push(input.value));
             rowVals.push('0'); // Subtotal
             rowVals.push('0'); // Comision

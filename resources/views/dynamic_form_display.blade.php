@@ -40,7 +40,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                 </header>
 
                 <div class="table-responsive">
-                    <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault();">
+                    <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault(); submitDynamicForm('{{ url('/dynamic-forms/save-response') }}', 'dynamic-form-{{ $form->id }}');">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                         <input type="hidden" name="email" value="{{ auth()->user()->email }}">
@@ -61,10 +61,16 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                         @foreach($form->form_structure as $column)
                                             @php
                                                 $key = $column['key'];
-                                                $isEditable = !in_array($key, ['puntaje_a_evaluar', 'puntaje_de_la_comision_dictaminadora', 'observaciones']);
+                                                // 'actividad' should be read-only text, 'puntaje...' and 'observaciones' have specific logic
+                                                $isActividad = ($key === 'actividad');
+                                                $isCommission = ($key === 'puntaje_de_la_comision_dictaminadora');
+                                                $isEditable = !in_array($key, ['actividad', 'puntaje_a_evaluar', 'puntaje_de_la_comision_dictaminadora']);
                                             @endphp
                                             <td>
-                                                @if($isEditable)
+                                                @if($isActividad)
+                                                    <span class="fw-bold">{{ $row[$key] ?? '' }}</span>
+                                                    <input type="hidden" name="data[{{ $loop->parent->index }}][{{ $key }}]" value="{{ $row[$key] ?? '' }}">
+                                                @elseif($isEditable)
                                                     <input type="text" class="form-control" name="data[{{ $loop->parent->index }}][{{ $key }}]" value="{{ $row[$key] ?? '' }}">
                                                 @else
                                                     <span>{{ $row[$key] ?? '' }}</span>
@@ -82,5 +88,61 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             </main>
         </div>
     </div>
+    <script>
+        function submitDynamicForm(url, formId) {
+            const form = document.getElementById(formId);
+            const formData = new FormData(form);
+            
+            // Construct JSON payload from FormData
+            const structuredData = {
+                user_id: formData.get('user_id'),
+                email: formData.get('email'),
+                user_type: formData.get('user_type'),
+                form_id: formData.get('form_id'),
+                data: []
+            };
+            
+            // Extract table data
+            const rows = form.querySelectorAll('tbody tr');
+            rows.forEach((row, index) => {
+                const rowData = {};
+                const inputs = row.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const name = input.name; 
+                    // Regex to extract key from name="data[rowIndex][key]"
+                    const match = name.match(/\[(.+?)\]$/);
+
+                    if (match) {
+                        const key = match[1];
+                        rowData[key] = input.value;
+                    }
+                });
+                structuredData.data.push(rowData);
+            });
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(structuredData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Formulario guardado correctamente');
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Error al enviar'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error de conexión');
+            });
+        }
+    </script>
 </body>
 </html>
