@@ -150,19 +150,18 @@ $staticFormTypes = [
                         la ó el Docente </a></li>
                 <li><a href="javascript:void(0);" onclick="showStep(20)">3.19 Participación en cuerpos colegiados</a></li>
                 {{-- Bucle para formularios dinámicos de la sección 3 --}}
-            @foreach($dynamicForms as $form)
-                @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                    @php
-                        $stepNumber = $staticStepCount + $loop->iteration;
-                    @endphp
+                @php $dynamicIndex = 20; @endphp
+                    @foreach($dynamicForms as $form)
+                        @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                            @php $dynamicIndex++; @endphp
 
-                    <li>
-                        <a href="javascript:void(0);" onclick="showStep({{ $stepNumber }})">
-                            {{ $form->form_name }}
-                        </a>
-                    </li>
-                @endif
-            @endforeach
+                            <li>
+                                <a href="javascript:void(0);" onclick="showStep({{ $dynamicIndex }})">
+                                    {{ $form->form_name }}
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
             </ul>
         </nav>
 
@@ -192,15 +191,19 @@ $staticFormTypes = [
                  
                  {{-- Bucle para formularios dinámicos de la sección 3 (segundo menú) --}}
                 
-                @foreach($dynamicForms as $form)
-                    @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                        <li>
-                            <a href="javascript:void(0);" onclick="showStep({{ $staticStepCount + $loop->iteration }})">
-                                {{ $form->form_name }}
-                            </a>
-                        </li>
-                    @endif
-                @endforeach
+                    
+
+                    @foreach($dynamicForms as $form)
+                        @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                            @php $dynamicIndex++; @endphp
+
+                            <li>
+                                <a href="javascript:void(0);" onclick="showStep({{ $dynamicIndex }})">
+                                    {{ $form->form_name }}
+                                </a>
+                            </li>
+                        @endif
+                    @endforeach
              </ul>
         </x-nav-docentes>
     @endif
@@ -2891,52 +2894,47 @@ $staticFormTypes = [
                             <br>
 
                             {{-- Contenedores para los formularios dinámicos --}}
-                            <h1>DEBUG dynamicForms count: {{ count($dynamicForms) }}</h1>
+                            @php $dynamicContainerIndex = 20; @endphp
                             @foreach($dynamicForms as $form)
-                            <h2>DEBUG FORM: {{ $form->form_name }}</h2>
-                            
                                 @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
-                                <div id="step{{ $staticStepCount + $loop->iteration }}" style="display:none;">
-                                    @php 
+                                    @php
+                                    $dynamicContainerIndex++;
+                                    $stepNumber = $dynamicContainerIndex;
+                                    // Obtener datos específicos para este formulario (ya sea respuesta guardada o datos por defecto)
                                     $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
-                                    $stepNumber = $staticStepCount + $loop->iteration;
-                                    
+
                                     // Asegurar que renderData sea un array (decodificar si es string)
                                     if (is_string($renderData)) {
                                         $renderData = json_decode($renderData, true) ?? [];
                                     }
+                                    
+
                                     // Asegurar que form_structure sea un array
                                     $structure = $form->form_structure;
                                     if (is_string($structure)) {
                                         $structure = json_decode($structure, true) ?? [];
                                     }
-                                    // Fallback para evitar errores si structure es null
-                                    if (!is_array($structure)) {
-                                        $structure = [];
-                                    }
                                     @endphp
-                                            <div id="step{{ $stepNumber }}" style="display:none;">
-                                            <h2>DEBUG STEP REAL: {{ $stepNumber }}</h2>
-                                    
+
+                                    <div id="step{{ $stepNumber }}" style="display:none;">
                                         <h4>Puntaje máximo
                                             <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
                                         </h4>
-                                        <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault(); submitDynamicForm('{{ url('/dynamic-forms/save-response') }}', 'dynamic-form-{{ $form->id }}', {{ $staticStepCount + $dynamicFormIndex }});">
+
+                                        <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault(); submitDynamicForm('{{ url('/dynamic-forms/save-response') }}', 'dynamic-form-{{ $form->id }}', {{ $stepNumber }});">
                                             @csrf
                                             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                             <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                                             
-                                            {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                             <input type="hidden" name="user_type" value="docente">
                                             <input type="hidden" name="form_id" value="{{ $form->id }}">
 
                                             <h3>{{ $form->form_name }}</h3>
-                                            
+
                                             <div class="table-responsive">
                                                 <table class="table table-sm table-bordered">
                                                     <thead class="table-light">
                                                         <tr>
-                                                            @if(is_array($structure) || is_object($structure))
+                                                            @if(is_array($structure))
                                                                 @foreach($structure as $column)
                                                                     <th class="text-center align-middle">{{ $column['name'] }}</th>
                                                                 @endforeach
@@ -2944,23 +2942,24 @@ $staticFormTypes = [
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @if(!empty($renderData) && (is_array($renderData) || is_object($renderData)))
+                                                        @if(!empty($renderData) && is_array($renderData))
                                                             @foreach($renderData as $rowIndex => $row)
                                                                 <tr>
-                                                                    @foreach($structure as $colIndex => $column)
+                                                                    @foreach($structure as $column)
                                                                         @php
                                                                             $key = $column['key'];
                                                                             $isActividad = ($key === 'actividad');
                                                                             $isCommission = ($key === 'puntaje_de_la_comision_dictaminadora');
                                                                             $value = $row[$key] ?? '';
                                                                         @endphp
-                                                                        
+
                                                                         <td>
                                                                             @if($isActividad)
                                                                                 <span class="fw-bold">{{ $value }}</span>
                                                                                 <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
                                                                             @elseif($isCommission)
-                                                                                <span class="text-muted text-center d-block">-</span>
+                                                                                <span class="text-muted text-center d-block">{{ $value ?: '-' }}</span>
+                                                                                <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
                                                                             @else
                                                                                 <input type="text" class="form-control form-control-sm text-center" 
                                                                                     name="data[{{ $rowIndex }}][{{ $key }}]" 
@@ -2973,16 +2972,22 @@ $staticFormTypes = [
                                                             @endforeach
                                                         @else
                                                             <tr>
-                                                                <td colspan="100%" class="text-center text-muted">No hay datos disponibles para este formulario.</td>
+                                                                <td colspan="100%" class="text-center text-muted">No hay datos disponibles.</td>
                                                             </tr>
                                                         @endif
                                                     </tbody>
                                                 </table>
                                             </div>
 
-                                            <p class="mt-3"><strong>Acreditación:</strong> {{ $form->acreditacion }}</p>
+                                            @if(!empty($form->acreditacion))
+                                                <div class="mt-3">
+                                                    <strong>Acreditación:</strong> {{ $form->acreditacion }}
+                                                </div>
+                                            @endif
 
-                                            <button type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                                            <div class="mt-3">
+                                                <button type="submit" class="btn custom-btn printButtonClass">Enviar</button>
+                                            </div>
                                         </form>
                                     </div>
                                 @endif
