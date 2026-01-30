@@ -62,9 +62,11 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                                             @php
                                                 $key = $column['key'];
                                                 // 'actividad' should be read-only text, 'puntaje...' and 'observaciones' have specific logic
-                                                $isActividad = ($key === 'actividad');
-                                                $isCommission = ($key === 'puntaje_de_la_comision_dictaminadora');
-                                                $isEditable = !in_array($key, ['actividad', 'puntaje_a_evaluar', 'puntaje_de_la_comision_dictaminadora']);
+                                                $isActividad = ($index === 0);
+                                                $isSubtotal = ($index === count($form->form_structure) - 3);
+                                                $isCommission = ($index === count($form->form_structure) - 2);
+                                                $isObservaciones = ($index === count($form->form_structure) - 1);
+                                                $isEditable = !$isActividad && !$isSubtotal && !$isCommission;
                                             @endphp
                                             <td>
                                                 @if($isActividad)
