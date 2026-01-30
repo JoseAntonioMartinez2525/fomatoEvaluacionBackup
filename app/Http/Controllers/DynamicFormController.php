@@ -609,6 +609,13 @@ public function showDynamicFormByName(Request $request, $form_name)
         '3.10','3.11','3.12','3.13','3.14','3.15','3.16','3.17','3.18','3.19'
     ];
 
+
+    /* 
+        $dynamicFormTypes= [];
+    una pila no estatica de dynamicFormTypes, el length sera en base al numero de registros de dynamic_forms de la base de datos, 
+    probablemente con un count() pero realizando un evento, trigger o transaccion desde la base de datos
+    */
+
     $staticStepCount = 20;
 
     $view = $request->query('view') === 'single'
