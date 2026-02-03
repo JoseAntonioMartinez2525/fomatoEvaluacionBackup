@@ -20,7 +20,7 @@
 <script src="{{ asset('js/puntajeMaximo3_8_1.js') }}"></script>
 <script src="{{ asset('js/messages.js') }}"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/polyfills.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/polyfills.umd.js" integrity="sha512-zuET/f9xlS8Jf7OZXI9LwjJ96UHzXpELg5JMtyhpwNnsj3yq6ZJzhmB0++LxOPZNf5fu9AC53soGtlKwgeA2Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.development.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.development.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

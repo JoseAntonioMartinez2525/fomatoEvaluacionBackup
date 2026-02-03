@@ -20,8 +20,13 @@ class DocenteFormsController extends Controller
         //     ->select('users.id', 'users.name', 'users.email')
         //     ->distinct()
         // Se modifica para listar todos los docentes del sistema, permitiendo evaluar a cualquiera
+        $docenteEmails = array_values(config('docentes.emails', []));
+
         $docentes = DB::table('users')
-            ->where('user_type', 'docente')
+            ->where(function ($query) use ($docenteEmails) {
+                $query->where('user_type', 'docente')
+                      ->orWhereIn('email', $docenteEmails);
+            })
             ->select('id', 'name', 'email')
             ->orderBy('name')
             ->get();

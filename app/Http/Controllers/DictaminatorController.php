@@ -105,7 +105,12 @@ public function adminResetTimer(Request $request)
 
         if ($includeOthers) {
             // Traer TODOS los docentes registrados en el sistema (tabla users)
-            $docentes = \App\Models\User::where('user_type', 'docente')
+            $docenteEmails = array_values(config('docentes.emails', []));
+
+            $docentes = \App\Models\User::where(function ($query) use ($docenteEmails) {
+                    $query->where('user_type', 'docente')
+                          ->orWhereIn('email', $docenteEmails);
+                })
                 ->select('id', 'name', 'email')
                 ->orderBy('name')
                 ->get();
