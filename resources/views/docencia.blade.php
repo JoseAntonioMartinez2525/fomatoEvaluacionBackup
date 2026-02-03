@@ -823,7 +823,8 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
+
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
@@ -895,7 +896,7 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
@@ -971,7 +972,7 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <div>
@@ -1049,7 +1050,7 @@ $staticFormTypes = [
                                         <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                         <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                          
-                                        {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                        {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                         <input type="hidden" name="user_type" value="docente">
                                         @csrf
                                         <table class="table table-sm tutorias">
@@ -1318,7 +1319,7 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                         <!--3.10 Trabajos dirigidos para la titulación de estudiantes-->
@@ -1405,7 +1406,7 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <!--3.11 Trabajos dirigidos para la titulación de estudiantes-->
@@ -1506,7 +1507,7 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                         <!--3.12 Trabajos dirigidos para la titulación de estudiantes-->
@@ -1708,7 +1709,7 @@ $staticFormTypes = [
                                     <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                      
-                                    {{-- {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}} --}}
+                                    {{-- <input type="hidden" name="user_type" value="{{ auth()->user()->user_type }}"> --}}
                                     <input type="hidden" name="user_type" value="docente">
                                     @csrf
                                     <!--3.13 Proyectos académicos de investigación-->

@@ -775,7 +775,7 @@ foreach ($allowedEmails as $index => $email) {
                                     @foreach($forms as $form)
                                         @if(!in_array($form->form_name, $existingFormNames))
                                             <div class="bracket-item">
-                                                <button class="btn hierarchy-button form-option" onclick="navigateToRoute('/formato-evaluacion/{{ $form->form_name }}')">
+                                                <button class="btn hierarchy-button form-option" onclick="navigateToRoute('/formato-evaluacion/' + encodeURIComponent({{ json_encode($form->form_name) }}))">
                                                     {{ $form->form_name }}
                                                 </button>
                                             </div>
