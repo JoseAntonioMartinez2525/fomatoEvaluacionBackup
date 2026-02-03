@@ -16,7 +16,10 @@ $staticFormTypes = [
 
   // Si la variable no viene del controlador, la obtenemos aquí para evitar "Undefined variable"
   if (!isset($dynamicForms)) {
-      $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
+      $dynamicForms = DynamicForm::where(function($query) {
+          $query->where('form_type', 'like', '3.%')
+                ->orWhere('form_name', 'like', '3.%');
+      })->get();
   }
 
   // Aseguramos que los campos JSON sean arrays (decodificando si son strings)

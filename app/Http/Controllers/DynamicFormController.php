@@ -37,9 +37,10 @@ class DynamicFormController extends Controller
 
             // Extraer form_type del form_name. Ej: "3.20 Convenios" -> "3.20"
             $formName = trim($validatedData['form_name']);
-            preg_match('/^[0-9.]+/', $formName, $matches);
+            // Regex mejorado para capturar prefijos numéricos incluso con espacios (ej: "3. 20")
+            preg_match('/^[0-9.]+(\s*[0-9.]+)?/', $formName, $matches);
             // Si se encuentra, se limpia cualquier punto al final. Si no, es null.
-            $formType = !empty($matches[0]) ? rtrim($matches[0], '.') : null;
+            $formType = !empty($matches[0]) ? rtrim(str_replace(' ', '', $matches[0]), '.') : null;
 
             // 1. Preparar la estructura del formulario (columnas)
             $frontendColumnNames = $validatedData['column_names'];
@@ -565,7 +566,10 @@ public function showDynamicFormByName(Request $request, $form_name)
     $renderData = $normalizedData;
 
     // ✅ Formularios dinámicos sección 3
-    $dynamicForms = DynamicForm::where('form_type', 'like', '3.%')->get();
+    $dynamicForms = DynamicForm::where(function($query) {
+        $query->where('form_type', 'like', '3.%')
+              ->orWhere('form_name', 'like', '3.%');
+    })->get();
 
     $renderDataByForm = [];
 
