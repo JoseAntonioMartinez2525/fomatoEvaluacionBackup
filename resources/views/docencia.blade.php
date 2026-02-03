@@ -2949,6 +2949,7 @@ $staticFormTypes = [
                                                                         @php
                                                                             $key = $column['key'];
                                                                             $isActividad = ($key === 'actividad');
+                                                                            $isPuntajeAEvaluar = ($key === 'puntaje_a_evaluar');
                                                                             $isCommission = ($key === 'puntaje_de_la_comision_dictaminadora');
                                                                             $value = $row[$key] ?? '';
                                                                         @endphp
@@ -2957,9 +2958,16 @@ $staticFormTypes = [
                                                                             @if($isActividad)
                                                                                 <span class="fw-bold">{{ $value }}</span>
                                                                                 <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
+                                                                            @elseif($isPuntajeAEvaluar)
+                                                                                <input type="text" class="form-control form-control-sm text-center" 
+                                                                                    name="data[{{ $rowIndex }}][{{ $key }}]" 
+                                                                                    value="{{ $value }}"
+                                                                                >
                                                                             @elseif($isCommission)
-                                                                                <span class="text-muted text-center d-block">{{ $value ?: '-' }}</span>
-                                                                                <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
+                                                                                <input type="text" class="form-control form-control-sm text-center" 
+                                                                                    name="data[{{ $rowIndex }}][{{ $key }}]" 
+                                                                                    value="{{ $value }}"
+                                                                                >
                                                                             @else
                                                                                 <input type="text" class="form-control form-control-sm text-center" 
                                                                                     name="data[{{ $rowIndex }}][{{ $key }}]" 
