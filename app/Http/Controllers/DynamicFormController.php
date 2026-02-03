@@ -36,7 +36,8 @@ class DynamicFormController extends Controller
             ]);
 
             // Extraer form_type del form_name. Ej: "3.20 Convenios" -> "3.20"
-            preg_match('/^[0-9.]*/', $validatedData['form_name'], $matches);
+            $formName = trim($validatedData['form_name']);
+            preg_match('/^[0-9.]+/', $formName, $matches);
             // Si se encuentra, se limpia cualquier punto al final. Si no, es null.
             $formType = !empty($matches[0]) ? rtrim($matches[0], '.') : null;
 

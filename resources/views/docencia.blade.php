@@ -152,7 +152,7 @@ $staticFormTypes = [
                 {{-- Bucle para formularios dinámicos de la sección 3 --}}
                 @php $dynamicIndex = 20; @endphp
                     @foreach($dynamicForms as $form)
-                        @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                        @if((Str::startsWith((string)$form->form_type, '3.') || Str::startsWith($form->form_name, '3.')) && !in_array($form->form_type, $staticFormTypes))
                             @php $dynamicIndex++; @endphp
 
                             <li>
@@ -194,7 +194,7 @@ $staticFormTypes = [
                     
 
                     @foreach($dynamicForms as $form)
-                        @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                        @if((Str::startsWith((string)$form->form_type, '3.') || Str::startsWith($form->form_name, '3.')) && !in_array($form->form_type, $staticFormTypes))
                             @php $dynamicIndex++; @endphp
 
                             <li>
@@ -2897,7 +2897,7 @@ $staticFormTypes = [
                             {{-- Contenedores para los formularios dinámicos --}}
                             @php $dynamicContainerIndex = 20; @endphp
                             @foreach($dynamicForms as $form)
-                                @if(Str::startsWith($form->form_type, '3.') && !in_array($form->form_type, $staticFormTypes))
+                                @if((Str::startsWith((string)$form->form_type, '3.') || Str::startsWith($form->form_name, '3.')) && !in_array($form->form_type, $staticFormTypes))
                                     @php
                                     $dynamicContainerIndex++;
                                     $stepNumber = $dynamicContainerIndex;
@@ -2917,7 +2917,7 @@ $staticFormTypes = [
                                     }
                                     @endphp
 
-                                    <div id="step{{ $stepNumber }}" style="display:none;">
+                                    <div id="step{{ $stepNumber }}" style="display:none; margin-inline-start: 10rem;">
                                         <h4>Puntaje máximo
                                             <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
                                         </h4>
