@@ -2927,11 +2927,24 @@ $staticFormTypes = [
                                     |--------------------------------------------------------------------------
                                     | NORMALIZACIÓN CRÍTICA
                                     |--------------------------------------------------------------------------
-                                    | Si una columna no tiene 'group', se asume 'actividad'
-                                    | Esto evita que la tabla desaparezca
+                                    | Asigna un 'group' a cada columna si no lo tiene, para poder
+                                    | agruparlas visualmente en el encabezado de la tabla.
                                     */
                                     $structure = collect($structure)->map(function ($col) {
-                                        if (!isset($col['group'])) {
+                                        if (isset($col['group'])) {
+                                            return $col; // Si ya tiene grupo, no hacer nada.
+                                        }
+
+                                        $key = $col['key'] ?? '';
+                                        $name = $col['name'] ?? '';
+
+                                        if ($key === 'puntaje_a_evaluar' || $name === 'Puntaje a evaluar') {
+                                            $col['group'] = 'evaluacion';
+                                        } elseif ($key === 'puntaje_de_la_comision_dictaminadora' || $name === 'Puntaje de la Comisión Dictaminadora') {
+                                            $col['group'] = 'comision';
+                                        } elseif ($key === 'observaciones' || $name === 'Observaciones') {
+                                            $col['group'] = 'observaciones';
+                                        } else {
                                             $col['group'] = 'actividad';
                                         }
                                         return $col;
@@ -3010,7 +3023,7 @@ $staticFormTypes = [
 
                                                     {{-- 🟨 FILA 2: ENCABEZADOS FUNCIONALES --}}
                                                     <tr class="table-light text-center">
-                                                        @foreach($structure as $column)
+                                                        @foreach($orderedStructure as $column)
                                                             @php $group = $column['group']; @endphp
 
                                                             @if(in_array($group, ['evaluacion', 'comision']))
@@ -3032,7 +3045,7 @@ $staticFormTypes = [
                                                     @if(!empty($renderData) && is_array($renderData))
                                                         @foreach($renderData as $rowIndex => $row)
                                                             <tr>
-                                                                @foreach($structure as $column)
+                                                                @foreach($orderedStructure as $column)
                                                                     @php
                                                                         $key = $column['key'];
                                                                         $value = $row[$key] ?? '';
