@@ -69,6 +69,14 @@ $staticFormTypes = [
             margin-bottom: 3rem;
          }
 
+         body.light-mode .btn.dynamicBtnDocencia{
+        background-color: #72aaca;
+        color: whitesmoke;
+        padding: 0 100px  0 100px; 
+        text-align: center;
+        border-radius: 90px 90px 90px 90px;
+         }
+
     </style>
 </head>
 @if (Route::has('login'))
@@ -3014,7 +3022,7 @@ $staticFormTypes = [
                                                             @if($group === 'observaciones')
                                                                 <th></th>
                                                             @else
-                                                                <th colspan="{{ $cols->count() }}" class="fw-bold text-center">
+                                                                <th colspan="{{ $cols->count() }}" class="fw-bold text-center  bg-transparent">
                                                                     {{ $label }}
                                                                 </th>
                                                             @endif
@@ -3024,10 +3032,18 @@ $staticFormTypes = [
                                                     {{-- 🟨 FILA 2: ENCABEZADOS FUNCIONALES --}}
                                                     <tr class="table-light text-center">
                                                         @foreach($orderedStructure as $column)
-                                                            @php $group = $column['group']; @endphp
+                                                            @php 
+                                                                $group = $column['group'];
+                                                                $headerStyle = '';
+                                                                if ($group === 'evaluacion') {
+                                                                    $headerStyle = 'background-color: #0b5967; color: white;';
+                                                                } elseif ($group === 'comision') {
+                                                                    $headerStyle = 'background-color: #ffcc6d; color: black;';
+                                                                }
+                                                            @endphp
 
                                                             @if(in_array($group, ['evaluacion', 'comision']))
-                                                                <th class="fw-bold">
+                                                                <th class="fw-bold" style="{{ $headerStyle }}">
                                                                     <span
                                                                         class="score-header"
                                                                         data-key="{{ $column['key'] }}"
@@ -3085,21 +3101,36 @@ $staticFormTypes = [
                                                             </td>
                                                         </tr>
                                                     @endif
+
+                                                    @php
+                                                        $totalCols = $orderedStructure->count();
+                                                        $obsCols = $orderedStructure->where('group', 'observaciones')->count();
+                                                        if ($obsCols === 0) $obsCols = 1;
+                                                        $spacerCols = max(0, $totalCols - $obsCols);
+                                                    @endphp
+
+                                                    <tr>
+                                                        <td colspan="{{ $totalCols }}" style="border: none; padding-top: 1rem;">
+                                                            @if(!empty($form->acreditacion))
+                                                                <strong>Acreditación:</strong> {{ $form->acreditacion }}
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        @if($spacerCols > 0)
+                                                            <td colspan="{{ $spacerCols }}" style="border: none;"></td>
+                                                        @endif
+                                                        <td colspan="{{ $obsCols }}" style="border: none; text-align: center;">
+                                                            <button type="submit" class="btn custom-btn printButtonClass dynamicBtnDocencia">
+                                                                Enviar
+                                                            </button>
+                                                        </td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
 
-                                        @if(!empty($form->acreditacion))
-                                            <div class="mt-3">
-                                                <strong>Acreditación:</strong> {{ $form->acreditacion }}
-                                            </div>
-                                        @endif
-
-                                        <div class="mt-3">
-                                            <button type="submit" class="btn custom-btn printButtonClass">
-                                                Enviar
-                                            </button>
-                                        </div>
                                     </form>
                                 </div>
                             @endif
