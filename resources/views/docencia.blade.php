@@ -2898,199 +2898,199 @@ $staticFormTypes = [
                             </div>        
                             <br>
 
-                            {{-- Contenedores para los formularios dinámicos --}}
-{{-- Contenedores para los formularios dinámicos --}}
-@php $dynamicContainerIndex = 20; @endphp
+           
+                        {{-- Contenedores para los formularios dinámicos --}}
+                        @php $dynamicContainerIndex = 20; @endphp
 
-@foreach($dynamicForms as $form)
-    @if(
-        (Str::startsWith((string)$form->form_type, '3.') || Str::startsWith($form->form_name, '3.'))
-        && !in_array($form->form_type, $staticFormTypes)
-    )
-        @php
-            $dynamicContainerIndex++;
-            $stepNumber = $dynamicContainerIndex;
+                        @foreach($dynamicForms as $form)
+                            @if(
+                                (Str::startsWith((string)$form->form_type, '3.') || Str::startsWith($form->form_name, '3.'))
+                                && !in_array($form->form_type, $staticFormTypes)
+                            )
+                                @php
+                                    $dynamicContainerIndex++;
+                                    $stepNumber = $dynamicContainerIndex;
 
-            // Datos a renderizar (respuesta guardada o data base)
-            $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
-            if (is_string($renderData)) {
-                $renderData = json_decode($renderData, true) ?? [];
-            }
+                                    // Datos a renderizar (respuesta guardada o data base)
+                                    $renderData = $renderDataByForm[$form->id] ?? $form->form_data;
+                                    if (is_string($renderData)) {
+                                        $renderData = json_decode($renderData, true) ?? [];
+                                    }
 
-            // Estructura del formulario
-            $structure = $form->form_structure;
-            if (is_string($structure)) {
-                $structure = json_decode($structure, true) ?? [];
-            }
+                                    // Estructura del formulario
+                                    $structure = $form->form_structure;
+                                    if (is_string($structure)) {
+                                        $structure = json_decode($structure, true) ?? [];
+                                    }
 
-            /*
-            |--------------------------------------------------------------------------
-            | NORMALIZACIÓN CRÍTICA
-            |--------------------------------------------------------------------------
-            | Si una columna no tiene 'group', se asume 'actividad'
-            | Esto evita que la tabla desaparezca
-            */
-            $structure = collect($structure)->map(function ($col) {
-                if (!isset($col['group'])) {
-                    $col['group'] = 'actividad';
-                }
-                return $col;
-            })->values();
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | NORMALIZACIÓN CRÍTICA
+                                    |--------------------------------------------------------------------------
+                                    | Si una columna no tiene 'group', se asume 'actividad'
+                                    | Esto evita que la tabla desaparezca
+                                    */
+                                    $structure = collect($structure)->map(function ($col) {
+                                        if (!isset($col['group'])) {
+                                            $col['group'] = 'actividad';
+                                        }
+                                        return $col;
+                                    })->values();
 
-            /*
-            |--------------------------------------------------------------------------
-            | ORDEN VISUAL FIJO
-            |--------------------------------------------------------------------------
-            */
-            $groupOrder = ['actividad', 'evaluacion', 'comision', 'observaciones'];
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | ORDEN VISUAL FIJO
+                                    |--------------------------------------------------------------------------
+                                    */
+                                    $groupOrder = ['actividad', 'evaluacion', 'comision', 'observaciones'];
 
-            $orderedStructure = collect($groupOrder)
-                ->flatMap(fn ($group) => $structure->where('group', $group))
-                ->values();
+                                    $orderedStructure = collect($groupOrder)
+                                        ->flatMap(fn ($group) => $structure->where('group', $group))
+                                        ->values();
 
-            // Fallback de seguridad
-            if ($orderedStructure->isEmpty()) {
-                $orderedStructure = $structure;
-            }
-        @endphp
+                                    // Fallback de seguridad
+                                    if ($orderedStructure->isEmpty()) {
+                                        $orderedStructure = $structure;
+                                    }
+                                @endphp
 
-        <div id="step{{ $stepNumber }}" style="display:none; margin-inline-start: 10rem;">
-            <h4>
-                Puntaje máximo
-                <label class="bg-black text-white px-4 mt-3">
-                    {{ $form->puntaje_maximo }}
-                </label>
-            </h4>
+                                <div id="step{{ $stepNumber }}" style="display:none; margin-inline-start: 10rem;">
+                                    <h4>
+                                        Puntaje máximo
+                                        <label class="bg-black text-white px-4 mt-3">
+                                            {{ $form->puntaje_maximo }}
+                                        </label>
+                                    </h4>
 
-            <form
-                id="dynamic-form-{{ $form->id }}"
-                data-max-score="{{ $form->puntaje_maximo }}"
-                method="POST"
-                onsubmit="event.preventDefault(); submitDynamicForm(
-                    '{{ url('/dynamic-forms/save-response') }}',
-                    'dynamic-form-{{ $form->id }}',
-                    {{ $stepNumber }}
-                );"
-            >
-                @csrf
+                                    <form
+                                        id="dynamic-form-{{ $form->id }}"
+                                        data-max-score="{{ $form->puntaje_maximo }}"
+                                        method="POST"
+                                        onsubmit="event.preventDefault(); submitDynamicForm(
+                                            '{{ url('/dynamic-forms/save-response') }}',
+                                            'dynamic-form-{{ $form->id }}',
+                                            {{ $stepNumber }}
+                                        );"
+                                    >
+                                        @csrf
 
-                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                <input type="hidden" name="user_type" value="docente">
-                <input type="hidden" name="form_id" value="{{ $form->id }}">
+                                        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                                        <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                                        <input type="hidden" name="user_type" value="docente">
+                                        <input type="hidden" name="form_id" value="{{ $form->id }}">
 
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered">
+                                                <thead class="table-light">
 
-                            {{-- 🟦 FILA 1: SUPER ENCABEZADOS --}}
-                            <tr class="table-secondary text-center">
-                                @foreach($groupOrder as $group)
-                                    @php
-                                        $cols = $orderedStructure->where('group', $group);
-                                        if ($cols->isEmpty()) continue;
+                                                    {{-- 🟦 FILA 1: SUPER ENCABEZADOS --}}
+                                                    <tr class="table-secondary text-center">
+                                                        @foreach($groupOrder as $group)
+                                                            @php
+                                                                $cols = $orderedStructure->where('group', $group);
+                                                                if ($cols->isEmpty()) continue;
 
-                                        $label = match ($group) {
-                                            'actividad'  => $form->form_name,
-                                            'evaluacion' => 'Puntaje a evaluar',
-                                            'comision'   => 'Puntaje de la Comisión Dictaminadora',
-                                            default      => ''
-                                        };
-                                    @endphp
+                                                                $label = match ($group) {
+                                                                    'actividad'  => $form->form_name,
+                                                                    'evaluacion' => 'Puntaje a evaluar',
+                                                                    'comision'   => 'Puntaje de la Comisión Dictaminadora',
+                                                                    default      => ''
+                                                                };
+                                                            @endphp
 
-                                    @if($group === 'observaciones')
-                                        <th></th>
-                                    @else
-                                        <th colspan="{{ $cols->count() }}" class="fw-bold text-center">
-                                            {{ $label }}
-                                        </th>
-                                    @endif
-                                @endforeach
-                            </tr>
+                                                            @if($group === 'observaciones')
+                                                                <th></th>
+                                                            @else
+                                                                <th colspan="{{ $cols->count() }}" class="fw-bold text-center">
+                                                                    {{ $label }}
+                                                                </th>
+                                                            @endif
+                                                        @endforeach
+                                                    </tr>
 
-                            {{-- 🟨 FILA 2: ENCABEZADOS FUNCIONALES --}}
-                            <tr class="table-light text-center">
-                                @foreach($orderedStructure as $column)
-                                    @php $group = $column['group']; @endphp
+                                                    {{-- 🟨 FILA 2: ENCABEZADOS FUNCIONALES --}}
+                                                    <tr class="table-light text-center">
+                                                        @foreach($structure as $column)
+                                                            @php $group = $column['group']; @endphp
 
-                                    @if(in_array($group, ['evaluacion', 'comision']))
-                                        <th class="fw-bold">
-                                            <span
-                                                class="score-header"
-                                                data-key="{{ $column['key'] }}"
-                                            >0</span>
-                                        </th>
-                                    @else
-                                        <th>{{ $column['name'] }}</th>
-                                    @endif
-                                @endforeach
-                            </tr>
+                                                            @if(in_array($group, ['evaluacion', 'comision']))
+                                                                <th class="fw-bold">
+                                                                    <span
+                                                                        class="score-header"
+                                                                        data-key="{{ $column['key'] }}"
+                                                                    >0</span>
+                                                                </th>
+                                                            @else
+                                                                <th>{{ $column['name'] }}</th>
+                                                            @endif
+                                                        @endforeach
+                                                    </tr>
 
-                        </thead>
+                                                </thead>
 
-                        <tbody>
-                            @if(!empty($renderData) && is_array($renderData))
-                                @foreach($renderData as $rowIndex => $row)
-                                    <tr>
-                                        @foreach($orderedStructure as $column)
-                                            @php
-                                                $key = $column['key'];
-                                                $value = $row[$key] ?? '';
+                                                <tbody>
+                                                    @if(!empty($renderData) && is_array($renderData))
+                                                        @foreach($renderData as $rowIndex => $row)
+                                                            <tr>
+                                                                @foreach($structure as $column)
+                                                                    @php
+                                                                        $key = $column['key'];
+                                                                        $value = $row[$key] ?? '';
 
-                                                $isActividad = $key === 'actividad';
-                                                $isEvaluacion = $key === 'puntaje_a_evaluar';
-                                                $isComision = $key === 'puntaje_de_la_comision_dictaminadora';
-                                            @endphp
+                                                                        $isActividad = $key === 'actividad';
+                                                                        $isEvaluacion = $key === 'puntaje_a_evaluar';
+                                                                        $isComision = $key === 'puntaje_de_la_comision_dictaminadora';
+                                                                    @endphp
 
-                                            <td class="{{ ($isEvaluacion || $isComision) ? 'bg-light fw-bold' : '' }}">
-                                                @if($isActividad)
-                                                    <span class="fw-bold">{{ $value }}</span>
-                                                    <input type="hidden"
-                                                        name="data[{{ $rowIndex }}][{{ $key }}]"
-                                                        value="{{ $value }}">
-                                                @elseif($isEvaluacion || $isComision)
-                                                    <input type="text"
-                                                        class="form-control form-control-sm text-center"
-                                                        name="data[{{ $rowIndex }}][{{ $key }}]"
-                                                        value="{{ $value }}">
-                                                @else
-                                                    <input type="text"
-                                                        class="form-control form-control-sm text-center
-                                                            {{ ($column['role'] ?? '') === 'sum' ? 'sum-input' : '' }}"
-                                                        data-row="{{ $rowIndex }}"
-                                                        name="data[{{ $rowIndex }}][{{ $key }}]"
-                                                        value="{{ $value }}">
-                                                @endif
-                                            </td>
-                                        @endforeach
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="100%" class="text-center text-muted">
-                                        No hay datos disponibles.
-                                    </td>
-                                </tr>
+                                                                    <td class="{{ ($isEvaluacion || $isComision) ? 'bg-light fw-bold' : '' }}">
+                                                                        @if($isActividad)
+                                                                            <span class="fw-bold">{{ $value }}</span>
+                                                                            <input type="hidden"
+                                                                                name="data[{{ $rowIndex }}][{{ $key }}]"
+                                                                                value="{{ $value }}">
+                                                                        @elseif($isEvaluacion || $isComision)
+                                                                            <input type="text"
+                                                                                class="form-control form-control-sm text-center"
+                                                                                name="data[{{ $rowIndex }}][{{ $key }}]"
+                                                                                value="{{ $value }}">
+                                                                        @else
+                                                                            <input type="text"
+                                                                                class="form-control form-control-sm text-center
+                                                                                    {{ ($column['role'] ?? '') === 'sum' ? 'sum-input' : '' }}"
+                                                                                data-row="{{ $rowIndex }}"
+                                                                                name="data[{{ $rowIndex }}][{{ $key }}]"
+                                                                                value="{{ $value }}">
+                                                                        @endif
+                                                                    </td>
+                                                                @endforeach
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
+                                                        <tr>
+                                                            <td colspan="100%" class="text-center text-muted">
+                                                                No hay datos disponibles.
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        @if(!empty($form->acreditacion))
+                                            <div class="mt-3">
+                                                <strong>Acreditación:</strong> {{ $form->acreditacion }}
+                                            </div>
+                                        @endif
+
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn custom-btn printButtonClass">
+                                                Enviar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             @endif
-                        </tbody>
-                    </table>
-                </div>
-
-                @if(!empty($form->acreditacion))
-                    <div class="mt-3">
-                        <strong>Acreditación:</strong> {{ $form->acreditacion }}
-                    </div>
-                @endif
-
-                <div class="mt-3">
-                    <button type="submit" class="btn custom-btn printButtonClass">
-                        Enviar
-                    </button>
-                </div>
-            </form>
-        </div>
-    @endif
-@endforeach
+                        @endforeach
 
 
 </main>
