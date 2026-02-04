@@ -2933,34 +2933,36 @@ $staticFormTypes = [
                                             <input type="hidden" name="user_type" value="docente">
                                             <input type="hidden" name="form_id" value="{{ $form->id }}">
 
-                                            {{-- <h3>{{ $form->form_name }}</h3> --}}
-
                                             <div class="table-responsive">
                                                 <table class="table table-sm table-bordered">
                                                     <thead class="table-light">
                                                    {{-- 🟦 FILA 1: SUPER ENCABEZADOS --}}
                                                         <tr class="table-secondary text-center">
-                                                        @php                                                                     
-                                                        $groups = collect($structure)->groupBy(fn($c) => $c['group'] ?? 'default');
-                                                        @endphp 
-                                                            @foreach($groups as $group => $cols)
-                                                                @php
-                                                                $label = match($group) {
-                                                                    'evaluacion' => 'Puntaje a evaluar',
-                                                                    'comision'   => 'Puntaje de la Comisión Dictaminadora',
-                                                                    'actividad'  => $form->form_name,
-                                                                    default      => ''
-                                                                };
-                                                                 @endphp
-                                                                @if($group === 'observaciones')
-                                                                    {{-- Observaciones: encabezado superior VACÍO --}}
-                                                                    <th></th>
-                                                                @else
-                                                                    <th colspan="{{ count($cols) }}" class="fw-bold text-center">
-                                                                                {{ $label }}
-                                                                    </th>
-                                                                @endif
-                                                            @endforeach
+                                                        @php
+                                                        $groupOrder = ['actividad', 'evaluacion', 'comision', 'observaciones'];
+                                                        @endphp
+
+                                                    @foreach($groupOrder as $group)
+                                                        @php
+                                                            $cols = collect($structure)->where('group', $group);
+                                                            if ($cols->isEmpty()) continue;
+
+                                                            $label = match($group) {
+                                                                'actividad'  => $form->form_name,
+                                                                'evaluacion' => 'Puntaje a evaluar',
+                                                                'comision'   => 'Puntaje de la Comisión Dictaminadora',
+                                                                default      => ''
+                                                            };
+                                                        @endphp
+
+                                                        @if($group === 'observaciones')
+                                                            <th></th>
+                                                        @else
+                                                            <th colspan="{{ $cols->count() }}" class="fw-bold text-center">
+                                                                {{ $label }}
+                                                            </th>
+                                                        @endif
+                                                    @endforeach
 
                                                         </tr>
 
