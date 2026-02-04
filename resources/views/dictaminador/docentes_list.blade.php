@@ -62,7 +62,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
 <body class="font-sans antialiased">
     @auth
-        @if(Auth::user()->user_type !== 'docente')
+        @if(Auth::user()->user_type !== 'docente' || in_array(Auth::user()->email, \App\Http\Controllers\SessionsController::$allowedEmails))
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             
