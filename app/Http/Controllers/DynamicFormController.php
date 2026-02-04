@@ -59,19 +59,24 @@ class DynamicFormController extends Controller
 
             // 2. Preparar los datos del formulario (filas)
             $formData = [];
-            if (!empty($validatedData['table_data'])) {
-                foreach ($validatedData['table_data'] as $rowValues) {
-                    $rowData = [];
-                    if (is_array($rowValues)) {
-                        foreach ($rowValues as $colIndex => $value) {
-                            // Usar la clave sanitizada de la estructura de la columna
-                            $columnKey = $formStructure[$colIndex]['key'] ?? 'col_' . $colIndex;
-                            $rowData[$columnKey] = $value ?? '';
-                        }
-                    }
-                    $formData[] = $rowData;
-                }
+
+        foreach ($validatedData['table_data'] as $row) {
+
+            // 🟢 Caso moderno: ya viene semántico (asociativo)
+            if (is_array($row) && !array_is_list($row)) {
+                $formData[] = $row;
+                continue;
             }
+
+            // 🟡 Caso legado: array indexado
+            $normalized = [];
+            foreach ($formStructure as $i => $column) {
+                $normalized[$column['key']] = $row[$i] ?? '';
+            }
+
+            $formData[] = $normalized;
+        }
+
 
             // 3. Guardar en la base de datos usando el modelo Eloquent
             $form = DynamicForm::create([

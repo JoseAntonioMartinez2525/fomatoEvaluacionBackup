@@ -28,6 +28,7 @@ $staticFormTypes = [
       if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true) ?? [];
   }
 
+
 @endphp
 <!DOCTYPE html>
 <!--
@@ -197,7 +198,7 @@ $staticFormTypes = [
                     
 
                     @foreach($dynamicForms as $form)
-                        @if((Str::startsWith((string)$form->form_type, '3.') || Str::startsWith($form->form_name, '3.')) && !in_array($form->form_type, $staticFormTypes))
+                        @if((Str::startsWith((string)$form->form_type, '3.%') || Str::startsWith($form->form_name, '3.%')) && !in_array($form->form_type, $staticFormTypes))
                             @php $dynamicIndex++; @endphp
 
                             <li>
@@ -2925,30 +2926,73 @@ $staticFormTypes = [
                                             <label class="bg-black text-white px-4 mt-3">{{ $form->puntaje_maximo }}</label>
                                         </h4>
 
-                                        <form id="dynamic-form-{{ $form->id }}" method="POST" onsubmit="event.preventDefault(); submitDynamicForm('{{ url('/dynamic-forms/save-response') }}', 'dynamic-form-{{ $form->id }}', {{ $stepNumber }});">
+                                        <form id="dynamic-form-{{ $form->id }}" data-max-score="{{ $form->puntaje_maximo }}" method="POST" onsubmit="event.preventDefault(); submitDynamicForm('{{ url('/dynamic-forms/save-response') }}', 'dynamic-form-{{ $form->id }}', {{ $stepNumber }});">
                                             @csrf
                                             <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                             <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                             <input type="hidden" name="user_type" value="docente">
                                             <input type="hidden" name="form_id" value="{{ $form->id }}">
 
-                                            <h3>{{ $form->form_name }}</h3>
+                                            {{-- <h3>{{ $form->form_name }}</h3> --}}
 
                                             <div class="table-responsive">
                                                 <table class="table table-sm table-bordered">
                                                     <thead class="table-light">
-                                                        <tr>
-                                                            @if(is_array($structure))
-                                                                @foreach($structure as $column)
-                                                                    <th class="text-center align-middle">{{ $column['name'] }}</th>
-                                                                @endforeach
-                                                            @endif
+                                                   {{-- 🟦 FILA 1: SUPER ENCABEZADOS --}}
+                                                        <tr class="table-secondary text-center">
+                                                        @php                                                                     
+                                                        $groups = collect($structure)->groupBy(fn($c) => $c['group'] ?? 'default');
+                                                        @endphp 
+                                                            @foreach($groups as $group => $cols)
+                                                                @php
+                                                                $label = match($group) {
+                                                                    'evaluacion' => 'Puntaje a evaluar',
+                                                                    'comision'   => 'Puntaje de la Comisión Dictaminadora',
+                                                                    'actividad'  => $form->form_name,
+                                                                    default      => ''
+                                                                };
+                                                                 @endphp
+                                                                @if($group === 'observaciones')
+                                                                    {{-- Observaciones: encabezado superior VACÍO --}}
+                                                                    <th></th>
+                                                                @else
+                                                                    <th colspan="{{ count($cols) }}" class="fw-bold text-center">
+                                                                                {{ $label }}
+                                                                    </th>
+                                                                @endif
+                                                            @endforeach
+
+                                                        </tr>
+
+                                                        {{-- 🟨 FILA 2: ENCABEZADOS FUNCIONALES --}}
+                                                        <tr class="table-light text-center">
+
+                                                            @foreach($structure as $column)
+                                                                @php
+                                                                    $group = $column['group'] ?? '';
+                                                                @endphp
+
+                                                                @if(in_array($group, ['evaluacion', 'comision']))
+                                                                    {{-- Puntajes: valor numérico (0) --}}
+                                                                    <th class="fw-bold">
+                                                                        <span
+                                                                            class="score-header"
+                                                                            data-key="{{ $column['key'] }}"
+                                                                        >0</span>
+                                                                    </th>
+                                                                @else
+                                                                    {{-- Actividad / dinámicos / observaciones --}}
+                                                                    <th>{{ $column['name'] }}</th>
+                                                                @endif
+
+                                                            @endforeach
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         @if(!empty($renderData) && is_array($renderData))
                                                             @foreach($renderData as $rowIndex => $row)
-                                                                <tr>
+                                                                <tr>        
                                                                     @foreach($structure as $column)
                                                                         @php
                                                                             $key = $column['key'];
@@ -2958,7 +3002,7 @@ $staticFormTypes = [
                                                                             $value = $row[$key] ?? '';
                                                                         @endphp
 
-                                                                        <td>
+                                                                        <td class="{{ ($isPuntajeAEvaluar || $isCommission) ? 'bg-light fw-bold' : '' }}">
                                                                             @if($isActividad)
                                                                                 <span class="fw-bold">{{ $value }}</span>
                                                                                 <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
@@ -2973,9 +3017,11 @@ $staticFormTypes = [
                                                                                     value="{{ $value }}"
                                                                                 >
                                                                             @else
-                                                                                <input type="text" class="form-control form-control-sm text-center" 
-                                                                                    name="data[{{ $rowIndex }}][{{ $key }}]" 
-                                                                                    value="{{ $value }}"
+                                                                                <input type="text" class="form-control form-control-sm text-center
+                                                                                    {{ ($column['role'] ?? '') === 'sum' ? 'sum-input' : '' }}"
+                                                                                data-row="{{ $rowIndex }}"
+                                                                                name="data[{{ $rowIndex }}][{{ $key }}]"
+                                                                                value="{{ $value }}"
                                                                                 >
                                                                             @endif
                                                                         </td>
@@ -3311,6 +3357,11 @@ const stepMap = {
         const current = document.getElementById(`step${stepNumber}`);
         if (current) {
             current.style.display = "block";
+
+            const form = current.querySelector('form');
+                if (form) {
+                    initDynamicFormScoring(form.id);
+                }
         }
     }
 
@@ -4310,7 +4361,49 @@ if (!isNaN(score3_9)) {
     document.getElementById('edit-form-btn').addEventListener('click', populateCurrentForm);
 
     // --- End of New Logic ---
+function initDynamicFormScoring(formId) {
 
+    const form = document.getElementById(formId);
+    if (!form) return;
+
+    const MAX_SCORE = Number(form.dataset.maxScore) || 0;
+
+    function recalcRow(rowIndex) {
+        let sum = 0;
+
+        form.querySelectorAll(`.sum-input[data-row="${rowIndex}"]`)
+            .forEach(input => {
+                sum += Number(input.value) || 0;
+            });
+
+        return Math.min(sum, MAX_SCORE);
+    }
+
+    function recalcTable() {
+        let total = 0;
+
+        form.querySelectorAll('tbody tr')
+            .forEach((tr, rowIndex) => {
+
+                const value = recalcRow(rowIndex);
+
+                const input = tr.querySelector('input[name*="puntaje_a_evaluar"]');
+                if (input) input.value = value;
+
+                total += value;
+            });
+
+        form.querySelectorAll('.score-header[data-key="puntaje_a_evaluar"]')
+            .forEach(el => el.textContent = total);
+    }
+
+    form.querySelectorAll('.sum-input')
+        .forEach(input => {
+            input.addEventListener('input', recalcTable);
+        });
+
+    recalcTable();
+}
         </script>
         </body>
 

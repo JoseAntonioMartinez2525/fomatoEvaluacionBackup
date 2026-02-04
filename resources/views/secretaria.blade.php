@@ -1250,49 +1250,65 @@ foreach ($allowedEmails as $index => $email) {
     }
 
     async function guardarFormularioDinamico() {
+        // 1. Construir estructura con metadata
+        const formStructure = buildFormStructure();
+        const structureKeys = formStructure.map(col => col.key);
+
+        // 2. Datos básicos
         const previewNameInput = document.getElementById('previewFormNameInput');
-        const formName = previewNameInput ? previewNameInput.value : document.getElementById('newFormName').value;
+        const formName = previewNameInput
+            ? previewNameInput.value
+            : document.getElementById('newFormName').value;
 
         const maxScore = document.getElementById('newFormMaxScore').value;
         const acreditacion = document.getElementById('newFormAcreditacion').value;
         const rows = document.getElementById('newFormRows').value;
         const cols = document.getElementById('newFormCols').value;
 
+        // 3. Nombres de columnas dinámicas (se mantienen por compatibilidad)
         const colInputs = document.querySelectorAll('.dynamic-col-name');
         let columnNames = [];
         colInputs.forEach(input => columnNames.push(input.value));
 
+        // 4. Construir table_data
         let tableData = [];
         const trs = document.querySelectorAll('#previewBody tr');
+
         trs.forEach(tr => {
-            let rowVals = [];
-            rowVals.push(tr.querySelector('.row-desc-val').value); // Actividad (Description)
-            tr.querySelectorAll('.row-dynamic-val').forEach(input => rowVals.push(input.value));
-            rowVals.push('0'); // Subtotal
-            rowVals.push('0'); // Comision
-            rowVals.push('');  // Obs
-            tableData.push(rowVals);
+            const inputs = tr.querySelectorAll('input');
+            let row = {};
+
+            structureKeys.forEach((key, index) => {
+                row[key] = inputs[index]?.value ?? '';
+            });
+
+            tableData.push(row);
         });
 
+        // 5. Payload
         const payload = {
             form_name: formName,
             puntaje_maximo: maxScore,
             acreditacion: acreditacion,
             filas: rows,
             columnas: cols,
-            column_names: columnNames,
+            column_names: columnNames,      // legacy / compatibilidad
+            form_structure: formStructure,  // 🔑 CLAVE
             table_data: tableData,
             user_id: {{ Auth::id() }},
             email: "{{ Auth::user()->email }}",
             user_type: "{{ Auth::user()->user_type }}"
         };
 
+        // 6. Envío
         try {
             const response = await fetch("{{ route('dynamic-form.store') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content')
                 },
                 body: JSON.stringify(payload)
             });
@@ -1300,10 +1316,9 @@ foreach ($allowedEmails as $index => $email) {
             const result = await response.json();
 
             if (!response.ok) {
-                // Si la respuesta no es exitosa (ej. 422, 500), construye un mensaje de error detallado.
                 let serverMessage = result.message || 'Error del servidor';
                 if (result.errors) {
-                    serverMessage += ':\n' + Object.values(result.errors).flat().join('\n');
+                    serverMessage += '\n' + Object.values(result.errors).flat().join('\n');
                 }
                 throw new Error(serverMessage);
             }
@@ -1314,11 +1329,71 @@ foreach ($allowedEmails as $index => $email) {
             } else {
                 alert('❌ Error: ' + (result.message || 'Ocurrió un error inesperado.'));
             }
+
         } catch (e) {
             console.error('Error al guardar el formulario:', e);
             alert('❌ Error: ' + e.message);
         }
     }
+
+
+    function slugify(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '_')
+        .replace(/[^\w\-]+/g, '');
+}
+
+const dynamicHeaders = [];
+document.querySelectorAll('.dynamic-col-name').forEach(input => {
+    dynamicHeaders.push(slugify(input.value));
+});
+
+
+function buildFormStructure() {
+    const structure = [];
+
+    // 1. Actividad (Descripción)
+    structure.push({
+        key: 'actividad',
+        name: 'Actividad',
+        group: 'actividad'
+    });
+
+    // 2. Columnas dinámicas (también actividad)
+    document.querySelectorAll('.dynamic-col-name').forEach(input => {
+        structure.push({
+            key: slugify(input.value),
+            name: input.value,
+            group: 'actividad'
+        });
+    });
+
+    // 3. Puntaje a evaluar
+    structure.push({
+        key: 'puntaje_a_evaluar',
+        name: 'Puntaje a evaluar',
+        group: 'evaluacion'
+    });
+
+    // 4. Puntaje comisión
+    structure.push({
+        key: 'puntaje_de_la_comision_dictaminadora',
+        name: 'Puntaje Comisión',
+        group: 'comision'
+    });
+
+    // 5. Observaciones
+    structure.push({
+        key: 'observaciones',
+        name: 'Observaciones',
+        group: 'observaciones'
+    });
+
+    return structure;
+}
     </script>
 </body>
 </html>
