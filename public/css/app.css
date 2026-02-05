@@ -1684,3 +1684,21 @@ outline: none;
  button#btn3_11Button{
     margin-left: 60rem;
   }
+
+.bgComision {
+    background-color: #d6fff7 !important;
+}
+
+.bgComision input {
+    background-color: transparent !important;
+}
+
+body.dark-mode .bgComision {
+    background-color: #82bdb2 !important;
+    color: white !important;
+    border-color: transparent !important;
+}
+
+body.dark-mode .bgComision input {
+    color: white !important;
+}

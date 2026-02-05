@@ -2986,9 +2986,10 @@ $staticFormTypes = [
                                     <form
                                         id="dynamic-form-{{ $form->id }}"
                                         data-max-score="{{ $form->puntaje_maximo }}"
+                                        data-structure="{{ json_encode($orderedStructure) }}"
                                         method="POST"
                                         onsubmit="event.preventDefault(); submitDynamicForm(
-                                            '{{ url('/dynamic-forms/save-response') }}',
+                                            '{{ url('/formato-evaluacion/dynamic-forms/save-response') }}',
                                             'dynamic-form-{{ $form->id }}',
                                             {{ $stepNumber }}
                                         );"
@@ -3060,7 +3061,7 @@ $staticFormTypes = [
                                                 <tbody>
                                                     @if(!empty($renderData) && is_array($renderData))
                                                         @foreach($renderData as $rowIndex => $row)
-                                                            <tr>
+                                                            <tr class="data-row">
                                                                 @foreach($orderedStructure as $column)
                                                                     @php
                                                                         $key = $column['key'];
@@ -3069,9 +3070,10 @@ $staticFormTypes = [
                                                                         $isActividad = $key === 'actividad';
                                                                         $isEvaluacion = $key === 'puntaje_a_evaluar';
                                                                         $isComision = $key === 'puntaje_de_la_comision_dictaminadora';
+                                                                        $isObservaciones = $column['group'] === 'observaciones';
                                                                     @endphp
 
-                                                                    <td class="{{ ($isEvaluacion || $isComision) ? 'bg-light fw-bold' : '' }}">
+                                                                    <td class="{{ $isEvaluacion ? 'bg-light fw-bold' : '' }} {{ ($isComision || $isObservaciones) ? 'bgComision' : '' }}">
                                                                         @if($isActividad)
                                                                             <span class="fw-bold">{{ $value }}</span>
                                                                             <input type="hidden"
@@ -3455,7 +3457,7 @@ const stepMap = {
         const form = document.getElementById(formId);
         const formData = new FormData(form);
         
-        // Construct JSON payload from FormData
+        // Construir el payload JSON desde FormData
         const structuredData = {
             user_id: formData.get('user_id'),
             email: formData.get('email'),
@@ -3464,8 +3466,8 @@ const stepMap = {
             data: []
         };
         
-        // Extract table data
-        const rows = form.querySelectorAll('tbody tr');
+        // Extraer datos de la tabla, solo de las filas con la clase 'data-row'
+        const rows = form.querySelectorAll('tbody tr.data-row');
         rows.forEach((row, index) => {
             const rowData = {};
             const inputs = row.querySelectorAll('input');
@@ -3478,7 +3480,10 @@ const stepMap = {
                     rowData[key] = input.value;
                 }
             });
-            structuredData.data.push(rowData);
+            // Solo añadir si la fila tiene datos
+            if (Object.keys(rowData).length > 0) {
+                structuredData.data.push(rowData);
+            }
         });
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -3510,7 +3515,11 @@ const stepMap = {
                     }
                 }
             } else {
-                showMessage('❌ Error: ' + (data.message || 'Error al enviar'), 'red');
+                let errorMessage = '❌ Error: ' + (data.message || 'Error al enviar');
+                if (data.errors) {
+                    errorMessage += '\n' + Object.values(data.errors).flat().join('\n');
+                }
+                showMessage(errorMessage, 'red');
             }
         })
         .catch(error => {
@@ -4447,49 +4456,99 @@ if (!isNaN(score3_9)) {
     document.getElementById('edit-form-btn').addEventListener('click', populateCurrentForm);
 
     // --- End of New Logic ---
-function initDynamicFormScoring(formId) {
+    function initDynamicFormScoring(formId) {
+        const form = document.getElementById(formId);
+        if (!form) return;
 
-    const form = document.getElementById(formId);
-    if (!form) return;
+        // 1. Obtener estructura y puntaje máximo desde los atributos data-*
+        const MAX_SCORE = Number(form.dataset.maxScore) || 0;
+        let structure = [];
+        try {
+            structure = JSON.parse(form.dataset.structure);
+        } catch (e) {
+            console.error('No se pudo parsear la estructura del formulario:', formId);
+            return;
+        }
 
-    const MAX_SCORE = Number(form.dataset.maxScore) || 0;
+        // 2. Identificar las columnas que se van a multiplicar y la columna de destino del puntaje
+        const scoreColumnKey = 'puntaje_a_evaluar';
+        
+        // Obtenemos todas las columnas dinámicas (las que pertenecen al grupo 'actividad' pero no son la descripción principal)
+        const multiplicandColumns = structure.filter(col => 
+            col.group === 'actividad' && col.key !== 'actividad'
+        );
+        
+        // Si no hay columnas para multiplicar, el puntaje se ingresa manualmente.
+        if (multiplicandColumns.length === 0) {
+            function recalcTotalFromManualScores() {
+                let totalTableScore = 0;
+                form.querySelectorAll(`input[name*="[${scoreColumnKey}]"]`).forEach(input => {
+                    totalTableScore += Number(input.value) || 0;
+                });
+                const cappedTotalScore = Math.min(totalTableScore, MAX_SCORE);
+                form.querySelectorAll(`.score-header[data-key="${scoreColumnKey}"]`)
+                    .forEach(el => el.textContent = cappedTotalScore);
+            }
 
-    function recalcRow(rowIndex) {
-        let sum = 0;
+            form.querySelectorAll(`input[name*="[${scoreColumnKey}]"]`).forEach(input => {
+                input.addEventListener('input', recalcTotalFromManualScores);
+            });
+            recalcTotalFromManualScores();
+            return; 
+        }
 
-        form.querySelectorAll(`.sum-input[data-row="${rowIndex}"]`)
-            .forEach(input => {
-                sum += Number(input.value) || 0;
+        const multiplicandKeys = multiplicandColumns.map(c => c.key);
+
+        // 3. Lógica de cálculo y actualización
+        function recalcTable() {
+            let totalTableScore = 0;
+
+            form.querySelectorAll('tbody tr.data-row').forEach((tr, rowIndex) => {
+                let rowProduct = 1;
+
+                // Iterar sobre las columnas a multiplicar (ej. 'cantidad', 'puntaje')
+                multiplicandKeys.forEach(key => {
+                    const input = tr.querySelector(`input[name="data[${rowIndex}][${key}]"]`);
+                    let val = 0;
+                    if (input && input.value.trim() !== '') {
+                        const numericValue = Number(input.value.replace(',', '.'));
+                        if (!isNaN(numericValue)) {
+                            val = numericValue;
+                        }
+                    }
+                    rowProduct *= val;
+                });
+                
+
+                // Actualizar el campo de "Puntaje a evaluar" de la fila
+                const scoreInput = tr.querySelector(`input[name="data[${rowIndex}][${scoreColumnKey}]"]`);
+                if (scoreInput) {
+                    scoreInput.value = rowProduct.toFixed(2); // Asignar el producto calculado
+                    scoreInput.readOnly = true; // Hacerlo de solo lectura para evitar errores
+                    scoreInput.style.backgroundColor = '#e9ecef';
+                }
+
+                totalTableScore += rowProduct;
             });
 
-        return Math.min(sum, MAX_SCORE);
-    }
+            // Calcular el total y aplicar el puntaje máximo
+            const cappedTotalScore = Math.min(totalTableScore, MAX_SCORE);
 
-    function recalcTable() {
-        let total = 0;
+            // Actualizar el encabezado con el puntaje total
+            form.querySelectorAll(`.score-header[data-key="${scoreColumnKey}"]`)
+                .forEach(el => el.textContent = cappedTotalScore.toFixed(2));
+        }
 
-        form.querySelectorAll('tbody tr')
-            .forEach((tr, rowIndex) => {
-
-                const value = recalcRow(rowIndex);
-
-                const input = tr.querySelector('input[name*="puntaje_a_evaluar"]');
-                if (input) input.value = value;
-
-                total += value;
+        // 4. Añadir el evento 'input' a cada celda que participa en la multiplicación
+        multiplicandKeys.forEach(key => {
+            form.querySelectorAll(`input[name*="[${key}]"]`).forEach(input => {
+                input.addEventListener('input', recalcTable);
             });
-
-        form.querySelectorAll('.score-header[data-key="puntaje_a_evaluar"]')
-            .forEach(el => el.textContent = total);
-    }
-
-    form.querySelectorAll('.sum-input')
-        .forEach(input => {
-            input.addEventListener('input', recalcTable);
         });
 
-    recalcTable();
-}
+        // Ejecutar el cálculo una vez al cargar la página
+        recalcTable();
+    }
         </script>
         </body>
 

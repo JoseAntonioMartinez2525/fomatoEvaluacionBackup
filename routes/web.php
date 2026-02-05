@@ -368,6 +368,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/toggle-dark-mode', [ThemeController::class, 'toggleDarkMode'])->name('theme.toggle');
     //Route::resource('dynamic-forms', DynamicFormController::class);
     Route::post('/formato-evaluacion/dynamic-form/store', [DynamicFormController::class, 'store'])->name('dynamic-form.store');
+    Route::post('/formato-evaluacion/dynamic-forms/save-response', [DynamicFormController::class, 'saveResponse'])
+    ->name('dynamic-form.save-response')
+    ->middleware('auth');
 
     Route::get('/formato-evaluacion/dynamic-form/{formName}', [DynamicFormController::class, 'getFormByName']);
         // Add this route with your other routes

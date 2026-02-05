@@ -547,7 +547,10 @@ public function showDynamicFormByName(Request $request, $form_name)
         ->where('user_id', $user->id)
         ->first();
 
-    $renderData = $currentResponse ? $currentResponse->data : $form->form_data;
+    // Si existe una respuesta, usar el array 'rows'. Si no, usar los datos base del formulario.
+    $renderData = ($currentResponse && isset($currentResponse->data['rows']))
+        ? $currentResponse->data['rows']
+        : $form->form_data;
 
     if (is_string($renderData)) {
         $renderData = json_decode($renderData, true) ?? [];
@@ -590,7 +593,9 @@ public function showDynamicFormByName(Request $request, $form_name)
             ->where('user_id', $user->id)
             ->first();
 
-        $data = $dfResponse ? $dfResponse->data : $df->form_data;
+        $data = ($dfResponse && isset($dfResponse->data['rows']))
+            ? $dfResponse->data['rows']
+            : $df->form_data;
 
         if (is_string($data)) {
             $data = json_decode($data, true) ?? [];
@@ -642,6 +647,80 @@ public function showDynamicFormByName(Request $request, $form_name)
     ));
 }
 
+/**
+ * Guarda la respuesta de un docente para un formulario dinámico.
+ */
+public function saveResponse(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'form_id' => 'required|exists:dynamic_forms,id',
+        'data' => 'required|array',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'message' => 'Datos inválidos.', 'errors' => $validator->errors()], 422);
+    }
+
+    $validatedData = $validator->validated();
+    $user = Auth::user();
+
+    try {
+        $form = DynamicForm::findOrFail($validatedData['form_id']);
+        $structure = $form->form_structure;
+        $maxScore = $form->puntaje_maximo;
+
+        $submittedData = $validatedData['data'];
+        $processedData = [];
+        $totalScore = 0;
+
+        // Determinar la clave de la columna de puntaje
+        $scoreKey = 'puntaje_a_evaluar'; // default
+        $structureCollection = collect($structure);
+        $scoreColumn = $structureCollection->firstWhere('group', 'evaluacion');
+        if ($scoreColumn && isset($scoreColumn['key'])) {
+            $scoreKey = $scoreColumn['key'];
+        }
+
+        // Procesar los datos enviados y calcular el puntaje total
+        foreach ($submittedData as $row) {
+            $normalizedRow = [];
+            foreach ($structure as $column) {
+                $key = $column['key'];
+                // Asegurar que todas las claves de la estructura existan en la fila guardada
+                $normalizedRow[$key] = $row[$key] ?? '';
+            }
+            
+            // Sumar el puntaje de la fila al total
+            if (isset($normalizedRow[$scoreKey]) && is_numeric($normalizedRow[$scoreKey])) {
+                $totalScore += (float)$normalizedRow[$scoreKey];
+            }
+
+            $processedData[] = $normalizedRow;
+        }
+
+        // Aplicar el puntaje máximo al total
+        $cappedTotalScore = min($totalScore, $maxScore);
+
+        // Estructura final a guardar en el campo 'data'
+        $dataToSave = [
+            'rows' => $processedData,
+            '_total_score' => $cappedTotalScore,
+            '_raw_total_score' => $totalScore,
+        ];
+
+        // Guardar o actualizar la respuesta en la base de datos
+        DynamicFormResponse::updateOrCreate(
+            ['dynamic_form_id' => $form->id, 'user_id' => $user->id],
+            ['user_type' => $user->user_type, 'data' => $dataToSave]
+        );
+
+        return response()->json(['success' => true, 'message' => 'Respuesta guardada correctamente.']);
+
+    } catch (\Exception $e) {
+        Log::error('Error al guardar respuesta de formulario dinámico: ' . $e->getMessage(), ['request' => $request->all(), 'user_id' => $user->id]);
+        return response()->json(['success' => false, 'message' => 'Ocurrió un error interno al guardar la respuesta.'], 500);
+    }
+}
 
 
 }
