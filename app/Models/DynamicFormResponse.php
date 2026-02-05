@@ -10,7 +10,9 @@ class DynamicFormResponse extends Model
         'dynamic_form_id',
         'user_id',
         'user_type',
-        'data'
+        'data',
+        'evaluador_id',
+        'evaluador_email'
     ];
 
     protected $casts = [

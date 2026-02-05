@@ -404,6 +404,7 @@ class DynamicFormController extends Controller
     {
         try {
             $form = DynamicForm::findOrFail($formId);
+            $evaluator = Auth::user();
 
             // Validar los datos enviados
             $validatedData = $request->validate([
@@ -430,9 +431,19 @@ class DynamicFormController extends Controller
                         'puntaje_comision' => $row['puntaje_comision'] ?? null,
                         'puntaje_input_values' => $row['puntaje_input_values'] ?? null, // Guardar puntaje_input_values
                         'observaciones' => $row['observaciones'] ?? null,
+                        'evaluador_id' => $evaluator ? $evaluator->id : null,
+                        'evaluador_email' => $evaluator ? $evaluator->email : null,
                     ]
                 );
             }
+
+            // Actualizar también el registro principal de respuesta con los datos del evaluador
+            DynamicFormResponse::where('dynamic_form_id', $formId)
+                ->where('user_id', $validatedData['user_id'])
+                ->update([
+                    'evaluador_id' => $evaluator ? $evaluator->id : null,
+                    'evaluador_email' => $evaluator ? $evaluator->email : null,
+                ]);
 
             return response()->json(['success' => true, 'message' => 'Datos actualizados correctamente.']);
         } catch (\Exception $e) {

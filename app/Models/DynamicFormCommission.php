@@ -19,6 +19,8 @@ class DynamicFormCommission extends Model
         'puntaje_input_values',
         'puntaje_comision',
         'observaciones',
+        'evaluator_id',
+        'evaluator_email',
     ];
 
     public function dynamicForm()
