@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\DynamicFormResponse;
 use App\Models\DynamicForm;
+use App\Models\DynamicFormCommission;
 
 class DocenteFormsController extends Controller
 {
@@ -269,6 +270,12 @@ class DocenteFormsController extends Controller
              $renderData = $response->data;
         }
 
+        // Obtener datos de la comisión si existen
+        $commissionData = DynamicFormCommission::where('dynamic_form_id', $formId)
+            ->where('email_docente', $docenteEmail)
+            ->get()
+            ->keyBy('row_identifier');
+
         // Decode structure
         $structure = $form->form_structure;
         if (is_string($structure)) {
@@ -294,6 +301,6 @@ class DocenteFormsController extends Controller
         
         if ($orderedStructure->isEmpty()) $orderedStructure = $structure;
 
-        return view('dictaminador.dynamic_form_detail', compact('form', 'docente', 'renderData', 'orderedStructure', 'groupOrder'));
+        return view('dictaminador.dynamic_form_detail', compact('form', 'docente', 'renderData', 'orderedStructure', 'groupOrder', 'commissionData'));
     }
 }
