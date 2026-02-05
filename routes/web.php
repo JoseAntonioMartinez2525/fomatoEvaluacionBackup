@@ -372,6 +372,11 @@ Route::middleware(['auth'])->group(function () {
     ->name('dynamic-form.save-response')
     ->middleware('auth');
 
+    Route::get('/dictaminador/dynamic-form/{formId}/{docenteEmail}', [App\Http\Controllers\DocenteFormsController::class, 'viewDynamicForm'])
+    ->name('dictaminador.dynamic_form.show')
+    ->middleware('auth');
+
+
     Route::get('/formato-evaluacion/dynamic-form/{formName}', [DynamicFormController::class, 'getFormByName']);
         // Add this route with your other routes
     //Route::get('/get-form-content/{selectedForm}', [DynamicFormController::class, 'getFormContent']);

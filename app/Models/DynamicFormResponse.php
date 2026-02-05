@@ -19,7 +19,6 @@ class DynamicFormResponse extends Model
 
     public function form()
     {
-        return $this->belongsTo(DynamicForm::class);
+        return $this->belongsTo(DynamicForm::class, 'dynamic_form_id');
     }
 }
-

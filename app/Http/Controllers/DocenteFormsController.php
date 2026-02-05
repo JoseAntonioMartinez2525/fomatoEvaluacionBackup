@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\DynamicFormResponse;
+use App\Models\DynamicForm;
 
 class DocenteFormsController extends Controller
 {
@@ -224,20 +226,24 @@ class DocenteFormsController extends Controller
         }
 
         // Check dynamic forms
-        // $dynamicForms = DB::table('dynamic_form_combined')
-        //     ->where('email', $docenteEmail)
-        //     ->get();
+        if ($docente) {
+            $dynamicResponses = DynamicFormResponse::with('form')
+                ->where('user_id', $docente->id)
+                ->get();
 
-        // foreach ($dynamicForms as $dynamicForm) {
-        //     $completedForms[] = [
-        //         'form_key' => 'dynamic_' . $dynamicForm->id,
-        //         'form_name' => $dynamicForm->form_type ?? 'Formulario Dinámico',
-        //         'completed_at' => $dynamicForm->created_at ?? null,
-        //         'updated_at' => $dynamicForm->updated_at ?? null,
-        //         'route' => '#', // Dynamic forms route would need to be defined
-        //         'status' => 'completed'
-        //     ];
-        // }
+            foreach ($dynamicResponses as $response) {
+                if ($response->form) {
+                    $completedForms[] = [
+                        'form_key' => 'dynamic_' . $response->form->id,
+                        'form_name' => $response->form->form_name,
+                        'completed_at' => $response->created_at,
+                        'updated_at' => $response->updated_at,
+                        'route' => route('dictaminador.dynamic_form.show', ['formId' => $response->form->id, 'docenteEmail' => $docenteEmail]),
+                        'status' => 'completed'
+                    ];
+                }
+            }
+        }
 
         // Sort by completion date (most recent first)
         usort($completedForms, function($a, $b) {
@@ -245,5 +251,49 @@ class DocenteFormsController extends Controller
         });
 
         return view('dictaminador.docente_forms', compact('docente', 'completedForms', 'docenteEmail'));
+    }
+
+    public function viewDynamicForm($formId, $docenteEmail)
+    {
+        $docente = \App\Models\User::where('email', $docenteEmail)->firstOrFail();
+        $form = DynamicForm::findOrFail($formId);
+        
+        $response = DynamicFormResponse::where('dynamic_form_id', $formId)
+            ->where('user_id', $docente->id)
+            ->first();
+
+        $renderData = [];
+        if ($response && isset($response->data['rows'])) {
+            $renderData = $response->data['rows'];
+        } elseif ($response && is_array($response->data)) {
+             $renderData = $response->data;
+        }
+
+        // Decode structure
+        $structure = $form->form_structure;
+        if (is_string($structure)) {
+            $structure = json_decode($structure, true) ?? [];
+        }
+
+        // Normalize structure (grouping logic)
+        $structure = collect($structure)->map(function ($col) {
+            if (isset($col['group'])) return $col;
+            $key = $col['key'] ?? '';
+            $name = $col['name'] ?? '';
+            if ($key === 'puntaje_a_evaluar' || $name === 'Puntaje a evaluar') $col['group'] = 'evaluacion';
+            elseif ($key === 'puntaje_de_la_comision_dictaminadora' || $name === 'Puntaje de la Comisión Dictaminadora') $col['group'] = 'comision';
+            elseif ($key === 'observaciones' || $name === 'Observaciones') $col['group'] = 'observaciones';
+            else $col['group'] = 'actividad';
+            return $col;
+        })->values();
+
+        $groupOrder = ['actividad', 'evaluacion', 'comision', 'observaciones'];
+        $orderedStructure = collect($groupOrder)
+            ->flatMap(fn ($group) => $structure->where('group', $group))
+            ->values();
+        
+        if ($orderedStructure->isEmpty()) $orderedStructure = $structure;
+
+        return view('dictaminador.dynamic_form_detail', compact('form', 'docente', 'renderData', 'orderedStructure', 'groupOrder'));
     }
 }
