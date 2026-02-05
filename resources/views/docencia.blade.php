@@ -69,14 +69,22 @@ $staticFormTypes = [
             margin-bottom: 3rem;
          }
 
-         body.light-mode .btn.dynamicBtnDocencia{
-        background-color: #72aaca;
+         .btn.dynamicBtnDocencia{
         color: whitesmoke;
         padding: 0 100px  0 100px; 
         text-align: center;
         border-radius: 90px 90px 90px 90px;
          }
 
+         body.light-mode .btn.dynamicBtnDocencia{
+        background-color: #72aaca;
+        color: whitesmoke;
+
+         }
+
+          body.dark-mode .btn.dynamicBtnDocencia{
+            background-color: #456483; 
+          }
     </style>
 </head>
 @if (Route::has('login'))
@@ -2989,7 +2997,7 @@ $staticFormTypes = [
                                         data-structure="{{ json_encode($orderedStructure) }}"
                                         method="POST"
                                         onsubmit="event.preventDefault(); submitDynamicForm(
-                                            '{{ url('/formato-evaluacion/dynamic-forms/save-response') }}',
+                                            '{{ route('dynamic-form.save-response') }}',
                                             'dynamic-form-{{ $form->id }}',
                                             {{ $stepNumber }}
                                         );"
@@ -3496,7 +3504,17 @@ const stepMap = {
             },
             body: JSON.stringify(structuredData)
         })
-        .then(response => response.json())
+        .then(async response => {
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error en el servidor');
+                }
+                throw new Error('Error ' + response.status + ': ' + response.statusText);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 showMessage('✅ Formulario enviado correctamente', 'green');
@@ -3525,6 +3543,7 @@ const stepMap = {
         .catch(error => {
             console.error('Error:', error);
             showMessage('❌ Error de conexión', 'red');
+            console.log('❌ ' + error.message, );
         });
     }
 
