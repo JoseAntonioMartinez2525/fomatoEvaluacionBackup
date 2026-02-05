@@ -107,11 +107,8 @@ $newLocale = str_replace('_', '-', $locale);
                                             $isEvaluacion = $group === 'evaluacion';
                                             $isComision = $group === 'comision';
                                             $isObservaciones = $group === 'observaciones';
-                                            
-                                            $cellClass = '';
-                                            if ($isComision || $isObservaciones) $cellClass = 'bgComision';
                                         @endphp
-                                        <td class="text-center align-middle {{ $cellClass }}">
+                                        <td class="text-center align-middle">
                                             @if($group === 'actividad')
                                                 <span class="fw-bold">{{ $value }}</span>
                                             @else
@@ -144,7 +141,7 @@ $newLocale = str_replace('_', '-', $locale);
                 <div class="mt-4 p-3 bg-light rounded border">
                     <div class="row">
                         <div class="col-md-6">
-                            <strong><i class="fa-solid fa-star"></i> Puntaje Máximo:</strong> {{ $form->puntaje_maximo }}
+                            <strong> Puntaje Máximo:</strong> {{ $form->puntaje_maximo }}
                         </div>
                     </div>
                 </div>
