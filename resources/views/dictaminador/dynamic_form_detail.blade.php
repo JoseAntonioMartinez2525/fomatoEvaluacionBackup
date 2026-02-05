@@ -223,7 +223,7 @@ $newLocale = str_replace('_', '-', $locale);
         }
         payload.rows = Object.values(rowsObj);
 
-        fetch('/update-commission-data/{{ $form->id }}', {
+        fetch('{{ route("commission.data.update", ["formId" => $form->id]) }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -300,7 +300,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Ruta para la tabla fragmentada de comision de formularios dinamicos
     Route::get('/get-teacher-form-data/{email}/{formName}', [DynamicFormController::class, 'getTeacherFormData']);
-    Route::post('/update-commission-data/{formId}', [DynamicFormController::class, 'updateCommissionData']);
+    Route::post('/update-commission-data/{formId}', [DynamicFormController::class, 'updateCommissionData'])->name('commission.data.update');
 
     //GET formularios utilizados por Docentes
     Route::get('/get-data1', [ResponseController::class, 'getData1'])->name('getData1');

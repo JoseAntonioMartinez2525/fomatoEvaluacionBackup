@@ -6,8 +6,6 @@ use App\Models\DynamicFormCommission;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use App\Models\DynamicFormColumn;
-use App\Models\DynamicFormValue;
 use Illuminate\Http\Request;
 use App\Models\DynamicFormItem;
 use Illuminate\Support\Facades\Auth;
@@ -158,10 +156,12 @@ class DynamicFormController extends Controller
         if (!$form) {
             return redirect()->route('edit_delete_form')->with('error', 'Formulario no encontrado.');
         }
-        // Obtener las columnas y valores para este formulario
-        $columns = \DB::table('dynamic_form_columns')->where('dynamic_form_id', $form->id)->get();
-        $values = \DB::table('dynamic_form_items')->where('dynamic_form_id', $form->id)->get();
-
+        /* Se usaba esto con tablas pivote:
+        $columns, $values, $items y sus relaciones con dynamic_forms
+        Obtener las columnas y valores para este formulario
+        // $columns = \DB::table('dynamic_form_columns')->where('dynamic_form_id', $form->id)->get();
+        // $values = \DB::table('dynamic_form_items')->where('dynamic_form_id', $form->id)->get();
+        */
         // Fetch all forms from the database
         $forms = DynamicForm::all();
 
@@ -174,8 +174,8 @@ class DynamicFormController extends Controller
 
         return view('edit_delete_form', [
             'form' => $form,
-            'columns' => $columns,
-            'values' => $values,
+            // 'columns' => $columns,
+            // 'values' => $values,
             'forms' => $forms // Pass the forms to the view
         ]);
 
@@ -189,19 +189,19 @@ class DynamicFormController extends Controller
 
     }
 
-    public function edit($formName, $columnId)
-    {
-        $form = DynamicForm::with(['columns', 'values'])
-            ->where('form_name', $formName)
-            ->firstOrFail();
+    // public function edit($formName, $columnId)
+    // {
+    //     $form = DynamicForm::with(['columns', 'values'])
+    //         ->where('form_name', $formName)
+    //         ->firstOrFail();
 
-        $column = $form->columns->where('id', $columnId)->firstOrFail();
-        $value = $form->values->where('dynamic_form_column_id', $columnId)->first();
+    //     $column = $form->columns->where('id', $columnId)->firstOrFail();
+    //     $value = $form->values->where('dynamic_form_column_id', $columnId)->first();
 
 
-        dd($form, $column, $value); // Esto mostrará los datos en la pantalla
-        return view('edit_delete_form', compact('form', 'column', 'value'));
-    }
+    //     dd($form, $column, $value); // Esto mostrará los datos en la pantalla
+    //     return view('edit_delete_form', compact('form', 'column', 'value'));
+    // }
 
 
     public function update(Request $request, $id)
@@ -418,6 +418,13 @@ class DynamicFormController extends Controller
                 'user_type' => 'required|string',
             ]);
 
+            // Obtener el ID del docente a partir del email proporcionado
+            $docente = User::where('email', $validatedData['email'])->first();
+            if (!$docente) {
+                return response()->json(['success' => false, 'message' => 'Docente no encontrado.'], 404);
+            }
+            $docenteId = $docente->id;
+
             foreach ($validatedData['rows'] as $row) {
                 DynamicFormCommission::updateOrCreate(
                     [
@@ -426,8 +433,8 @@ class DynamicFormController extends Controller
                         'email_docente' => $validatedData['email'],
                     ],
                     [
-                        'user_id' => $validatedData['user_id'],
-                        'user_type' => $validatedData['user_type'],
+                        'user_id' => $docenteId, // Guardar el ID del docente
+                        'user_type' => 'docente', // El tipo de usuario al que pertenece la evaluación
                         'puntaje_comision' => $row['puntaje_comision'] ?? null,
                         'puntaje_input_values' => $row['puntaje_input_values'] ?? null, // Guardar puntaje_input_values
                         'observaciones' => $row['observaciones'] ?? null,
@@ -437,13 +444,48 @@ class DynamicFormController extends Controller
                 );
             }
 
-            // Actualizar también el registro principal de respuesta con los datos del evaluador
-            DynamicFormResponse::where('dynamic_form_id', $formId)
-                ->where('user_id', $validatedData['user_id'])
-                ->update([
-                    'evaluador_id' => $evaluator ? $evaluator->id : null,
-                    'evaluador_email' => $evaluator ? $evaluator->email : null,
-                ]);
+            // Obtener la respuesta original del docente para actualizarla con los datos de la comisión
+            $response = DynamicFormResponse::where('dynamic_form_id', $formId)
+                ->where('user_id', $docenteId)
+                ->first();
+
+            if ($response) {
+                $responseData = $response->data;
+                $structure = $form->form_structure;
+                if (is_string($structure)) {
+                    $structure = json_decode($structure, true) ?? [];
+                }
+
+                // Identificar las claves dinámicas para el puntaje de comisión y observaciones
+                $structureCollection = collect($structure);
+                $commissionScoreCol = $structureCollection->firstWhere('name', 'Puntaje de la Comisión Dictaminadora');
+                $observationsCol = $structureCollection->firstWhere('name', 'Observaciones');
+                
+                $commissionScoreKey = $commissionScoreCol['key'] ?? 'puntaje_de_la_comision_dictaminadora';
+                $observationsKey = $observationsCol['key'] ?? 'observaciones';
+
+                // Mapear los datos enviados por el dictaminador para un acceso rápido
+                $submittedDataMap = collect($validatedData['rows'])->keyBy('row_identifier');
+
+                // Actualizar el array 'rows' en la data de la respuesta
+                if (isset($responseData['rows']) && is_array($responseData['rows'])) {
+                    foreach ($responseData['rows'] as $index => &$row) {
+                        if ($submittedDataMap->has($index)) {
+                            $submittedRow = $submittedDataMap->get($index);
+                            
+                            // Asignar el puntaje y las observaciones de la comisión a las claves correspondientes
+                            $row[$commissionScoreKey] = $submittedRow['puntaje_comision'] ?? ($row[$commissionScoreKey] ?? '');
+                            $row[$observationsKey] = $submittedRow['observaciones'] ?? ($row[$observationsKey] ?? '');
+                        }
+                    }
+                }
+
+                // Guardar la data actualizada y la información del evaluador en la respuesta principal
+                $response->data = $responseData;
+                $response->evaluador_id = $evaluator ? $evaluator->id : null;
+                $response->evaluador_email = $evaluator ? $evaluator->email : null;
+                $response->save();
+            }
 
             return response()->json(['success' => true, 'message' => 'Datos actualizados correctamente.']);
         } catch (\Exception $e) {
