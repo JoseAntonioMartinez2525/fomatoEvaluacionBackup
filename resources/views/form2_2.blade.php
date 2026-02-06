@@ -3,6 +3,25 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    
+    $convocatoria2 = $convocatoria;
+    $periodo2 = $periodo;
+}
+
  $docenteConfig = [
         'formKey' => 'form2_2',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
@@ -279,6 +298,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form2_2';
                     </div>
                 @endif
             </div>
+             <div>{{ $periodo }}</div>
         </center>
 
         <div id="piedepagina" style="margin-left: 500px;margin-top:10px;">

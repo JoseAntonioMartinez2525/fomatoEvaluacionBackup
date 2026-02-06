@@ -3,6 +3,25 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($convocatoria) || !isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    
+    $convocatoria2 = $convocatoria;
+    $periodo2 = $periodo;
+}
 
 $elaboracionMappings = [];
 for ($i = 1; $i <= 5; $i++) {
@@ -192,7 +211,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     #piedepagina1,
     #piedepagina2 {
         margin: 0;
-        font-size: 0.7rem;
+        font-size: 0.5rem;
     }
 
     #piedepagina {
@@ -280,7 +299,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     }
 
     .dictaminador-style#piedepagina2 {
-        margin-left: 800px;
+        margin-left: 3rem;
         margin-top: 10px;
         font-weight: normal !important;
         white-space: nowrap;
@@ -390,6 +409,7 @@ button.edit-button{
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id;
+
     $hasData = false;
     $checkFields = ['actv3Comision'];
     foreach($checkFields as $f) {
@@ -504,10 +524,12 @@ $formNumber = '31';
                             <!-- Mostrar convocatoria -->
                             @if(isset($convocatoria))
                                 <div style="margin-right: -500px;">
-                                    <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
+                                    Convocatoria: {{ is_string($convocatoria) ? $convocatoria : ($convocatoria->convocatoria ?? 'No disponible') }}
                                 </div>
+                                
                             @endif
                         </div>
+                        <div>Periodo: {{ $periodo }}</div>
                         <div id="piedepagina1"
                             class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
                             Página 3 de 34
@@ -619,11 +641,12 @@ $formNumber = '31';
                                         <!-- Mostrar convocatoria -->
                                         @if(isset($convocatoria))
 
-                                            <div style="margin-right: -200px;white-space: nowrap;">
-                                                <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
+                                            <div style="margin-right: 200px;white-space: nowrap;">
+                                                {{ is_string($convocatoria) ? $convocatoria : ($convocatoria->convocatoria ?? 'No disponible') }}
                                             </div>
                                         @endif
                                     </div>
+                                    <div>Periodo: {{ $periodo }}</div>
 
                                     <div id="piedepagina2"
                                         class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">

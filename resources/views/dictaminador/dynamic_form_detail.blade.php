@@ -1,6 +1,14 @@
 @php
 $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
+
+use App\Models\UsersResponseForm1;
+
+if (!isset($convocatoria) || !isset($periodo)) {
+    $form1 = UsersResponseForm1::where('user_id', $docente->id)->first();
+    $convocatoria = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
+    $periodo = $form1 ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+}
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $newLocale }}">

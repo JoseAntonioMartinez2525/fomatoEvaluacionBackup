@@ -417,6 +417,7 @@ $formNumber = '34';
                     <div style="margin-right: -700px;">
                         <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
                     </div>
+                     <div><h3>Periodo: </h3> {{ is_string($periodo) ? $periodo : ($periodo->periodo ?? '') }}</div>
                 @endif
             </div>
         </center>

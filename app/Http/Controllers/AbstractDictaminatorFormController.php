@@ -236,9 +236,24 @@ abstract class AbstractDictaminatorFormController extends TransferController
         $userType = \Auth::user() ? \Auth::user()->user_type : null;
         
         $hasData = false;
+        $targetUser = null;
+
         if ($teacherEmail) {
              $modelClass = $this->getDictaminatorModelClass();
              $hasData = $modelClass::where('email', $teacherEmail)->exists();
+             $targetUser = \App\Models\User::where('email', $teacherEmail)->first();
+        } else {
+             $targetUser = \Auth::user();
+        }
+
+        // Obtener convocatoria y periodo
+        $convocatoria = 'Convocatoria no asignada';
+        $periodo = 'Periodo no definido';
+
+        if ($targetUser) {
+            $form1 = \App\Models\UsersResponseForm1::where('user_id', $targetUser->id)->first();
+            $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+            $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
         }
 
         return view($this->getViewName(), [
@@ -246,6 +261,10 @@ abstract class AbstractDictaminatorFormController extends TransferController
             'showSearch' => $showSearchComponent,
             'userType' => $userType,
             'hasData' => $hasData,
+            'convocatoria' => $convocatoria,
+            'periodo' => $periodo,
+            'convocatoria2' => $convocatoria,
+            'periodo2' => $periodo,
         ]);
     }
 

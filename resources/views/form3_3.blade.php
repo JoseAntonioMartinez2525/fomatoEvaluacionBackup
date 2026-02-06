@@ -511,10 +511,12 @@ $formNumber = '33';
                             <span style="margin-right: 700px; display: inline-block;">
                                 <h1>Convocatoria: </h1>
                             </span>
+                            <span>{{ $periodo }}</span>
                         @elseif($userType == 'secretaria')
                             <span style="margin-right: 60px; margin-left: 100px; display:nonek;padding-right: 12px; text-align:left;">
                                 <h1>Convocatoria: </h1>
                             </span>
+                            <span>{{ $periodo }}</span>
                             <span id="piedepagina" style="display: none; margin-left: 20px;">
                                 Página 3 de 34
                             </span>

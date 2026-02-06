@@ -357,10 +357,32 @@ class DynamicFormController extends Controller
         }
     }
 
-    public function loadFormView($formType)
+    public function loadFormView(Request $request, $formType)
     {
+        $user = Auth::user();
+        $targetUser = $user;
+
+        // Si se proporciona un email (caso secretaria/dictaminador), buscamos ese usuario
+        if ($request->has('email')) {
+            $email = $request->input('email');
+            $foundUser = User::where('email', $email)->first();
+            if ($foundUser) {
+                $targetUser = $foundUser;
+            }
+        }
+
+        // Lógica centralizada para obtener convocatoria y periodo
+        $form1 = \App\Models\UsersResponseForm1::where('user_id', $targetUser->id)->first();
+        $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+        $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+
+        // Variables adicionales para compatibilidad con las vistas
+        $convocatoria2 = $convocatoria;
+        $periodo2 = $periodo;
+        $teacherEmailFromUrl = $request->input('email');
+
         // Esta función maneja los formularios estáticos
-        return view($formType);
+        return view($formType, compact('convocatoria', 'periodo', 'convocatoria2', 'periodo2', 'teacherEmailFromUrl'));
     }
 
     public function getDynamicFormForSecretaria($formName)
@@ -596,6 +618,11 @@ public function showDynamicFormByName(Request $request, $form_name)
 
     $user = Auth::user();
 
+        // Obtener convocatoria y periodo para el footer
+        $form1 = \App\Models\UsersResponseForm1::where('user_id', $user->id)->first();
+        $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+        $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+
     $currentResponse = DynamicFormResponse::where('dynamic_form_id', $form->id)
         ->where('user_id', $user->id)
         ->first();
@@ -696,7 +723,9 @@ public function showDynamicFormByName(Request $request, $form_name)
         'staticFormTypes',
         'staticStepCount',
         'renderData',
-        'renderDataByForm'
+        'renderDataByForm',
+        'convocatoria',
+        'periodo'
     ));
 }
 

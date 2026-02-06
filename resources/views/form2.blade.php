@@ -3,6 +3,25 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($convocatoria) || !isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    
+    $convocatoria2 = $convocatoria;
+    $periodo2 = $periodo;
+}
 
  $docenteConfig = [
         'formKey' => 'form2',
@@ -178,6 +197,7 @@ body.dark-mode .table-header {
 $user = Auth::user();
 $userType = $user->user_type;
 $user_identity = $user->id; 
+
     $hasData = false;
     $checkFields = ['comision1'];
     foreach($checkFields as $f) {
@@ -341,10 +361,12 @@ $formNumber = '2';
                 <!-- Mostrar convocatoria -->
                 @if(isset($convocatoria))
                     <div style="margin-right: -700px;">
-                        <h1>Convocatoria: {{ $convocatoria->convocatoria ?? 'No disponible' }}</h1>
+                        <h1>Convocatoria: {{ is_string($convocatoria) ? $convocatoria : ($convocatoria->convocatoria ?? 'No disponible') }}</h1>
                     </div>
+                     
                 @endif
             </div>
+            <div>{{ $periodo }}</div>
         </center>
 
         <div id="piedepagina" style="margin-left: 500px; margin-top: 10px;">
