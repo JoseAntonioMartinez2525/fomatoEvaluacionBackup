@@ -38,6 +38,23 @@ $newLocale = str_replace('_', '-', $locale);
                 <h3 class="mb-0 h5">{{ $form->form_name }}</h3>
                 <small>Docente: {{ $docente->name }} ({{ $docente->email }})</small>
             </div>
+             <div class="mt-4 p-3 bg-light rounded border">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong> 
+                                <span> Puntaje Máximo:  </span>
+                                <span class="bg-dark text-white p-2">{{ $form->puntaje_maximo }}</span>
+                            </strong>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            @if($canEdit)
+                                <button type="button" onclick="submitCommission()" class="btn btn-success">
+                                    <i class="fa-solid fa-save"></i> Guardar Evaluación
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             <div class="card-body">
                 <form id="commissionForm">
                 <div class="table-responsive">
@@ -177,24 +194,14 @@ $newLocale = str_replace('_', '-', $locale);
                 </div>
                 </form>
                 
-                <div class="mt-4 p-3 bg-light rounded border">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <strong> Puntaje Máximo:</strong> {{ $form->puntaje_maximo }}
-                        </div>
-                        <div class="col-md-6 text-end">
-                            @if($canEdit)
-                                <button type="button" onclick="submitCommission()" class="btn btn-success">
-                                    <i class="fa-solid fa-save"></i> Guardar Evaluación
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </div>
-
+<footer class="mt-4">
+    <p class="text-center">Convocatoria actual: {{ $convocatoria ?? 'No asignada' }}</p>
+    <p class="text-center">Periodo: {{ $periodo ?? 'Sin definir' }}</p>
+</footer>
     <script>
     function submitCommission() {
         const form = document.getElementById('commissionForm');
