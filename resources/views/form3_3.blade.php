@@ -508,27 +508,29 @@ $formNumber = '33';
                     class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                     @if(isset($convocatoria))
                         @if($userType == 'dictaminador')
-                            <span style="margin-right: 700px; display: inline-block;">
-                                <h1>Convocatoria: </h1>
-                            </span>
-                            <span>{{ $periodo }}</span>
+                            <div style="margin-right: -700px;">
+                                <span style="font-size: 1.5em; font-weight: bold;">Convocatoria: {{ $convocatoria }}</span>
+                            </div>
+                            <div><span style="font-size: 1.17em; font-weight: bold;">Periodo: </span> {{ $periodo }}</div>
                         @elseif($userType == 'secretaria')
-                            <span style="margin-right: 60px; margin-left: 100px; display:nonek;padding-right: 12px; text-align:left;">
-                                <h1>Convocatoria: </h1>
-                            </span>
-                            <span>{{ $periodo }}</span>
-                            <span id="piedepagina" style="display: none; margin-left: 20px;">
+                            <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;">
+                                <span style="font-size: 1.5em; font-weight: bold;">Convocatoria: {{ $convocatoria }}</span>
+                            </div>
+                            <div><span style="font-size: 1.17em; font-weight: bold;">Periodo: </span> {{ $periodo }}</div>
+                            {{-- <span id="piedepagina" style="display: block; margin-left: 20px;">
                                 Página 3 de 34
-                            </span>
+                            </span> --}}
+                        @else
+                            <span>Convocatoria: {{ $convocatoria }}</span>
+                            <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+
                         @endif
-                    <span>Convocatoria: {{ $convocatoria }}</span>
-                    <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                     @endif
                 </div>
             <div>
                 @if($userType == 'dictaminador')
-                    <span id="piedepagina" style="display: none;margin-left:800px;">Página 6 de 34</span>
-                    <span id="piedepagina" style="display: none; float: right;">Página 6 de 34</span>
+                    {{-- <span id="piedepagina" style="display: none;margin-left:800px;">Página 6 de 34</span> --}}
+                    <span id="piedepagina" style="display: block; float: right;">Página 6 de 34</span>
                 @endif
             </div>
             </div><br><br>

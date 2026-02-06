@@ -134,6 +134,18 @@ body.dark-mode [id^="btn3_"]:hover {
     background-color: #6a5b9f;
     
 }
+    .secretaria-style {
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: left;
+    }
+    .dictaminador-style {
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 10px;
+        text-align: center;
+    }
 </style>
 <body class="bg-gray-50 text-black/50">
 
@@ -290,14 +302,23 @@ $formNumber = '35';
     <center>
         <footer id="footerForm3_4">
             <center>
-                <div id="convocatoria">
+                <div id="convocatoria" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                     <!-- Mostrar convocatoria -->
                     @if(isset($convocatoria))
-
-                        <div style="margin-right: -700px;">
-                        <h1>Convocatoria: {{ $convocatoria }}</h1>
-                        </div>
-                    <div><h3>Periodo: </h3> {{ $periodo }}</div>
+                        @if($userType == 'dictaminador')
+                            <div style="margin-right: -700px;">
+                                <span style="font-size: 1.5em; font-weight: bold;">Convocatoria: {{ $convocatoria }}</span>
+                            </div>
+                            <div><span style="font-size: 1.17em; font-weight: bold;">Periodo: </span> {{ $periodo }}</div>
+                        @elseif($userType == 'secretaria')
+                            <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;">
+                                <span style="font-size: 1.5em; font-weight: bold;">Convocatoria: {{ $convocatoria }}</span>
+                            </div>
+                            <div><span style="font-size: 1.17em; font-weight: bold;">Periodo: </span> {{ $periodo }}</div>
+                        @else
+                            <span>Convocatoria: {{ $convocatoria }}</span>
+                            <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                        @endif
                     @endif
                 </div>
             </center>
