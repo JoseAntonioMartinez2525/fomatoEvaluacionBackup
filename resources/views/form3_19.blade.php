@@ -505,9 +505,10 @@ $formNumber = '319';
                 <div id="convocatoria">
                     <!-- Mostrar convocatoria -->
                     @if(isset($convocatoria))
-                        <div style="margin-right: -500px;">
-                            <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                        </div>
+                        <span>Convocatoria: {{ $convocatoria }}</span>
+                    @endif
+                    @if(isset($periodo))
+                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                     @endif
                 </div>
                 <div id="piedepagina1"
@@ -750,10 +751,10 @@ $formNumber = '319';
                 <div id="convocatoria2">
                     <!-- Mostrar convocatoria -->
                     @if(isset($convocatoria))
-
-                        <div style="margin-right: -700px;">
-                            <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                        </div>
+                        <span>Convocatoria: {{ $convocatoria }}</span>
+                    @endif
+                    @if(isset($periodo))
+                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                     @endif
                 </div>
 
@@ -946,10 +947,10 @@ $formNumber = '319';
                 <div id="convocatoria3">
                     <!-- Mostrar convocatoria -->
                     @if(isset($convocatoria))
-
-                        <div style="margin-right: -700px;">
-                            <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                        </div>
+                        <span>Convocatoria: {{ $convocatoria }}</span>
+                    @endif
+                    @if(isset($periodo))
+                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                     @endif
                 </div>
                 <div id="piedepagina3"

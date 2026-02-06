@@ -521,11 +521,14 @@ $formNumber = '33';
                                 Página 3 de 34
                             </span>
                         @endif
+                    <span>Convocatoria: {{ $convocatoria }}</span>
+                    <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                     @endif
                 </div>
             <div>
                 @if($userType == 'dictaminador')
                     <span id="piedepagina" style="display: none;margin-left:800px;">Página 6 de 34</span>
+                    <span id="piedepagina" style="display: none; float: right;">Página 6 de 34</span>
                 @endif
             </div>
             </div><br><br>

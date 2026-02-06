@@ -415,9 +415,9 @@ $formNumber = '34';
                 @if(isset($convocatoria))
 
                     <div style="margin-right: -700px;">
-                        <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
+                        <h1>Convocatoria: {{ $convocatoria }}</h1>
                     </div>
-                     <div><h3>Periodo: </h3> {{ is_string($periodo) ? $periodo : ($periodo->periodo ?? '') }}</div>
+                     <div><h3>Periodo: </h3> {{ $periodo }}</div>
                 @endif
             </div>
         </center>
