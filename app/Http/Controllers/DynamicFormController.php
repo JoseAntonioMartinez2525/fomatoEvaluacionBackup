@@ -758,7 +758,7 @@ public function saveResponse(Request $request)
         $dataToSave = [
             'rows' => $processedData,
             '_total_score' => $cappedTotalScore,
-            '_raw_total_score' => $totalScore,
+            '_comision_total_score' => $totalScore,
         ];
 
         // Guardar o actualizar la respuesta en la base de datos
