@@ -3,6 +3,22 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+}
 //mapping del partials docente-autocomplete.blade.php
 $docenteMappings = [
     'score3_9' => 'score3_9',
@@ -271,7 +287,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
 
 .dictaminador-style {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 12px;
     margin-top: 10px;
     text-align: center;
 }
@@ -292,10 +308,26 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     display: inline-block;
 }
 
+    td{
+        font-size: 12px;
+    }
+
+}
 }
 
 
 }
+
+    .secretaria-style {
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: left;
+    }
+    .dictaminador-style {
+        font-size: 16px;
+        margin-top: 10px;
+        text-align: center;
+    }
 
   .nav-max-content{
 
@@ -534,22 +566,34 @@ $formNumber = '39';
                     </tr>
                 </tbody>
             </table>
-            <div style="display: flex; justify-content: space-between;padding-top: 50px;">
-                <div id="convocatoria">
-                        <!-- Mostrar convocatoria -->
+            <div style="display: flex; justify-content: space-between; padding-top: 50px;">
+                <div>
+                    <div id="convocatoria" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                         @if(isset($convocatoria))
-
-                            <div style="margin-right: -500px;">
-                                <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                            </div>
+                            @if($userType == 'dictaminador')
+                                <div style="margin-right: -700px;"><span style="font-size: 1em;">{{ $convocatoria }}</span></div>
+                            @elseif($userType == 'secretaria')
+                                <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1em;">{{ $convocatoria }}</span></div>
+                            @else
+                                <span>{{ $convocatoria }}</span>
+                            @endif
                         @endif
+                    </div>
+                    <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($periodo))
+                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                                <div><span style="font-size: 1em;"></span> {{ $periodo }}</div>
+                            @else
+                                <span style="margin-left: 50px;">{{ $periodo }}</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
-                    <div id="piedepagina1"
-                        class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
-                        Página 14 de 34
-                    </div>                
+                <div id="piedepagina1" class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+                    Página 14 de 34
+                </div>
             </div>
-
+            <br><br><br>
             <table class="table table-sm tutorias table2">
             <x-sub-headers-form3_9 :componentIndex="1" />
                 <tbody data-page="15">
@@ -805,20 +849,30 @@ $formNumber = '39';
                     </tr>
                 </thead>
             </table>
-    <div style="display: flex; justify-content: space-between;padding-top: 200px;">
-        <div id="convocatoria2">
-            <!-- Mostrar convocatoria -->
-            @if(isset($convocatoria))
-
-                <div style="margin-right: -700px;">
-                    <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                </div>
-            @endif
+    <div style="display: flex; justify-content: space-between; padding-top: 200px;">
+        <div>
+            <div id="convocatoria2" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                @if(isset($convocatoria))
+                    @if($userType == 'dictaminador')
+                        <div style="margin-right: -700px;"><span style="font-size: 1.5em;">{{ $convocatoria }}</span></div>
+                    @elseif($userType == 'secretaria')
+                        <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">{{ $convocatoria }}</span></div>
+                    @else
+                        <span>Convocatoria: {{ $convocatoria }}</span>
+                    @endif
+                @endif
+            </div>
+            <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                @if(isset($periodo))
+                    @if($userType == 'dictaminador' || $userType == 'secretaria')
+                        <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                    @else
+                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                    @endif
+                @endif
+            </div>
         </div>
-
-
-        <div id="piedepagina2"
-            class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+        <div id="piedepagina2" class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
             Página 15 de 34
         </div>
     </div>

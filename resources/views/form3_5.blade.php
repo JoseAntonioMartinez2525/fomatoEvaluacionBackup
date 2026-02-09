@@ -3,6 +3,22 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+}
 // datos para cada formulario
 $docenteConfig = [
         'formKey' => 'form3_5',
@@ -135,13 +151,11 @@ body.dark-mode [id^="btn3_"]:hover {
     
 }
     .secretaria-style {
-        font-weight: bold;
         font-size: 14px;
         margin-top: 10px;
         text-align: left;
     }
     .dictaminador-style {
-        font-weight: bold;
         font-size: 16px;
         margin-top: 10px;
         text-align: center;
@@ -307,16 +321,22 @@ $formNumber = '35';
                     @if(isset($convocatoria))
                         @if($userType == 'dictaminador')
                             <div style="margin-right: -700px;">
-                                <span style="font-size: 1.5em; font-weight: bold;">Convocatoria: {{ $convocatoria }}</span>
+                                <span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span>
                             </div>
-                            <div><span style="font-size: 1.17em; font-weight: bold;">Periodo: </span> {{ $periodo }}</div>
                         @elseif($userType == 'secretaria')
                             <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;">
-                                <span style="font-size: 1.5em; font-weight: bold;">Convocatoria: {{ $convocatoria }}</span>
+                                <span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span>
                             </div>
-                            <div><span style="font-size: 1.17em; font-weight: bold;">Periodo: </span> {{ $periodo }}</div>
                         @else
                             <span>Convocatoria: {{ $convocatoria }}</span>
+                        @endif
+                    @endif
+                </div>
+                <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                    @if(isset($periodo))
+                        @if($userType == 'dictaminador' || $userType == 'secretaria')
+                            <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                        @else
                             <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                         @endif
                     @endif
