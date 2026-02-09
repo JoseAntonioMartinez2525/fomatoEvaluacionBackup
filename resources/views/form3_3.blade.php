@@ -389,6 +389,11 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
             .elabInput{
                 height: 2rem;
             }
+
+            a.details{
+        margin-left: 1rem!important;
+        color: #497ad4!important;
+    }
     </style>
 <script>
 window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
@@ -448,7 +453,7 @@ $formNumber = '33';
                 <x-table-header />
                 <tbody class="page-break" data-page="6">
                     <tr>
-                        <td class="seccion3_3" colspan="5">3.3 Publicaciones relacionadas con la docencia</td>
+                        <td class="seccion3_3" colspan="5">3.3 Publicaciones relacionadas con la docencia<a href="#" class="details printButtonClass">Ver mas detalles</a></td>
                         <td id="score3_3">0</td>
                         <td class="comision3_3" id="comision3_3"style="background-color: #ffcc6d; text-align: center; border: none; font-weight: bold;">0</td>
                     </tr>

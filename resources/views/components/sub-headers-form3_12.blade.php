@@ -17,7 +17,7 @@
             relacionadas con el
             contenido
             de los PE que imparte el docente</th>
-        <th></th>
+        <th><a class="details printButtonClass" href="#">Ver mas detalles</a></th>
         <th class="score3_12" id="score3_12_{{ $componentIndex }}">0</th>
         <th class="comision3_12" id="comision3_12_{{ $componentIndex }}">0</th>
         

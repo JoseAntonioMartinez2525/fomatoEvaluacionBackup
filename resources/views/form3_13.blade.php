@@ -193,7 +193,7 @@ body.dark-mode td.td_obsInicioFinancimientoExt, body.dark-mode td.td_obsInicioIn
     .secretaria-style {
         font-size: 14px;
         margin-top: 10px;
-        text-align: left;
+        text-align: center;
     }
     .dictaminador-style {
         font-size: 16px;
@@ -423,7 +423,7 @@ $formNumber = '313';
                             <span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span>
                         </div>
                     @elseif($userType == 'secretaria')
-                        <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;">
+                        <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:center;">
                             <span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span>
                         </div>
                     @else

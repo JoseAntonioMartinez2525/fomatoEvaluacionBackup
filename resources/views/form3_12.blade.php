@@ -361,6 +361,12 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         button#edit-btn-form3_12{
             margin-left: 15rem;
         }
+
+        a.details{
+        margin-left: 1rem!important;
+        color: #497ad4!important;
+    }
+
     </style>
 </head>
 
@@ -567,7 +573,7 @@ $formNumber = '312';
                             <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                                 @if(isset($periodo))
                                     @if($userType == 'dictaminador' || $userType == 'secretaria')
-                                        <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                                        <div><span style="font-size: .8rem;">Periodo: </span> {{ $periodo }}</div>
                                     @else
                                         <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
                                     @endif
