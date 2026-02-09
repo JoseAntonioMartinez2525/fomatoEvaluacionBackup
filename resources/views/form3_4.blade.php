@@ -221,6 +221,7 @@ body.dark-mode [id^="btn3_"]:hover {
         font-size: 14px;
         margin-top: 10px;
         text-align: left;
+        margin-inline-start: 68rem;
     }
     .dictaminador-style {
         font-weight: bold;
