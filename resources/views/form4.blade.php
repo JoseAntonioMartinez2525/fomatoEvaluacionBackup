@@ -2,6 +2,23 @@
 $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
+
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($convocatoria) || !isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+}
 @endphp
 <!DOCTYPE html>
 <html lang="">
@@ -262,7 +279,14 @@ $userType = Auth::user()->user_type;
 
             <footer>
                 <div>
-                    <label id="convocatoriaPeriodoLabel" style="color:black;"></label>
+                    <label id="convocatoriaPeriodoLabel" style="color:black;">
+                        @if(isset($convocatoria))
+                            <strong>Convocatoria:</strong> {{ $convocatoria }}
+                        @endif
+                        @if(isset($periodo))
+                            <strong>Periodo:</strong> {{ $periodo }}
+                        @endif
+                    </label>
                 </div>
                 @component('components.pie-pag', ['number' => '3'])
                 @endcomponent

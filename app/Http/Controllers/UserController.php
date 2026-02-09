@@ -161,6 +161,7 @@ class UserController extends Controller
                 'dictaminadores' => $dictaminadores,
                 // Variables adicionales que pueda requerir tu vista
                 'convocatoria' => $convocatoria,
+                'periodo' => $periodo,
             ];
 
             // Renderizar vista a HTML

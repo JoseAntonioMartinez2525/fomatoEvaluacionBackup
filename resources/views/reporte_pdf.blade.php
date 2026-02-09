@@ -4,6 +4,7 @@
 // Inicializa
 $logoBase64 = $logoBase64 ?? ''; // Prevenir error si no se pasa en exportación masiva
 $convocatoria = '';
+$periodo = $periodo ?? '';
 
 // Intenta obtener email desde la query (la ruta que llama al PDF usa ?email=...)
 try {
@@ -21,11 +22,13 @@ try {
     if ($userModel) {
         $form1 = \App\Models\UsersResponseForm1::where('user_id', $userModel->id)->first();
         $convocatoria = $form1->convocatoria ?? '';
+        $periodo = $form1->periodo ?? '';
     }
 } catch (\Throwable $e) {
     // Evita que la vista rompa: registramos el error y dejamos $convocatoria vacío
     \Log::error('Error cargando convocatoria en vista reporte_pdf: '.$e->getMessage());
     $convocatoria = '';
+    $periodo = '';
 }
 
 $filas1To3_8_1 = [
@@ -322,7 +325,7 @@ $filas3_9To3_19 = [
                 
             <tr>
                 <td colspan="3" class="center">
-                    <strong>Convocatoria:</strong> {{ $convocatoria }}
+                    <strong>Convocatoria:</strong> {{ $convocatoria }} <strong>Periodo:</strong> {{ $periodo }}
                 </td>
             </tr>
         </tbody>
@@ -379,7 +382,7 @@ $filas3_9To3_19 = [
         </tr>
         <tr>
             <td colspan="3" class="center">
-                <strong>Convocatoria:</strong> {{ $convocatoria }}
+                <strong>Convocatoria:</strong> {{ $convocatoria }} <strong>Periodo:</strong> {{ $periodo }}
                 
             </td>
         </tr>
@@ -430,7 +433,7 @@ $filas3_9To3_19 = [
     </table>
 
     <div style="margin-top: 20rem; text-align: center;">
-    <strong>Convocatoria:</strong> {{ $convocatoria }}
+    <strong>Convocatoria:</strong> {{ $convocatoria }} <strong>Periodo:</strong> {{ $periodo }}
     <label class="pie-pag" style="margin-left: 10rem;">página 33 de 34</label>
 </div>
 
@@ -474,7 +477,7 @@ $filas3_9To3_19 = [
 
 
 <div style="margin-top: 100px; text-align: center;">
-    <strong>Convocatoria:</strong> {{ $convocatoria }}
+    <strong>Convocatoria:</strong> {{ $convocatoria }} <strong>Periodo:</strong> {{ $periodo }}
     <label class="pie-pag" style="margin-left: 10rem;">página 34 de 34</label>
 </div>
 
@@ -487,10 +490,11 @@ $filas3_9To3_19 = [
                 $font = $fontMetrics->get_font("Arial", "normal");
                 $size = 10;
                 $convocatoria = "' . addslashes($convocatoria) . '";
+                $periodo = "' . addslashes($periodo) . '";
                 $pagina_inicio = ' . intval($pagina_inicio) . ';
                 $pagina_total = ' . intval($pagina_total) . ';
                 $y = 820;
-                $pdf->text(40, $y, "Programa de estímulos al desempeño del Personal docente: " . $convocatoria, $font, $size);
+                $pdf->text(40, $y, "Programa de estímulos al desempeño del Personal docente: " . $convocatoria . " Periodo: " . $periodo, $font, $size);
                 $pdf->text(500, $y, "Página " . ($PAGE_NUM + $pagina_inicio - 1) . " de " . $pagina_total, $font, $size);
             ');
         }
