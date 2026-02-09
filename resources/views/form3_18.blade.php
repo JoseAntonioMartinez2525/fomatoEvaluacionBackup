@@ -3,6 +3,22 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+}
 // --- BLOQUES BASE ---
 $bloques = [
     'ComOrgInt',
@@ -282,6 +298,16 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         
 
     }
+    .secretaria-style {
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: left;
+    }
+    .dictaminador-style {
+        font-size: 16px;
+        margin-top: 10px;
+        text-align: center;
+    }
     </style>
 
 </head>
@@ -497,13 +523,27 @@ $formNumber = '318';
                 </tbody>
             </table>
             <div style="display: flex; justify-content: space-between;padding-top: 80px;margin-top: 10rem;">
-                <div id="convocatoria">
-                    <!-- Mostrar convocatoria -->
-                    @if(isset($convocatoria))
-                        <div style="margin-right: -500px;">
-                            <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                        </div>
-                    @endif
+                <div>
+                    <div id="convocatoria" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($convocatoria))
+                            @if($userType == 'dictaminador')
+                                <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @elseif($userType == 'secretaria')
+                                <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @else
+                                <span>Convocatoria: {{ $convocatoria }}</span>
+                            @endif
+                        @endif
+                    </div>
+                    <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($periodo))
+                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                                <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                            @else
+                                <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
                 <div id="piedepagina1"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
@@ -706,14 +746,27 @@ $formNumber = '318';
                 @endif
             <!--Convocatoria 2-->
             <div style="display: flex; justify-content: space-between;padding-top: 150px;">
-                <div id="convocatoria2">
-                    <!-- Mostrar convocatoria -->
-                    @if(isset($convocatoria))
-
-                        <div style="margin-right: -700px;">
-                            <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
-                        </div>
-                    @endif
+                <div>
+                    <div id="convocatoria2" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($convocatoria))
+                            @if($userType == 'dictaminador')
+                                <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @elseif($userType == 'secretaria')
+                                <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @else
+                                <span>Convocatoria: {{ $convocatoria }}</span>
+                            @endif
+                        @endif
+                    </div>
+                    <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($periodo))
+                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                                <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                            @else
+                                <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
 
                 <div id="piedepagina2"

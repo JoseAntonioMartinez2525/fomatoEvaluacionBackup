@@ -3,6 +3,22 @@ $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
+use App\Models\UsersResponseForm1;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+if (!isset($periodo)) {
+    $targetUser = Auth::user();
+    $teacherEmail = $teacherEmailFromUrl ?? request('email');
+    if ($teacherEmail) {
+        $found = User::where('email', $teacherEmail)->first();
+        if ($found) $targetUser = $found;
+    }
+    
+    $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
+    $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
+}
 // Lista base de categorías (los sufijos)
 $secciones = [
     'CGUtitular', 'CGUespecial', 'CGUpermanente',
@@ -133,18 +149,18 @@ if (!isset($docenteConfigForm)) {
             margin-left: 200px;
             margin-top: -10px;
             padding: 0;
-            font-size: .9rem;
+            font-size: .7rem;
 
         }
 
         footer {
             position: fixed;
-            font-size: .9rem;
+            font-size: .7rem;
             bottom: 0;
             left: 0;
             width: 100%;
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             background-color: white;
             /* Para asegurar que el footer no interfiera visualmente */
             z-index: 10;
@@ -171,7 +187,7 @@ if (!isset($docenteConfigForm)) {
         #convocatoria {
             margin: 0;
             display: block;
-            margin-top: 1rem;
+            margin-top: .3rem;
         }
 
         #piedepagina {
@@ -233,7 +249,6 @@ if (!isset($docenteConfigForm)) {
         }
 
         .secretaria-style {
-            font-weight: normal;
             font-size: 14px;
             margin-top: 10px;
             text-align: left;
@@ -248,9 +263,8 @@ if (!isset($docenteConfigForm)) {
         }
 
         .dictaminador-style {
-            font-weight: normal;
-            font-size: 14px;
-            margin-top: 8px;
+            font-size: 16px;
+            margin-top: 10px;
             text-align: center;
         }
 
@@ -502,14 +516,27 @@ $formNumber = '319';
             
                 
             <div style="display: flex; justify-content: space-between; padding-top: {{ $userType == 'secretaria' ? '80px' : '50px' }};">
-                <div id="convocatoria">
-                    <!-- Mostrar convocatoria -->
-                    @if(isset($convocatoria))
-                        <span>Convocatoria: {{ $convocatoria }}</span>
-                    @endif
-                    @if(isset($periodo))
-                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
-                    @endif
+                <div>
+                    <div id="convocatoria" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($convocatoria))
+                            @if($userType == 'dictaminador')
+                                <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @elseif($userType == 'secretaria')
+                                <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @else
+                                <span>Convocatoria: {{ $convocatoria }}</span>
+                            @endif
+                        @endif
+                    </div>
+                    <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($periodo))
+                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                                <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                            @else
+                                <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
                 <div id="piedepagina1"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
@@ -748,14 +775,27 @@ $formNumber = '319';
                 </tbody>
             </table>
             <div style="display: flex; justify-content: space-between;padding-top: 150px;">
-                <div id="convocatoria2">
-                    <!-- Mostrar convocatoria -->
-                    @if(isset($convocatoria))
-                        <span>Convocatoria: {{ $convocatoria }}</span>
-                    @endif
-                    @if(isset($periodo))
-                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
-                    @endif
+                <div>
+                    <div id="convocatoria2" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($convocatoria))
+                            @if($userType == 'dictaminador')
+                                <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @elseif($userType == 'secretaria')
+                                <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @else
+                                <span>Convocatoria: {{ $convocatoria }}</span>
+                            @endif
+                        @endif
+                    </div>
+                    <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($periodo))
+                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                                <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                            @else
+                                <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
 
                 <div id="piedepagina2"
@@ -944,14 +984,27 @@ $formNumber = '319';
                 @endif
 
             <div style="display: flex; justify-content: space-between;padding-top: 150px;">
-                <div id="convocatoria3">
-                    <!-- Mostrar convocatoria -->
-                    @if(isset($convocatoria))
-                        <span>Convocatoria: {{ $convocatoria }}</span>
-                    @endif
-                    @if(isset($periodo))
-                        <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
-                    @endif
+                <div>
+                    <div id="convocatoria3" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($convocatoria))
+                            @if($userType == 'dictaminador')
+                                <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @elseif($userType == 'secretaria')
+                                <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
+                            @else
+                                <span>Convocatoria: {{ $convocatoria }}</span>
+                            @endif
+                        @endif
+                    </div>
+                    <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
+                        @if(isset($periodo))
+                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                                <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
+                            @else
+                                <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
+                            @endif
+                        @endif
+                    </div>
                 </div>
                 <div id="piedepagina3"
                     class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
