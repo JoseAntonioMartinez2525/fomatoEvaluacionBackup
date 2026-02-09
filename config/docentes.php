@@ -2,49 +2,32 @@
 
 /**
  * Configuración de Docentes
+ *
+ * Estructura normalizada por email.
+ * El email actúa como clave única del docente.
  * 
- * IMPORTANTE: Todos los arrays (emails, nombres, departamentos, areas) deben tener
- * el MISMO número de elementos y estar ALINEADOS por índice.
- * 
- * Ejemplo:
- * - emails[0] debe corresponder a nombres[0], departamentos[0], areas[0]
- * - emails[1] debe corresponder a nombres[1], departamentos[1], areas[1]
- * - etc.
- * 
- * Si un docente no tiene un valor específico para algún campo, use una cadena vacía ''
- * pero NO omita el elemento del array.
+ * NOTA:
+ * - Departamentos y áreas serán reemplazables por datos reales vía API
  */
 
 return [
-    'emails' => [
-        // Agrega aquí los correos que actuarán como docentes para pruebas
-        'jperez@uabcs.mx',          // Índice 0
-        'iestrada@uabcs.mx',        // Índice 1
-        'antoninaIv@uabcs.mx',      // Índice 2
-        // ... duplicado de dictaminadores o correos específicos de prueba
-    ],
-    
-    'nombres' => [
-        'M.C Juan Carlos Pérez Concha',        // Índice 0 - corresponde a jperez@uabcs.mx
-        'M.S.C. Italia Estrada Cota',          // Índice 1 - corresponde a iestrada@uabcs.mx
-        'Dra. Antonina Ivanova Boncheva',      // Índice 2 - corresponde a antoninaIv@uabcs.mx
-        // ...
+
+    'jperez@uabcs.mx' => [
+        'nombre' => 'M.C Juan Carlos Pérez Concha',
+        'departamento' => 'Ciencias Sociales y Juridicas',
+        'area' => 'Ciencias Sociales y Juridicas',
     ],
 
-    /*Departamento Académico*/
-    'departamentos' => [
-        'Ciencias Sociales y Juridicas',       // Índice 0 - corresponde a jperez@uabcs.mx
-        'Sistemas Computacionales',            // Índice 1 - corresponde a iestrada@uabcs.mx
-        'Ciencias Sociales y Humanidades',     // Índice 2 - corresponde a antoninaIv@uabcs.mx
-        // ...
+    'iestrada@uabcs.mx' => [
+        'nombre' => 'M.S.C. Italia Estrada Cota',
+        'departamento' => 'Sistemas Computacionales',
+        'area' => 'Sistemas Computacionales',
     ],
 
-    /*Área de Conocimiento*/ 
-    'areas' => [
-        'Ciencias Sociales y Juridicas',       // Índice 0 - corresponde a jperez@uabcs.mx
-        'Sistemas Computacionales',            // Índice 1 - corresponde a iestrada@uabcs.mx
-        'Humanidades',                         // Índice 2 - corresponde a antoninaIv@uabcs.mx
-        // ...
+    'antoninaIv@uabcs.mx' => [
+        'nombre' => 'Dra. Antonina Ivanova Boncheva',
+        'departamento' => 'Ciencias Sociales y Humanidades',
+        'area' => 'Humanidades',
     ],
 
 ];

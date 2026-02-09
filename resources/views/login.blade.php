@@ -6,7 +6,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         'rluna@uabcs.mx',
         'v.andrade@uabcs.mx',
     ];
-    $dictaminadores = config('dictaminadores.emails');
+    $dictaminadores = array_keys(config('dictaminadores', []));
     $autoLoginEmails = array_merge($allowedEmails, $dictaminadores);
 @endphp
 <!DOCTYPE html>

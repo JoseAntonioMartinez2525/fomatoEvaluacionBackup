@@ -34,7 +34,8 @@ class SessionsController extends Controller
 
     public function __construct()
     {
-        $this->dictaminadorEmails = config('dictaminadores.emails');
+        $this->dictaminadorEmails = array_keys(config('dictaminadores'));
+
     }
 
 public function login(Request $request)
@@ -72,7 +73,8 @@ public function login(Request $request)
         $activeRole = 'dictaminador';
         
         // 2. Verificamos si TAMBIÉN es docente consultando el archivo de configuración
-        $isAlsoDocente = in_array($email, config('docentes.emails', []));
+        $isAlsoDocente = array_key_exists($email, config('docentes', []));
+
         $now = Carbon::now();
 
         // 1. Buscar periodo de dictaminadores
@@ -98,9 +100,10 @@ public function login(Request $request)
         // ---------------------------------------------------
 
         if (!$user) {
-            $index = array_search($email, $this->dictaminadorEmails);
-            $name = config('dictaminadores.nombres')[$index] ?? $email;
-            $departamento = config('dictaminadores.departamentos')[$index] ?? null;
+        $dicta = config('dictaminadores')[strtolower($email)] ?? null;
+
+            $name = $dicta['nombre'] ?? $email;
+            $departamento = $dicta['departamento'] ?? null;
 
             $user = User::create([
                 'name' => $name,
@@ -110,9 +113,10 @@ public function login(Request $request)
                 'password' => Hash::make('defaultpassword'),
                 'departamento' => $departamento,
             ]);
+
         } else {
-            $index = array_search($email, $this->dictaminadorEmails);
-            $departamento = config('dictaminadores.departamentos')[$index] ?? $user->departamento;
+            $dicta = config('dictaminadores')[strtolower($email)] ?? null;
+            $departamento = $dicta['departamento'] ?? $user->departamento;
 
             // Asegurarse de que el tipo sea dictaminador, flag esté activado y departamento actualizado
             $user->update([
@@ -127,18 +131,12 @@ public function login(Request $request)
         if ($isAlsoDocente) {
             $userResponseForm1 = UsersResponseForm1::firstOrNew(['user_id' => $user->id]);
 
-            // Obtener datos desde docentes.php
-            $docenteEmails = array_values(config('docentes.emails', []));
-            $docenteNombres = array_values(config('docentes.nombres', []));
-            $docenteAreas = array_values(config('docentes.areas', []));
-            $docenteDeptos = array_values(config('docentes.departamentos', []));
+            // ✅ acceso directo por email
+            $docente = config('docentes')[strtolower($user->email)] ?? null;
 
-            // Buscar índice normalizando a minúsculas para evitar errores de coincidencia
-            $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
-            
-            $dNombre = ($dIndex !== false && isset($docenteNombres[$dIndex])) ? $docenteNombres[$dIndex] : $user->name;
-            $dArea = ($dIndex !== false && isset($docenteAreas[$dIndex])) ? $docenteAreas[$dIndex] : ($user->area ?? 'No definida');
-            $dDepto = ($dIndex !== false && isset($docenteDeptos[$dIndex])) ? $docenteDeptos[$dIndex] : ($user->departamento ?? 'No definido');
+            $dNombre = $docente['nombre'] ?? $user->name;
+            $dArea = $docente['area'] ?? ($user->area ?? 'No definida');
+            $dDepto = $docente['departamento'] ?? ($user->departamento ?? 'No definido');
 
             if (!$userResponseForm1->exists) {
                 $currentPeriod = UsersResponseForm1::calculateCurrentPeriod();
@@ -161,7 +159,6 @@ public function login(Request $request)
                 'nombre' => $dNombre,
                 'area' => $dArea,
                 'departamento' => $dDepto,
-                'config_index' => $dIndex
             ]);
         }
         // --------------------------------------------------------------------------------
@@ -177,21 +174,16 @@ public function login(Request $request)
 
         // Si el usuario es un docente (o dual-role que entra como docente),
         // asegurar que tenga un registro en UsersResponseForm1 si no lo tiene.
-        if (in_array($user->email, config('docentes.emails', [])) || $user->user_type === 'docente') {
+        if (array_key_exists(strtolower($user->email), config('docentes', [])) || $user->user_type === 'docente') {
             $userResponseForm1 = UsersResponseForm1::firstOrNew(['user_id' => $user->id]);
             
             // Obtener datos desde docentes.php
-            $docenteEmails = array_values(config('docentes.emails', []));
-            $docenteNombres = array_values(config('docentes.nombres', []));
-            $docenteAreas = array_values(config('docentes.areas', []));
-            $docenteDeptos = array_values(config('docentes.departamentos', []));
+            $docente = config('docentes')[strtolower($user->email)] ?? null;
 
-            // Buscar índice normalizando a minúsculas
-            $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
-            
-            $dNombre = ($dIndex !== false && isset($docenteNombres[$dIndex])) ? $docenteNombres[$dIndex] : $user->name;
-            $dArea = ($dIndex !== false && isset($docenteAreas[$dIndex])) ? $docenteAreas[$dIndex] : ($user->area ?? 'No definida');
-            $dDepto = ($dIndex !== false && isset($docenteDeptos[$dIndex])) ? $docenteDeptos[$dIndex] : ($user->departamento ?? 'No definido');
+            $dNombre = $docente['nombre'] ?? $user->name;
+            $dArea = $docente['area'] ?? ($user->area ?? 'No definida');
+            $dDepto = $docente['departamento'] ?? ($user->departamento ?? 'No definido');
+
 
             if (!$userResponseForm1->exists) {
                 $currentPeriod = UsersResponseForm1::calculateCurrentPeriod();
@@ -213,7 +205,6 @@ public function login(Request $request)
                 'nombre' => $dNombre,
                 'area' => $dArea,
                 'departamento' => $dDepto,
-                'config_index' => $dIndex
             ]);
         }
 
@@ -294,26 +285,13 @@ private function redirectByUserType($user)
         $convocatoria = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
         
         // Cargar datos directamente del archivo docentes.php si es posible
-        // Usamos array_values para asegurar que los índices sean numéricos y coincidan
-        $docenteEmails = array_values(config('docentes.emails', []));
-        $docenteNombres = array_values(config('docentes.nombres', []));
-        $docenteAreas = array_values(config('docentes.areas', []));
-        $docenteDeptos = array_values(config('docentes.departamentos', []));
+        $docente = config('docentes')[strtolower($user->email)] ?? null;
 
-        // Buscar índice normalizando a minúsculas para asegurar que se encuentren los datos
-        $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
 
         // 1. Priorizar datos de UsersResponseForm1 si existen (ya sincronizados en login)
-        $nombre = $form1 && $form1->nombre ? $form1->nombre : $user->name;
-        $area = $form1 && $form1->area ? $form1->area : ($user->area ?? 'No definida');
-        $departamento = $form1 && $form1->departamento ? $form1->departamento : ($user->departamento ?? 'No definido');
-
-        // 2. Sobrescribir con datos del archivo de configuración SOLO si existen y son válidos
-        if ($dIndex !== false) {
-            $nombre = isset($docenteNombres[$dIndex]) && !empty($docenteNombres[$dIndex]) ? $docenteNombres[$dIndex] : $nombre;
-            $area = isset($docenteAreas[$dIndex]) && !empty($docenteAreas[$dIndex]) ? $docenteAreas[$dIndex] : $area;
-            $departamento = isset($docenteDeptos[$dIndex]) && !empty($docenteDeptos[$dIndex]) ? $docenteDeptos[$dIndex] : $departamento;
-        }
+        $nombre = $form1->nombre ?? ($docente['nombre'] ?? $user->name);
+        $area = $form1->area ?? ($docente['area'] ?? 'No definida');
+        $departamento = $form1->departamento ?? ($docente['departamento'] ?? 'No definido');
 
         Log::info('Welcome page data prepared', [
             'user_id' => $user->id,
@@ -321,8 +299,7 @@ private function redirectByUserType($user)
             'nombre' => $nombre,
             'area' => $area,
             'departamento' => $departamento,
-            'config_index' => $dIndex,
-            'has_form1' => $form1 ? true : false
+            'has_form1' => (bool) $form1
         ]);
 
         return view('welcome', compact('user', 'periodo', 'convocatoria', 'nombre', 'area', 'departamento'));
