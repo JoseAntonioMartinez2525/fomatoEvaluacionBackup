@@ -593,7 +593,7 @@ $formNumber = '39';
                     Página 14 de 34
                 </div>
             </div>
-            <br><br><br>
+            
             <table class="table table-sm tutorias table2">
             <x-sub-headers-form3_9 :componentIndex="1" />
                 <tbody data-page="15">
