@@ -30,4 +30,12 @@ return [
         'area' => 'Humanidades',
     ],
 
+    //Prueba 2, con la nueva arquitectura de configuración
+        'javtandiaz@uabcs.mx' => [
+        'nombre' => 'Dr. Javier Gaytan Diaz',
+        'departamento' => 'Ciencias del Mar y de la Tierra',
+        'area' => 'geologia',
+    ],
+
+
 ];
