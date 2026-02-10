@@ -72,6 +72,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'verify.admin' => \App\Http\Middleware\VerifyAdminPrivileges::class,
         'checktimer' => \App\Http\Middleware\CheckTimer::class,
-            'check.period' => \App\Http\Middleware\CheckEvaluationPeriod::class,
+        'check.period' => \App\Http\Middleware\CheckEvaluationPeriod::class,
+        'resolve.role' => \App\Http\Middleware\ResolveActiveRole::class,
     ];
 }

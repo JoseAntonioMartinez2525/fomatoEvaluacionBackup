@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Http\Controllers\FirmaDictaminadorController;
 use App\Http\Controllers\DocenteFormsController;
+use App\Support\DictaminadoresConfig;
 use App\Models\UsersResponseForm1;
 
 class DashboardController extends Controller
@@ -18,17 +19,17 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         if (!$user) {
-            return view('welcome'); // O redirigir a login
+            return redirect()->route('login');
         }
 
         $email = $user->email;
 
         // 1. Determinar Roles
         // Es docente si su tipo es docente O si está en la lista de configuración de docentes (para pruebas)
-        $isDocente = $user->user_type === 'docente' || in_array($email, config('docentes.emails', []));
+        $isDocente = $user->user_type === 'docente' || array_key_exists(strtolower($email), config('docentes', []));
         
         // Es dictaminador si su tipo es dictaminador O si su email está en la lista de dictaminadores
-        $isDictaminador = $user->user_type === 'dictaminador' || in_array($email, config('dictaminadores.emails', []));
+        $isDictaminador = $user->is_dictaminador || DictaminadoresConfig::byEmail($email);
 
         // 2. Lógica para usuarios con AMBOS roles
         if ($isDocente && $isDictaminador) {
@@ -75,26 +76,13 @@ class DashboardController extends Controller
         $form1 = UsersResponseForm1::where('user_id', $user->id)->first();
         $convocatoria = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
 
-        // Cargar datos directamente del archivo docentes.php si es posible
-        $docenteEmails = array_values(config('docentes.emails', []));
-        $docenteNombres = array_values(config('docentes.nombres', []));
-        $docenteAreas = array_values(config('docentes.areas', []));
-        $docenteDeptos = array_values(config('docentes.departamentos', []));
-
-        // Buscar índice normalizando a minúsculas para asegurar que se encuentren los datos
-        $dIndex = array_search(strtolower($user->email), array_map('strtolower', $docenteEmails));
+        // Cargar datos directamente del archivo de configuración de docentes
+        $docente = config('docentes')[strtolower($user->email)] ?? null;
 
         // 1. Priorizar datos de UsersResponseForm1 si existen (ya sincronizados en login)
-        $nombre = $form1 && $form1->nombre ? $form1->nombre : $user->name;
-        $area = $form1 && $form1->area ? $form1->area : ($user->area ?? 'No definida');
-        $departamento = $form1 && $form1->departamento ? $form1->departamento : ($user->departamento ?? 'No definido');
-
-        // 2. Sobrescribir con datos del archivo de configuración SOLO si existen y son válidos
-        if ($dIndex !== false) {
-            $nombre = isset($docenteNombres[$dIndex]) && !empty($docenteNombres[$dIndex]) ? $docenteNombres[$dIndex] : $nombre;
-            $area = isset($docenteAreas[$dIndex]) && !empty($docenteAreas[$dIndex]) ? $docenteAreas[$dIndex] : $area;
-            $departamento = isset($docenteDeptos[$dIndex]) && !empty($docenteDeptos[$dIndex]) ? $docenteDeptos[$dIndex] : $departamento;
-        }
+        $nombre = $form1->nombre ?? ($docente['nombre'] ?? $user->name);
+        $area = $form1->area ?? ($docente['area'] ?? $user->area ?? 'No definida');
+        $departamento = $form1->departamento ?? ($docente['departamento'] ?? $user->departamento ?? 'No definido');
 
         $areaOptions = ['Agropecuaria', 'Ciencias del Mar y Tierra', 'Ciencias Sociales y Humanidades'];
         $departamentoOptions = ['Agronomia', 'Ciencia animal y Conservación del habitat', 'Ciencias de la tierra', 'Ciencias Marinas y Costeras', 'Ciencias Sociales y Juridicas', 'Economia', 'Humanidades', 'Ingenieria en Pesquerias', 'Sistemas Computacionales'];

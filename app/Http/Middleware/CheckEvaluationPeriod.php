@@ -22,7 +22,7 @@ class CheckEvaluationPeriod
         $user = Auth::user();
 
         // Aplicar la lógica solo para los docentes
-        if ($user && $user->user_type === 'docente') {
+        if ($user && session('active_role') === 'docente') {
             $evaluationDates = EvaluationDate::where('type', 'docentes_llenado')->latest('id')->first();
             $now = Carbon::now();
 

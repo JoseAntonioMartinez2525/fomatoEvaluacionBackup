@@ -105,11 +105,6 @@ input:-webkit-autofill {
                                 </form>
                             </center>
                         </div>
-                        <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-                            <form id="registerForm" href="{{route('register') }}">
-                            @csrf
-                            </form>
-                        </div>
                     </div>
                     <!-- Pills content -->
                 </div>

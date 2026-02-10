@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'resolve.role' => \App\Http\Middleware\ResolveActiveRole::class,
+            'check.period' => \App\Http\Middleware\CheckEvaluationPeriod::class,
+            'checktimer'   => \App\Http\Middleware\CheckTimer::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

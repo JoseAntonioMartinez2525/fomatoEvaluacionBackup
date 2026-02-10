@@ -6,9 +6,11 @@ Fecha de creación: 2024-06-03
 */
 namespace App\Http\Controllers;
 
+use App\Support\DictaminadoresConfig;
 use App\Models\User; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -35,29 +37,29 @@ class AuthController extends Controller
             'registerPassword.confirmed' => 'Las contraseñas no coinciden.',
     ]);
 
-        // Verificar si el correo pertenece a un dictaminador
-        $isDictaminador = in_array($request->registerEmail, config('dictaminadores.emails'));
-        $userType = $isDictaminador ? 'dictaminador' : 'docente';
+            // 🔹 USO DEL NORMALIZADOR (única fuente de verdad)
+            $email = strtolower($request->registerEmail);
+            $dictaminador = DictaminadoresConfig::byEmail($email);
 
-        // Create the new user
-        // $user = new User();
-        // $user->name = $request->registerName;
-        // $user->user_type = 'docente';
-        // $user->email = $request->registerEmail;
-        // $user->password = Hash::make($request->registerPassword);
-        
-        // Use Hash to encrypt the password
-        // $user->save();
-        $user = User::create([
-            'name' => $request->registerName,
-            'email' => $request->registerEmail,
-            'password' => Hash::make($request->registerPassword),
-            'user_type' => $userType,
+            $isDictaminador = (bool) $dictaminador;
+            
+            // Verificar si está en la configuración de docentes
+            $isDocenteConfig = array_key_exists($email, config('docentes', []));
+
+            // Determinar tipo de usuario: si es dictaminador puro (y no está en docentes), asignar 'dictaminador', sino 'docente'
+            $userType = ($isDictaminador && !$isDocenteConfig) ? 'dictaminador' : 'docente';
+
+            $user = User::create([
+            'name'            => $request->registerName,
+            'email'           => $email,
+            'password'        => Hash::make($request->registerPassword),
+            'user_type'       => $userType,
             'is_dictaminador' => $isDictaminador,
+            'departamento'    => $dictaminador['departamento'] ?? null,
         ]);
 
+        Auth::login($user);
 
-        // Redirect or login the user
-        return redirect()->route('login')->with('success', 'Registro exitoso. Por favor inicia sesión.');
+        return redirect()->route('welcome');
     }
 }

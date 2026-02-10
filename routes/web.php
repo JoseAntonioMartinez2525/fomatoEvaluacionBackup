@@ -27,7 +27,6 @@ use App\Http\Controllers\DictaminatorForm3_8Controller;
 use App\Http\Controllers\DictaminatorForm3_9Controller;
 use App\Http\Controllers\DictaminatorFormsGroupsController;
 use App\Http\Controllers\DynamicFormController;
-use App\Http\Controllers\EvaluatorSignatureController1;
 use App\Http\Controllers\FormsController;
 use App\Http\Controllers\FormContentController;
 use App\Http\Controllers\ReportsController;
@@ -88,8 +87,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+
 Route::get('/login', [SessionsController::class, 'index'])->name('login');
 Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
+
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
 // // Rutas para restablecer contraseña
 // Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
@@ -97,7 +100,7 @@ Route::post('/login', [SessionsController::class, 'login'])->name('login.post');
 // Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 // Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
  
-Route::middleware(['auth'])->group(function (){
+Route::middleware(['auth','resolve.role'])->group(function (){
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('rules', function () {return view('rules'); })->name('rules');
      Route::get('/welcome', [DashboardController::class, 'index'])->name('welcome');
@@ -230,6 +233,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::post('/store-resume', [ResumeController::class, 'storeResume']);
     Route::post('/store-evaluator-signature', [EvaluatorSignatureController1::class, 'storeEvaluatorSignature'])->name('store-evaluator-signature');
+    Route::post('/store-evaluator-signature', [EvaluatorSignatureController::class, 'storeEvaluatorSignature'])->name('store-evaluator-signature');
 
     // Dictaminadores
     Route::post('/store-form2', [DictaminatorForm2_Controller::class, 'storeform2'])->name('form2.store')->withoutMiddleware('auth');
@@ -334,6 +338,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-form-data', [DictaminatorFormsGroupsController::class, 'getDictaminadorData']);
     Route::get('/get-data-resume', [ResumeController::class, 'getDataResume'])->name('get-data-resume');
     Route::get('/get-evaluator-signature', [EvaluatorSignatureController1::class, 'getEvaluatorSignature'])->name('get-evaluator-signature');
+    Route::get('/get-evaluator-signature', [EvaluatorSignatureController::class, 'getEvaluatorSignature'])->name('get-evaluator-signature');
 
 
     Route::get('/fetch-convocatoria/{user_id}', [ResumenComisionController::class, 'fetchConvocatoria'])->name('fetch-convocatoria');
@@ -358,9 +363,6 @@ Route::middleware(['auth'])->group(function () {
         event(new \App\Events\EvaluationCompleted($user_id));
         return 'Evento disparado para user_id: ' . $user_id;
     });
-
-    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
     Route::get('/formato-evaluacion/edit_delete_form/', [DynamicFormController::class, 'showDynamicForm'])->name('edit_delete_form');
 

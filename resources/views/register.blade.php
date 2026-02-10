@@ -41,7 +41,7 @@ Fecha de creación: 2024-06-03
                     </div>
 
                     <!-- Formulario de Registro -->
-                    <form id="registerForm" method="POST" action="{{ route('register') }}">
+                    <form id="registerForm" method="POST" action="{{ route('register.post') }}">
                         @csrf
                         <div class="text-center mb-3">
                             <p class="mb-2">Registrarse</p>

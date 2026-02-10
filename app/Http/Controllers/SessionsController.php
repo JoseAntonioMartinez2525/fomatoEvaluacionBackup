@@ -15,6 +15,7 @@ use App\Models\UsersResponseForm1; // Import UsersResponseForm1
 use Illuminate\Support\Facades\Log;
 use App\Models\EvaluationDate;
 use Carbon\Carbon;
+use App\Support\DictaminadoresConfig;
 
 class SessionsController extends Controller
 {
@@ -34,7 +35,7 @@ class SessionsController extends Controller
 
     public function __construct()
     {
-        $this->dictaminadorEmails = array_keys(config('dictaminadores'));
+        $this->dictaminadorEmails = DictaminadoresConfig::emails();
 
     }
 
@@ -42,170 +43,78 @@ public function login(Request $request)
 {
     $email = strtolower(trim($request->input('email')));
     $password = $request->input('password');
-
     $isNoPassword = $request->input('no_password_required') == 'true';
 
     // --- ACCESO PARA USUARIOS SIN CONTRASEÑA (SECRETARIA) ---
     if (in_array($email, self::$allowedEmails) && $isNoPassword) {
-        $user = User::where('email', $email)->first();
-
-        if (!$user) {
-            $user = User::create([
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
                 'name' => $email,
-                'user_type' => 'secretaria', // secretaria
-                'email' => $email,
+                'user_type' => 'secretaria',
                 'password' => Hash::make('defaultpassword'),
-            ]);
-        }
+            ]
+        );
 
         Auth::login($user);
-
         return $this->redirectByUserType($user);
     }
 
-    // --- ACCESO PARA DICTAMINADORES (desde config) ---
-    // if (in_array($email, $this->dictaminadorEmails) && $isNoPassword) {
-    if (in_array($email, $this->dictaminadorEmails)) {
-        $user = User::where('email', $email)->first();
+    // --- ACCESO PARA DICTAMINADORES (flag permanente) ---
+    $user = User::where('email', $email)->first();
 
-        // --- Lógica para determinar rol activo por fechas ---
-        // 1. Por defecto asumimos rol de dictaminador (ya que entró por esta validación)
-        $activeRole = 'dictaminador';
+    if ($user && $user->is_dictaminador && $isNoPassword) {
+        $dicta = DictaminadoresConfig::byEmail($email);
+        $departamento = $dicta['departamento'] ?? $user->departamento;
         
-        // 2. Verificamos si TAMBIÉN es docente consultando el archivo de configuración
-        $isAlsoDocente = array_key_exists($email, config('docentes', []));
+        $user->update([
+            'is_dictaminador' => true,
+            'departamento' => $departamento,
+        ]);
 
-        $now = Carbon::now();
-
-        // 1. Buscar periodo de dictaminadores
-        $dictaminadorPeriod = DB::table('docentes_evaluation_dates')
-            ->where('type', 'dictaminadores_capturando_datos')
-            ->orderBy('id', 'desc')
-            ->first();
-
-        // Fallback a tabla antigua si es necesario
-        if (!$dictaminadorPeriod) {
-            $dictaminadorPeriod = DB::table('evaluation_dates')
-                ->where('type', 'docentes_evaluacion')
-                ->orderBy('id', 'desc')
-                ->first();
-        }
-
-        // 3. Si es usuario DUAL y NO estamos en periodo de dictaminación, cambiamos a rol docente
-        $inDictaminatorPeriod = $dictaminadorPeriod && $now->between(Carbon::parse($dictaminadorPeriod->start_date)->startOfDay(), Carbon::parse($dictaminadorPeriod->end_date)->endOfDay());
-        
-        if ($isAlsoDocente && !$inDictaminatorPeriod) {
-            $activeRole = 'docente';
-        }
-        // ---------------------------------------------------
-
-        if (!$user) {
-        $dicta = config('dictaminadores')[strtolower($email)] ?? null;
-
-            $name = $dicta['nombre'] ?? $email;
-            $departamento = $dicta['departamento'] ?? null;
-
-            $user = User::create([
-                'name' => $name,
-                'user_type' => $activeRole,
-                'is_dictaminador' => true,
-                'email' => $email,
-                'password' => Hash::make('defaultpassword'),
-                'departamento' => $departamento,
-            ]);
-
-        } else {
-            $dicta = config('dictaminadores')[strtolower($email)] ?? null;
-            $departamento = $dicta['departamento'] ?? $user->departamento;
-
-            // Asegurarse de que el tipo sea dictaminador, flag esté activado y departamento actualizado
-            $user->update([
-                'user_type' => $activeRole,
-                'is_dictaminador' => true,
-                'departamento' => $departamento,
-            ]);
-        }
-
-        // --- Asegurar que el usuario dual-role tenga un registro en UsersResponseForm1 ---
-        // Esto es crucial ya que el formulario 1 fue eliminado de la vista.
+        // --- Asegurar registro en UsersResponseForm1 si también es docente ---
+        $isAlsoDocente = array_key_exists(strtolower($user->email), config('docentes', []));
         if ($isAlsoDocente) {
             $userResponseForm1 = UsersResponseForm1::firstOrNew(['user_id' => $user->id]);
-
-            // ✅ acceso directo por email
             $docente = config('docentes')[strtolower($user->email)] ?? null;
 
-            $dNombre = $docente['nombre'] ?? $user->name;
-            $dArea = $docente['area'] ?? ($user->area ?? 'No definida');
-            $dDepto = $docente['departamento'] ?? ($user->departamento ?? 'No definido');
+            $userResponseForm1->nombre = $docente['nombre'] ?? $user->name;
+            $userResponseForm1->area = $docente['area'] ?? ($user->area ?? 'No definida');
+            $userResponseForm1->departamento = $docente['departamento'] ?? ($user->departamento ?? 'No definido');
 
             if (!$userResponseForm1->exists) {
-                $currentPeriod = UsersResponseForm1::calculateCurrentPeriod();
-                // Intentar obtener la última convocatoria asignada, si no, usar un valor por defecto
+                $userResponseForm1->periodo = UsersResponseForm1::calculateCurrentPeriod();
                 $latestForm1 = UsersResponseForm1::latest()->first();
-                $currentConvocatoria = $latestForm1->convocatoria ?? 'Convocatoria no asignada';
-                $userResponseForm1->periodo = $currentPeriod;
-                $userResponseForm1->convocatoria = $currentConvocatoria;
+                $userResponseForm1->convocatoria = $latestForm1->convocatoria ?? 'Convocatoria no asignada';
             }
-            
-            // Actualizar siempre los datos desde config para mantenerlos sincronizados
-            $userResponseForm1->nombre = $dNombre;
-            $userResponseForm1->area = $dArea;
-            $userResponseForm1->departamento = $dDepto;
+
             $userResponseForm1->save();
-            
-            Log::info('Dual-role docente login data saved', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'nombre' => $dNombre,
-                'area' => $dArea,
-                'departamento' => $dDepto,
-            ]);
         }
-        // --------------------------------------------------------------------------------
 
-        // Auth::login($user);
-
-        // return $this->redirectByUserType($user);
+        Auth::login($user);
+        return $this->redirectByUserType($user);
     }
 
     // --- LOGIN REGULAR CON CONTRASEÑA ---
     if (Auth::attempt(['email' => $email, 'password' => $password])) {
         $user = Auth::user();
 
-        // Si el usuario es un docente (o dual-role que entra como docente),
-        // asegurar que tenga un registro en UsersResponseForm1 si no lo tiene.
+        // Sincronizar UsersResponseForm1 si es docente
         if (array_key_exists(strtolower($user->email), config('docentes', [])) || $user->user_type === 'docente') {
             $userResponseForm1 = UsersResponseForm1::firstOrNew(['user_id' => $user->id]);
-            
-            // Obtener datos desde docentes.php
             $docente = config('docentes')[strtolower($user->email)] ?? null;
 
-            $dNombre = $docente['nombre'] ?? $user->name;
-            $dArea = $docente['area'] ?? ($user->area ?? 'No definida');
-            $dDepto = $docente['departamento'] ?? ($user->departamento ?? 'No definido');
-
+            $userResponseForm1->nombre = $docente['nombre'] ?? $user->name;
+            $userResponseForm1->area = $docente['area'] ?? ($user->area ?? 'No definida');
+            $userResponseForm1->departamento = $docente['departamento'] ?? ($user->departamento ?? 'No definido');
 
             if (!$userResponseForm1->exists) {
-                $currentPeriod = UsersResponseForm1::calculateCurrentPeriod();
+                $userResponseForm1->periodo = UsersResponseForm1::calculateCurrentPeriod();
                 $latestForm1 = UsersResponseForm1::latest()->first();
-                $currentConvocatoria = $latestForm1->convocatoria ?? 'Convocatoria no asignada';
-                $userResponseForm1->periodo = $currentPeriod;
-                $userResponseForm1->convocatoria = $currentConvocatoria;
+                $userResponseForm1->convocatoria = $latestForm1->convocatoria ?? 'Convocatoria no asignada';
             }
-            
-            // Actualizar siempre los datos desde config para mantenerlos sincronizados
-            $userResponseForm1->nombre = $dNombre;
-            $userResponseForm1->area = $dArea;
-            $userResponseForm1->departamento = $dDepto;
+
             $userResponseForm1->save();
-            
-            Log::info('Docente login data saved', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-                'nombre' => $dNombre,
-                'area' => $dArea,
-                'departamento' => $dDepto,
-            ]);
         }
 
         return $this->redirectByUserType($user);
@@ -216,6 +125,7 @@ public function login(Request $request)
         'password' => 'Credenciales incorrectas, por favor intente de nuevo',
     ]);
 }
+
 
 private function redirectByUserType($user)
 {

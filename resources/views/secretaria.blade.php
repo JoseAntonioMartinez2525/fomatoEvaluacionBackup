@@ -5,6 +5,7 @@ $formType = request()->query('formType');
 $formName = request()->query('formName');
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 use App\Models\DynamicForm; // Ensure to include the model
+use App\Support\DictaminadoresConfig;
 use App\Models\DictaminadorSignature;
 use App\Models\User;
 
@@ -12,23 +13,31 @@ $forms = DynamicForm::all(); // Fetch all forms from the database
 $existingFormNames = [];
 
 // Obtener dictaminadores registrados que coinciden con la configuración
-$allowedEmails = config('dictaminadores.emails', []);
-$allowedNames = config('dictaminadores.nombres', []);
+$dictaminadores = config('dictaminadores', []);
+
+// Emails reales desde config NUEVO
+$allowedEmails = array_keys($dictaminadores);
+
 $registeredDictaminators = User::whereIn('email', $allowedEmails)->get();
 
-// Obtener firmas existentes para saber quién ya tiene firma cargada
+// Firmas existentes
 $registeredUserIds = $registeredDictaminators->pluck('id');
-$existingSignatures = DictaminadorSignature::whereIn('user_id', $registeredUserIds)->pluck('user_id')->toArray();
+$existingSignatures = DictaminadorSignature::whereIn('user_id', $registeredUserIds)
+    ->pluck('user_id')
+    ->toArray();
 
-// Combinar información para el listado completo
+// Construir listado final
 $allDictaminadores = [];
-foreach ($allowedEmails as $index => $email) {
+
+foreach ($allowedEmails as $email) {
     $user = $registeredDictaminators->firstWhere('email', $email);
+    $meta = DictaminadoresConfig::byEmail($email);
+
     $allDictaminadores[] = (object) [
         'email' => $email,
-        'name' => $allowedNames[$index] ?? 'N/A',
+        'name' => $meta['nombre'] ?? 'N/A',
         'user' => $user,
-        'has_signature' => $user && in_array($user->id, $existingSignatures)
+        'has_signature' => $user && in_array($user->id, $existingSignatures),
     ];
 }
 @endphp
