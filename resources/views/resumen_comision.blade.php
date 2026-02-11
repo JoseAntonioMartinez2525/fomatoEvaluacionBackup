@@ -239,7 +239,7 @@ body.dark-mode img.imgFirma{
             <!-- Loader oculto por defecto -->
             <div id="loader" style="display: none; text-align: center; padding: 2rem;">
                 {{-- <img src="{{ asset('loader.gif') }}" alt="Cargando..."> --}}
-                <i class="fa-solid fa-spinner fa-spin-pulse" style="color: #367ea8; font-size: 3rem;"></i>
+                <i class="fa-solid fa-spinner fa-spin-pulse" style="color: #367ea8; font-size: 5rem;"></i><span class="text-muted">....Cargando datos</span>
             </div>
 
             <main class="container" id="formContainer" style="display: none;">
