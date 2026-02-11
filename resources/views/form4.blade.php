@@ -108,73 +108,78 @@ $userType = Auth::user()->user_type;
 
         @endif
     </div>
-                    <main class="container">
-                        <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
-                            @csrf
-                            <div>
-                            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                             <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
-                            <input type="hidden" name="email" value="{{ auth()->user()->email }}">
-                            <input type="hidden" name="user_type" value="{{Auth()->user()->user_type}}">
-                            <center>
-                            <h2 id="resumen">Resumen</h2>
-                            <h4>A ser llenado por la Comisión del PEDPD</h4></center>
-                            <table class="resumenTabla">
-                            <thead>
-                                
+        <!-- Loader oculto por defecto -->
+        <div id="loader" style="display: block;">
+            <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+        </div>
+
+            <main class="container">
+                <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
+                    @csrf
+                    <div>
+                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                        <input type="hidden" name="dictaminador_id" value="{{ Auth::user()->id }}">
+                    <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                    <input type="hidden" name="user_type" value="{{Auth()->user()->user_type}}">
+                    <center>
+                    <h2 id="resumen">Resumen</h2>
+                    <h4>A ser llenado por la Comisión del PEDPD</h4></center>
+                    <table class="resumenTabla">
+                    <thead>
+                        
+                        <tr>
+                        <th id="actv">Actividad</th>
+                        <th id="pMaximo">Puntaje máximo</th>
+                        <th id="pComision">Puntaje otorgado Comisión PEDPD</th>
+                        </tr>
                     <tr>
-                    <th id="actv">Actividad</th>
-                    <th id="pMaximo">Puntaje máximo</th>
-                    <th id="pComision">Puntaje otorgado Comisión PEDPD</th>
+                        <td><center><b>Total logrado en la evaluación</b></center></td>
+                        <td></td>
+                        <td><label id="totalComision" for="">{{ $totalComisionRepetido ?? 0 }}</label></td>
                     </tr>
-<tr>
-    <td><center><b>Total logrado en la evaluación</b></center></td>
-    <td></td>
-    <td><label id="totalComision" for="">{{ $totalComisionRepetido ?? 0 }}</label></td>
-</tr>
-</tr>
+                    </tr>
 
-<tr>
-    <td>1. Permanencia en las actividades de la docencia</td>
-    <td>100</td>
-    <td><label id="totalComision1" for="">{{ $totalComision1 ?? 0 }}</label></td>
-</tr>
+                    <tr>
+                        <td>1. Permanencia en las actividades de la docencia</td>
+                        <td>100</td>
+                        <td><label id="totalComision1" for="">{{ $totalComision1 ?? 0 }}</label></td>
+                    </tr>
 
-<tr>
-    <td>2. Dedicación en el desempeño docente</td>
-    <td>200</td>
-    <td><label id="totalComision2" for="">{{ $totalComision2 ?? 0 }}</label></td>
-</tr>
-<tr>
-    <td>3. Calidad en la docencia</td>
-    <td>700</td>
-    <td><label id="totalComision3" for="">{{ $total ?? 0 }}</label></td>
-</tr>                               
-<tr>
-    <td>
-        <center><b>Total de puntaje obtenido en la evaluación</b></center>
-    </td>
-    <td></td>
-    <td><b><label id="totalComisionRepetido" class="p2">{{ $totalComisionRepetido ?? 0 }}</label></b></td>
+                    <tr>
+                        <td>2. Dedicación en el desempeño docente</td>
+                        <td>200</td>
+                        <td><label id="totalComision2" for="">{{ $totalComision2 ?? 0 }}</label></td>
+                    </tr>
+                    <tr>
+                        <td>3. Calidad en la docencia</td>
+                        <td>700</td>
+                        <td><label id="totalComision3" for="">{{ $total ?? 0 }}</label></td>
+                    </tr>                               
+                    <tr>
+                        <td>
+                            <center><b>Total de puntaje obtenido en la evaluación</b></center>
+                        </td>
+                        <td></td>
+                        <td><b><label id="totalComisionRepetido" class="p2">{{ $totalComisionRepetido ?? 0 }}</label></b></td>
 
 
-<tr>
-    <th>Nivel obtenido de acuerdo al artículo 10 del Reglamento</th> 
-    <th>Mínima de Calidad</th>
-    <th><b><span id="minimaCalidad">{{ $minimaCalidad ?? 'N/A' }}</span></b></th>
-</tr>
-<tr>
-    <th></th>
-    <th>Mínima Total</th>
-    <th><b><span id="minimaTotal">{{ $minimaTotal ?? 'N/A' }}</span></b></th>
-</tr>
-</thead>
-</table>
-<center>
-@if(Auth::user()->user_type === 'dictaminador')  
-<button type="submit" class="btn custom-btn buttonSignature">Enviar</button>
-@endif
-</center>
+                    <tr>
+                        <th>Nivel obtenido de acuerdo al artículo 10 del Reglamento</th> 
+                        <th>Mínima de Calidad</th>
+                        <th><b><span id="minimaCalidad">{{ $minimaCalidad ?? 'N/A' }}</span></b></th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Mínima Total</th>
+                        <th><b><span id="minimaTotal">{{ $minimaTotal ?? 'N/A' }}</span></b></th>
+                    </tr>
+                    </thead>
+                    </table>
+                        <center>
+                        @if(Auth::user()->user_type === 'dictaminador')  
+                        <button type="submit" class="btn custom-btn buttonSignature">Enviar</button>
+                        @endif
+                        </center>
 </div>
                         </form>
 
@@ -534,30 +539,38 @@ $userType = Auth::user()->user_type;
 
         //form4
         async function loadAllData() {
-            let data = await fetchData('/formato-evaluacion/get-form-data', { dictaminador_id: userId });
+            try {
+                let data = await fetchData('/formato-evaluacion/get-form-data', { dictaminador_id: userId });
 
-            if (data && data.dictaminador.dictaminador_id) {
-                // Asignar los valores de las comisiones automáticamente
-                if (data.form_data) {
-                    Object.keys(data.form_data).forEach(formKey => {
-                        const form = data.form_data[formKey];
-                        const comisionField = formKey.replace('DictaminatorsResponse', '').toLowerCase() + 'Comision';
-                        if (form && document.getElementById(comisionField)) {
-                            document.getElementById(comisionField).textContent = form.comision || '0';
-                        }
-                    });
+                if (data && data.dictaminador.dictaminador_id) {
+                    // Asignar los valores de las comisiones automáticamente
+                    if (data.form_data) {
+                         Object.keys(data.form_data).forEach(formKey => {
+                             const form = data.form_data[formKey];
+                             const comisionField = formKey.replace('DictaminatorsResponse', '').toLowerCase() + 'Comision';
+                             if (form && document.getElementById(comisionField)) {
+                                 document.getElementById(comisionField).textContent = form.comision || '0';
+                             }
+                         });
 
-                    // Calcular el puntaje total
-                    calculateTotalScore();
+                        // Calcular el puntaje total
+                        calculateTotalScore(); // Asegúrate que esta función exista
+                    }
+                     await loadSignatures(); 
+                } else {
+                    console.error('Error: Dictaminador not found or user type is invalid.');
                 }
-                await loadSignatures(); 
-            } else {
-                console.error('Error: Dictaminador not found or user type is invalid.');
+            } catch (error) {
+                console.error('Error loading data:', error);
             }
         }
         
-  
-    
+        // const loader = document.getElementById('loader');
+        // loader.style.display = 'block'; // 2. Aparece el loader.
+        // Llamar a la función para cargar los datos cuando la página esté lista.
+        // loadAllData().finally(() => { // 3. Se cargan los datos y al finalizar...
+        //     loader.style.display = 'none'; // 4. ...desaparece el loader.
+        // });
     });
 
 
@@ -588,11 +601,13 @@ $userType = Auth::user()->user_type;
         ];
 
         // Verifica si el email está en la lista de correos permitidos
-        if (allowedEmails.includes(userEmail)) {
-            // Muestra el enlace
-            document.getElementById('reportLink').classList.remove('d-none');
-        }
+        // if (allowedEmails.includes(userEmail)) {
+        //     // Muestra el enlace
+        //     document.getElementById('reportLink').classList.remove('d-none');
+        // }
     });
+
+
 
    document.addEventListener('DOMContentLoaded', async () => {
     // Current user type from the backend

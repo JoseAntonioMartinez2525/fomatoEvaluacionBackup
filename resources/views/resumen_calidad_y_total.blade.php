@@ -40,6 +40,11 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 @endphp
 
     <main class="container">
+        <!-- Loader oculto por defecto -->
+        <div id="loader" style="display: none; text-align: center; padding: 2rem;">
+            <img src="{{ asset('loader.gif') }}" alt="Cargando...">
+        </div>
+
         <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
             @csrf
             <div>
@@ -208,7 +213,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         }
 
        
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         async function submitForm(url, formId) {
@@ -266,13 +271,8 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         }
 
         window.submitForm = submitForm;
-    });
 
-
-
-    document.addEventListener('DOMContentLoaded', function () {
         const userId = {{ auth()->user()->id }};
-
         async function fetchData(url, params = {}) {
             const queryString = new URLSearchParams(params).toString();
             const fullUrl = `${url}?${queryString}`;
@@ -317,12 +317,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             }
         }
 
-
-    
-    });
-
-
-            function min700(...values){
+        function min700(...values){
                 const total = values.reduce((acc, val) => acc + val, 0);
                 return Math.min(total, 700);
             }
@@ -337,10 +332,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             }
 
 
-
-    document.addEventListener('DOMContentLoaded', function () {
         const userEmail = "{{ Auth::user()->email }}"; // Obtén el email del usuario desde Blade
-
         const allowedEmails = [
             'joma_18@alu.uabcs.mx',
             'oa.campillo@uabcs.mx',
@@ -349,17 +341,12 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         ];
 
         // Verifica si el email está en la lista de correos permitidos
-        if (allowedEmails.includes(userEmail)) {
-            // Muestra el enlace
-            document.getElementById('reportLink').classList.remove('d-none');
-        }
-    });
+        // if (allowedEmails.includes(userEmail)) {
+        //     // Muestra el enlace
+        //     document.getElementById('reportLink').classList.remove('d-none');
+        // }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-           
-
-            // Current user type from the backend
-            const userType = @json($userType);  // Get user type from backend
+        const userType = @json($userType);  // Get user type from backend
 
             // Fetch dictaminador options if user type is null or empty
             if (userType != 'docente') {
@@ -411,6 +398,13 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                     
                 }
             }
+
+        // Flujo de carga con loader
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block'; // 2. Aparece el loader.
+        // 3. Se inician las peticiones para cargar los datos.
+        loadAllData().finally(() => {
+            loader.style.display = 'none'; // 4. Al finalizar, desaparece el loader.
         });
 
         function minWithSum(value1, value2) {
