@@ -109,10 +109,11 @@ $userType = Auth::user()->user_type;
         @endif
     </div>
         <!-- Loader oculto por defecto -->
-        <div id="loader" style="display: block;">
-            <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+        <div id="loader" style="display: block; text-align: center; padding: 2rem;">
+            <img src="{{ asset('loader.gif') }}" alt="Cargando...">
         </div>
-
+         
+            {{-- <h2>Prueba de cache (Vista Form4)</h2> --}}
             <main class="container">
                 <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
                     @csrf
@@ -554,7 +555,7 @@ $userType = Auth::user()->user_type;
                          });
 
                         // Calcular el puntaje total
-                        calculateTotalScore(); // Asegúrate que esta función exista
+                        // calculateTotalScore(); // Asegúrate que esta función exista
                     }
                      await loadSignatures(); 
                 } else {
@@ -565,12 +566,16 @@ $userType = Auth::user()->user_type;
             }
         }
         
-        // const loader = document.getElementById('loader');
-        // loader.style.display = 'block'; // 2. Aparece el loader.
-        // Llamar a la función para cargar los datos cuando la página esté lista.
-        // loadAllData().finally(() => { // 3. Se cargan los datos y al finalizar...
-        //     loader.style.display = 'none'; // 4. ...desaparece el loader.
-        // });
+        const loader = document.getElementById('loader');
+        if (loader) {
+            // loader.style.display = 'block'; // Ya es block por defecto en HTML
+            // Llamar a la función para cargar los datos cuando la página esté lista.
+            loadAllData().finally(() => { // 3. Se cargan los datos y al finalizar...
+                loader.style.display = 'none'; // 4. ...desaparece el loader.
+            });
+        } else {
+            loadAllData();
+        }
     });
 
 

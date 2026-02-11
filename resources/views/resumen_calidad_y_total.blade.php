@@ -35,15 +35,21 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     <x-general-header />               
 @php
     $userType = Auth::user()->user_type;
-    $sections;
-    $subtotalAdded = false; 
+    // Inicializar variables para evitar errores si no vienen del controlador.
+    $sections = $sections ?? [];
+    $totalComisionRepetido = $totalComisionRepetido ?? 0;
+    $minimaCalidad = $minimaCalidad ?? 'N/A';
+    $minimaTotal = $minimaTotal ?? 'N/A';
+    $subtotalAdded = false;
 @endphp
 
     <main class="container">
         <!-- Loader oculto por defecto -->
-        <div id="loader" style="display: none; text-align: center; padding: 2rem;">
+        <div id="loader" style="display: block; text-align: center; padding: 2rem;">
             <img src="{{ asset('loader.gif') }}" alt="Cargando...">
         </div>
+        
+        {{-- <h2>Prueba de cache (Vista Resumen)</h2> --}}
 
         <form id="form4" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault(); submitForm('/formato-evaluacion/store-resume', 'form4');" >
             @csrf
@@ -111,7 +117,6 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     @endforeach
     @endif
 
-    @dd($sections);
                 <tr>
 
                     <td>
@@ -310,7 +315,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                     });
 
                     // Calcular el puntaje total
-                    calculateTotalScore();
+                    // calculateTotalScore();
                 }
             } else {
                 console.error('Error: Dictaminador not found or user type is invalid.');
@@ -353,59 +358,100 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                 try {
                     const response = await fetch('/formato-evaluacion/get-dictaminadores');
                     const dictaminadores = await response.json();
+            // if (userType != 'docente') {
+            //     try {
+            //         const response = await fetch('/formato-evaluacion/get-dictaminadores');
+            //         const dictaminadores = await response.json();
 
                         const dictaminadorId = event.target.value;
+            //             // ERROR: 'event' no está definido aquí. Este código debe ir dentro de un event listener.
+            //             // const dictaminadorId = event.target.value; 
 
 
                         if (dictaminadorId) {
                             try {
+            //             if (dictaminadorId) {
+            //                 try {
 
                                 const response = await axios.get('/formato-evaluacion/get-dictaminador-data', {
                                     params: { email: email, dictaminador_id: dictaminadorId }  // Send both ID and email
                                 });
                                 const data = response.data;
+            //                     const response = await axios.get('/formato-evaluacion/get-dictaminador-data', {
+            //                         params: { email: email, dictaminador_id: dictaminadorId }  // Send both ID and email
+            //                     });
+            //                     const data = response.data;
 
                                 document.getElementById('comision1').textContent = data.form2.comision1 || '0';
                                 document.getElementById('actv2Comision').textContent = data.form2_2.actv2Comision || '0';
                                 document.getElementById('actv3Comision').textContent = data.form3_1.actv3Comision || '0';
+            //                     document.getElementById('comision1').textContent = data.form2.comision1 || '0';
+            //                     document.getElementById('actv2Comision').textContent = data.form2_2.actv2Comision || '0';
+            //                     document.getElementById('actv3Comision').textContent = data.form3_1.actv3Comision || '0';
                            
                                 // Populate fields with fetched data
                                 for (let i = 2; i <= 19; i++) {
                                     const elementId = 'comision3_' + i;
                                     const formId = 'form3_' + i;
+            //                     // Populate fields with fetched data
+            //                     for (let i = 2; i <= 19; i++) {
+            //                         const elementId = 'comision3_' + i;
+            //                         const formId = 'form3_' + i;
 
                                     const scoreValue = data[formId]['comision3_' + i] || '0';
+            //                         const scoreValue = data[formId]['comision3_' + i] || '0';
 
                                     document.getElementById(elementId).textContent = scoreValue;
                                 }
+            //                         document.getElementById(elementId).textContent = scoreValue;
+            //                     }
 
                                     console.error('No form data found for the selected dictaminador.');
+            //                         console.error('No form data found for the selected dictaminador.');
 
                                     // Reset input values if no data found
                                     document.querySelector('input[name="dictaminador_id"]').value = '0';
                                     document.querySelector('input[name="user_id"]').value = '0';
                                     document.querySelector('input[name="email"]').value = '';
                                     document.querySelector('input[name="user_type"]').value = '';
+            //                         // Reset input values if no data found
+            //                         document.querySelector('input[name="dictaminador_id"]').value = '0';
+            //                         document.querySelector('input[name="user_id"]').value = '0';
+            //                         document.querySelector('input[name="email"]').value = '';
+            //                         document.querySelector('input[name="user_type"]').value = '';
 
 
                             } catch (error) {
                                 console.error('Error fetching dictaminador data:', error);
                             }
                         }
+            //                 } catch (error) {
+            //                     console.error('Error fetching dictaminador data:', error);
+            //                 }
+            //             }
                    
                 } catch (error) {
                     console.error('Error fetching dictaminadores:', error);
+            //     } catch (error) {
+            //         console.error('Error fetching dictaminadores:', error);
                     
                 }
             }
+            //     }
+            // }
 
         // Flujo de carga con loader
         const loader = document.getElementById('loader');
-        loader.style.display = 'block'; // 2. Aparece el loader.
-        // 3. Se inician las peticiones para cargar los datos.
-        loadAllData().finally(() => {
-            loader.style.display = 'none'; // 4. Al finalizar, desaparece el loader.
-        });
+        if (loader) {
+            loader.style.display = 'block'; // 2. Aparece el loader.
+            // loader.style.display = 'block'; // Ya es block por defecto en HTML
+            // 3. Se inician las peticiones para cargar los datos.
+            loadAllData().finally(() => {
+                loader.style.display = 'none'; // 4. Al finalizar, desaparece el loader.
+            });
+        } else {
+            loadAllData();
+        }
 
         function minWithSum(value1, value2) {
             const sum = value1 + value2;

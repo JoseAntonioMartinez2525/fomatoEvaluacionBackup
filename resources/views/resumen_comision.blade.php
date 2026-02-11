@@ -236,6 +236,12 @@ body.dark-mode img.imgFirma{
             <x-docente-search />
             @endif
             </div>
+            <!-- Loader oculto por defecto -->
+            <div id="loader" style="display: none; text-align: center; padding: 2rem;">
+                {{-- <img src="{{ asset('loader.gif') }}" alt="Cargando..."> --}}
+                <i class="fa-solid fa-spinner fa-spin-pulse" style="color: #367ea8; font-size: 3rem;"></i>
+            </div>
+
             <main class="container" id="formContainer" style="display: none;">
                 
             <form id="form4" method="POST" enctype="multipart/form-data"
@@ -716,6 +722,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadDocenteData(email) {
          if (!email) return;
 
+        const loader = document.getElementById('loader');
+        if (loader) loader.style.display = 'block';
+
         formContainer.style.display = 'none';
         dataContainer.innerHTML = '';
 
@@ -770,6 +779,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 pdfButtonContainer.innerHTML = '';
             }
             console.error('Error procesando docente', error);
+        } finally {
+            if (loader) loader.style.display = 'none';
         }
 
         // Llamada a fetchSignatures pasando el email seleccionado

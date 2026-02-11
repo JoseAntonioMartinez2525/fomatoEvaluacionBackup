@@ -72,6 +72,7 @@ use App\Http\Controllers\EvaluatorSignatureController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DictaminatorController;
 use App\Http\Controllers\EvaluationDateController;
+use App\Http\Controllers\EvaluatorSignatureController1;
 use App\Http\Controllers\FirmaDictaminadorController;
 use App\Http\Controllers\PuntajeMaximosController;
 use App\Http\Controllers\UserTimerController;
@@ -233,7 +234,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::post('/store-resume', [ResumeController::class, 'storeResume']);
     Route::post('/store-evaluator-signature', [EvaluatorSignatureController1::class, 'storeEvaluatorSignature'])->name('store-evaluator-signature');
-    Route::post('/store-evaluator-signature', [EvaluatorSignatureController::class, 'storeEvaluatorSignature'])->name('store-evaluator-signature');
+    // Route::post('/store-evaluator-signature', [EvaluatorSignatureController::class, 'storeEvaluatorSignature'])->name('store-evaluator-signature');
 
     // Dictaminadores
     Route::post('/store-form2', [DictaminatorForm2_Controller::class, 'storeform2'])->name('form2.store')->withoutMiddleware('auth');
@@ -338,7 +339,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-form-data', [DictaminatorFormsGroupsController::class, 'getDictaminadorData']);
     Route::get('/get-data-resume', [ResumeController::class, 'getDataResume'])->name('get-data-resume');
     Route::get('/get-evaluator-signature', [EvaluatorSignatureController1::class, 'getEvaluatorSignature'])->name('get-evaluator-signature');
-    Route::get('/get-evaluator-signature', [EvaluatorSignatureController::class, 'getEvaluatorSignature'])->name('get-evaluator-signature');
+    // Route::get('/get-evaluator-signature', [EvaluatorSignatureController::class, 'getEvaluatorSignature'])->name('get-evaluator-signature');
 
 
     Route::get('/fetch-convocatoria/{user_id}', [ResumenComisionController::class, 'fetchConvocatoria'])->name('fetch-convocatoria');
