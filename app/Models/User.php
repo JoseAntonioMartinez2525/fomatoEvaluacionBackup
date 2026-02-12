@@ -133,4 +133,12 @@ public function tieneAlgunFormularioEvaluado() //verificar que formularios fuero
         return $this->hasOne(Docente::class, 'email', 'email');
     }
 
+    /**
+     * Relación con la tabla comisionadores.
+     */
+    public function comisionador()
+    {
+        return $this->hasOne(Comisionador::class, 'email', 'email');
+    }
+
 }
