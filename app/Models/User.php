@@ -128,4 +128,9 @@ public function tieneAlgunFormularioEvaluado() //verificar que formularios fuero
     return false;
 }
 
+    public function docente()
+    {
+        return $this->hasOne(Docente::class, 'email', 'email');
+    }
+
 }
