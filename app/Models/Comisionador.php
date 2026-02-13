@@ -16,6 +16,7 @@ class Comisionador extends Model
 
     protected $fillable = [
         'user_id',
+        'id_maestro',
         'nombre',
         'apellido_1',
         'apellido_2',

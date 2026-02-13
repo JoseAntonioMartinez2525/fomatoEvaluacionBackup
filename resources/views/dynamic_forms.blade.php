@@ -94,7 +94,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     <div class="bg-gray-50 text-black/50">
         <div class="relative min-h-screen flex flex-col items-center justify-center">
             @if (Route::has('login'))
-                @if (Auth::check() && Auth::user()->user_type === 'secretaria')
+                @if (Auth::check() && Auth::user()->user_type ==='controlador')
                     <x-nav-menu :user="Auth::user()">
                         <div>
                             <ul style="list-style: none;">
@@ -151,7 +151,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             <!-- Puntaje máximo -->
             <div class="mt-3">
                 <h4>Puntaje máximo</h4>
-                @if($userType == 'secretaria') <!-- usuario secretaria -->
+                @if($userType =='controlador') <!-- usuario secretaria -->
                     <input class="pmax text-white px-4 mt-3" id="puntajeMaximo" placeholder="0" readonly>
                     <button type="button" class="btn custom-btn"
                         onclick="habilitarEdicion('puntajeMaximo')">Editar</button>

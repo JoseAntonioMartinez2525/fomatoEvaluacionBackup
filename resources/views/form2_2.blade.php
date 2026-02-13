@@ -278,7 +278,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form2_2';
                                     {{-- Lógica de botones --}}
                                     <x-edit-button formId="{{ $formId }}" :has-data="$hasData" :user-type="$userType" />
                                     {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
-                                    @if(!$hasData && $userType != 'secretaria')
+                                    @if(!$hasData && $userType !='controlador')
                                     <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
                                     @endif
                                 </th>

@@ -88,7 +88,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     <div class="bg-gray-50 text-black/50">
         <div class="d-flex">
             @if (Route::has('login'))
-                @if (Auth::check() && Auth::user()->user_type === 'secretaria')
+                @if (Auth::check() && Auth::user()->user_type ==='controlador')
                     <!-- Componente de menú de navegación -->
                     <x-nav-menu :user="Auth::user()">
                         <div>

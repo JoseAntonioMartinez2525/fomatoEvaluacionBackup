@@ -25,7 +25,7 @@ if (!isset($convocatoria) || !isset($periodo)) {
         .score-header { font-weight: bold; }
     </style>
     @php
-        $canEdit = in_array(Auth::user()->user_type, ['dictaminador', 'secretaria']);
+        $canEdit = in_array(Auth::user()->user_type, ['dictaminador','controlador']);
         // Identificar la clave de la columna de evaluación para usarla como referencia
         $evalKey = $orderedStructure->firstWhere('group', 'evaluacion')['key'] ?? null;
     @endphp

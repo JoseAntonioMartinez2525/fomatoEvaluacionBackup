@@ -18,7 +18,7 @@ class CreateDynamicFormCommissionTable extends Migration
             $table->decimal('puntaje_input_values', 10, 2)->nullable(); // Agregar las columna
             $table->decimal('puntaje_comision', 10, 2)->nullable(); // Puntaje de la comisión
             $table->text('observaciones')->nullable(); // Observaciones
-            $table->enum('user_type', ['docente', 'dictaminador', 'secretaria'])->nullable();
+            $table->enum('user_type', ['docente', 'dictaminador','controlador'])->nullable();
             $table->timestamps();
 
             // Claves foráneas

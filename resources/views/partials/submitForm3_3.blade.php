@@ -171,9 +171,9 @@
                     try { window.__docenteUpdateFooters(); } catch (e) { /* ignore */ }
                 }               
 
-             // Ejecutar para secretaria (userType === 'secretaria') y para el tipo configurado de dictaminador
-                // 🔹 CORRECCIÓN: Se activa si el usuario es 'secretaria' O 'dictaminador', sin depender de la configuración del formulario.
-                if (userType === 'secretaria' || userType === 'dictaminador') {
+             // Ejecutar para secretaria (userType ==='controlador') y para el tipo configurado de dictaminador
+                // 🔹 CORRECCIÓN: Se activa si el usuario es'controlador' (cambiado a'controlador') O 'dictaminador', sin depender de la configuración del formulario.
+                if (userType ==='controlador' || userType === 'dictaminador') {
                     try {
                         const dictRespUrl = config.dictEndpoint || '/formato-evaluacion/get-dictaminators-responses';
                         const resp = await fetch(dictRespUrl);

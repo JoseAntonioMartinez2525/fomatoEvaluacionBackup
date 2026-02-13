@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('total_puntaje');
             $table->string('minima_calidad');
             $table->string('minima_total');
-            $table->enum('user_type', ['docente', 'dictaminador', 'secretaria'])->nullable();
+            $table->enum('user_type', ['docente', 'dictaminador','controlador'])->nullable();
             
             $table->timestamps();
         });

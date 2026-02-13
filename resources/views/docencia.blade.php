@@ -118,7 +118,7 @@ $staticFormTypes = [
             <li class="nav-item">
             @if(Auth::user()->user_type === 'dictaminador')
                 <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('comision_dictaminadora') }}">Selección de Formatos</a>
-            @elseif(Auth::user()->user_type === 'secretaria')
+            @elseif(Auth::user()->user_type ==='controlador')
                 <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}">Selección de Formatos</a>
             @endif
                 <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="{{ route('welcome') }}" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Evaluación</a>
@@ -998,7 +998,7 @@ $staticFormTypes = [
                                     <div>
                                         <!--3.8.1 RSU -->
                                         <h4>Puntaje máximo 
-                                        @if($userType != 'secretaria') <!-- fetch puntajeMaximo form3_8_1 -->
+                                        @if($userType !='controlador') <!-- fetch puntajeMaximo form3_8_1 -->
                                             <span class="bg-black text-white px-4 mt-3" id="puntajeMaximo" for="">40</span>
                                         @endif
                                         </h4>

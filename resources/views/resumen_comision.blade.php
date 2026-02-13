@@ -317,7 +317,7 @@ body.dark-mode img.imgFirma{
                         <td colspan="2">No se ha registrado ninguna firma.</td>
                     </tr>
                 @endif
-            @elseif($userType === 'secretaria')
+            @elseif($userType ==='controlador')
                 {{-- Para secretaria, tbody se llenará con JS --}}
 
             @endif
@@ -786,8 +786,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Llamada a fetchSignatures pasando el email seleccionado
         const firmas = await fetchSignatures(email);
 
-        // After all data is fetched and rendered, create the PDF button for 'secretaria'
-        if (userType === 'secretaria' && email) {
+        // After all data is fetched and rendered, create the PDF button for'controlador'
+        if (userType ==='controlador' && email) {
             const pdfButtonContainer = document.getElementById('pdfButtonContainer');
             // Clear previous button
             pdfButtonContainer.innerHTML = ''; 

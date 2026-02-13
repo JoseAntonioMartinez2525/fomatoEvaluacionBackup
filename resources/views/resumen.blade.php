@@ -43,7 +43,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 @php
     $userType = Auth::user()->user_type;
 @endphp
-        @if ($userType == 'dictaminador' || $userType == 'secretaria')
+        @if ($userType == 'dictaminador' || $userType =='controlador')
 
                         <div class="container mt-4">
                             <!-- Selector para elegir el formulario -->

@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->decimal('comision3_8_1', 8, 2);
             $table->string('obs3_8_1_1')->default('sin comentarios'); // Default value
 
-            $table->enum('user_type', ['docente', 'dictaminador', 'secretaria'])->nullable();
+            $table->enum('user_type', ['docente', 'dictaminador','controlador'])->nullable();
             $table->timestamps();
         });
     }

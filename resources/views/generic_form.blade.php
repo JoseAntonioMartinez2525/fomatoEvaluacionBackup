@@ -62,7 +62,7 @@
     <div class="bg-gray-50 text-black/50">
         <div class="relative min-h-screen flex flex-col items-center justify-center">
             @if (Route::has('login'))
-                        @if (Auth::check() && Auth::user()->user_type === 'secretaria')
+                        @if (Auth::check() && Auth::user()->user_type ==='controlador')
                             <x-nav-menu :user="Auth::user()" />
                         @endif
 

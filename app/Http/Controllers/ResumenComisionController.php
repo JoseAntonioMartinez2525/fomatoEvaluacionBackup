@@ -75,7 +75,7 @@ class ResumenComisionController extends Controller
         }
 
         // Si el usuario es del tipo vacío (''), buscar los datos del dictaminador por defecto
-        if ($userType === 'secretaria') {
+        if ($userType ==='controlador') {
             // Aquí asumimos que el usuario '' tiene una relación o acceso por defecto al dictaminador
             // Debes definir cómo se obtiene el dictaminador en este caso. Asumo que tienes alguna manera de obtenerlo.
 
@@ -106,7 +106,7 @@ public function getFirmasYResumen(Request $request)
     $user = Auth::user();
 
     // Si es secretaria/admin, obtiene todas las firmas
-    if (in_array($user->user_type, ['admin', 'secretaria'])) {
+    if (in_array($user->user_type, ['admin','controlador'])) {
         $firmas = DB::table('firma_dictaminadores')
             ->select(
                 'id',

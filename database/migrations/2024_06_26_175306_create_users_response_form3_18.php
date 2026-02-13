@@ -53,7 +53,7 @@ return new class extends Migration {
             $table->string('obsCicloComApoyoInt')->nullable();
             $table->string('obsCicloComApoyoNac')->nullable();
             $table->string('obsCicloComApoyoReg')->nullable();
-            $table->enum('user_type', ['docente', 'dictaminador', 'secretaria'])->nullable();
+            $table->enum('user_type', ['docente', 'dictaminador','controlador'])->nullable();
             $table->timestamps();
         });
 

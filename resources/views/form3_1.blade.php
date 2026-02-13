@@ -531,7 +531,7 @@ $formNumber = '31';
                         </div>
                         <div>Periodo: {{ $periodo }}</div>
                         <div id="piedepagina1"
-                            class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+                            class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType ==='controlador' ? 'secretaria-style' : '') }}">
                             Página 3 de 34
                         </div>
                     </div><br>
@@ -632,7 +632,7 @@ $formNumber = '31';
                             {{-- Lógica de botones --}}
                             <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                             {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
-                            @if(!$hasData && $userType != 'secretaria')
+                            @if(!$hasData && $userType !='controlador')
                                 <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
                             @endif
                     <!--Convocatoria 2-->
@@ -649,7 +649,7 @@ $formNumber = '31';
                                     <div>Periodo: {{ $periodo }}</div>
 
                                     <div id="piedepagina2"
-                                        class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+                                        class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType ==='controlador' ? 'secretaria-style' : '') }}">
                                         Página 4 de 34
                                     </div>
                                 </div>

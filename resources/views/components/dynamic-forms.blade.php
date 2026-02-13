@@ -4,7 +4,7 @@
 <div>
     
     <h4>Puntaje máximo
-        @if($userType == 'secretaria') <!-- usuario secretaria -->
+        @if($userType =='controlador') <!-- usuario secretaria -->
             <input class="pmax text-white px-4 mt-3" id="puntajeMaximo" placeholder="40" readonly
                 oninput="actualizarPuntajeMaximo(this.value);"">
                             <button class=" btn custom-btn printButtonClass"

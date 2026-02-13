@@ -51,7 +51,7 @@ public function login(Request $request)
             ['email' => $email],
             [
                 'name' => $email,
-                'user_type' => 'secretaria',
+                'user_type' =>'controlador',
                 'password' => Hash::make('defaultpassword'),
             ]
         );
@@ -156,7 +156,7 @@ private function redirectByUserType($user)
             ->header('Cache-Control', $noCache)
             ->header('Pragma', $pragmaNoCache)
             ->header('Expires', $expiresZero);
-    } elseif ($user->user_type === 'secretaria') {
+    } elseif ($user->user_type ==='controlador') {
         return redirect()->route('secretaria')
             ->header('Cache-Control', $noCache)
             ->header('Pragma', $pragmaNoCache)

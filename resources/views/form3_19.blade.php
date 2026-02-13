@@ -515,13 +515,13 @@ $formNumber = '319';
             </table>
             
                 
-            <div style="display: flex; justify-content: space-between; padding-top: {{ $userType == 'secretaria' ? '80px' : '50px' }};">
+            <div style="display: flex; justify-content: space-between; padding-top: {{ $userType =='controlador' ? '80px' : '50px' }};">
                 <div>
                     <div id="convocatoria" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                         @if(isset($convocatoria))
                             @if($userType == 'dictaminador')
                                 <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
-                            @elseif($userType == 'secretaria')
+                            @elseif($userType =='controlador')
                                 <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
                             @else
                                 <span>Convocatoria: {{ $convocatoria }}</span>
@@ -530,7 +530,7 @@ $formNumber = '319';
                     </div>
                     <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                         @if(isset($periodo))
-                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                            @if($userType == 'dictaminador' || $userType =='controlador')
                                 <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
                             @else
                                 <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
@@ -539,7 +539,7 @@ $formNumber = '319';
                     </div>
                 </div>
                 <div id="piedepagina1"
-                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType ==='controlador' ? 'secretaria-style' : '') }}">
                     Página 28 de 34
                 </div>
             </div>
@@ -780,7 +780,7 @@ $formNumber = '319';
                         @if(isset($convocatoria))
                             @if($userType == 'dictaminador')
                                 <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
-                            @elseif($userType == 'secretaria')
+                            @elseif($userType =='controlador')
                                 <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
                             @else
                                 <span>Convocatoria: {{ $convocatoria }}</span>
@@ -789,7 +789,7 @@ $formNumber = '319';
                     </div>
                     <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                         @if(isset($periodo))
-                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                            @if($userType == 'dictaminador' || $userType =='controlador')
                                 <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
                             @else
                                 <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
@@ -799,7 +799,7 @@ $formNumber = '319';
                 </div>
 
                 <div id="piedepagina2"
-                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType ==='controlador' ? 'secretaria-style' : '') }}">
                     Página 29 de 34
                 </div>
             </div><br><br><br>
@@ -979,7 +979,7 @@ $formNumber = '319';
                 <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                 @endif
                 {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
-                @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                @if(!$hasData && $userType !='controlador' && $userType != 'docente')
                 <button type="submit" class="btn custom-btn printButtonClass" id="btn3_19">Enviar</button>
                 @endif
 
@@ -989,7 +989,7 @@ $formNumber = '319';
                         @if(isset($convocatoria))
                             @if($userType == 'dictaminador')
                                 <div style="margin-right: -700px;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
-                            @elseif($userType == 'secretaria')
+                            @elseif($userType =='controlador')
                                 <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">Convocatoria: {{ $convocatoria }}</span></div>
                             @else
                                 <span>Convocatoria: {{ $convocatoria }}</span>
@@ -998,7 +998,7 @@ $formNumber = '319';
                     </div>
                     <div class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                         @if(isset($periodo))
-                            @if($userType == 'dictaminador' || $userType == 'secretaria')
+                            @if($userType == 'dictaminador' || $userType =='controlador')
                                 <div><span style="font-size: 1.17em;">Periodo: </span> {{ $periodo }}</div>
                             @else
                                 <span style="margin-left: 50px;">Periodo: {{ $periodo }}</span>
@@ -1007,13 +1007,13 @@ $formNumber = '319';
                     </div>
                 </div>
                 <div id="piedepagina3"
-                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType === 'secretaria' ? 'secretaria-style' : '') }}">
+                    class="{{ $userType === 'dictaminador' ? 'dictaminador-style' : ($userType ==='controlador' ? 'secretaria-style' : '') }}">
                     Página 30 de 34
                 </div>
             </div>
         </form>
         <!--
-                @if ($userType == 'secretaria')
+                @if ($userType =='controlador')
                     <form action="{{ route('generate.pdf') }}" id="button3_19" method="POST" onsubmit="generatePdf('button3_19');">
                         @csrf
                         <input type="hidden" name="email" value="{{ Auth::user()->email }}">

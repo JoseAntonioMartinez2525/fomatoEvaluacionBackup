@@ -81,7 +81,7 @@ class SyncComisionadores extends Command
             $departamento = $info['departamento'] ?? null; // Por ahora del config
             $area = null; // Vendrá de la API
             $firmaGrafica = null; // Vendrá de la API (base64)
-            // $idExterno = ...; // ID de la API
+            $idMaestro = $info['id_maestro'] ?? null; // Vendrá de la API (o config local mientras tanto)
 
             $fullName = trim("{$nombre} {$apellido1} {$apellido2}");
 
@@ -110,6 +110,7 @@ class SyncComisionadores extends Command
                 ['email' => $email], // Condición de búsqueda
                 [
                     'user_id' => $user->id,
+                    'id_maestro' => $idMaestro,
                     'nombre' => $nombre,
                     'apellido_1' => $apellido1,
                     'apellido_2' => $apellido2,

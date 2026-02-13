@@ -266,7 +266,7 @@
                     try { window.__docenteUpdateFooters(); } catch (e) { /* ignore */ }
                 }               
 
-             // Ejecutar para secretaria (userType === 'secretaria') y para el tipo configurado de dictaminador
+             // Ejecutar para secretaria (userType ==='controlador') y para el tipo configurado de dictaminador
                     // --- CARGA DE RESPUESTA DE DICTAMINADOR ---
                     if (config.dictEndpoint) {
                         try {

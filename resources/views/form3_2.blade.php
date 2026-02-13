@@ -415,7 +415,7 @@ $formNumber = '32';
                             <x-edit-button formId="{{ $formId }}" :form-number="$formNumber" :has-data="$hasData" :user-type="$userType" />
                             @endif
                             {{-- y el botón Enviar sólo se muestra por JS/Blade según la lógica; si quieres mantener fallback: --}}
-                            @if(!$hasData && $userType != 'secretaria' && $userType != 'docente')
+                            @if(!$hasData && $userType !='controlador' && $userType != 'docente')
                                 <button type="submit" class="btn custom-btn printButtonClass" id="{{ $formId }}Button">Enviar</button>
                             @endif
                             </th>

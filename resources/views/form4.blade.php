@@ -99,7 +99,7 @@ $userType = Auth::user()->user_type;
     <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
     <div class="container mt-4 printButtonClass">
-       @if($userType == 'secretaria')
+       @if($userType =='controlador')
             <!--//Select para usuario con user_type vacío seleccionando dictaminadores-->
             <label for="dictaminadorSelect">Seleccionar Dictaminador:</label>
             <select id="dictaminadorSelect" class="form-select">
@@ -197,7 +197,7 @@ $userType = Auth::user()->user_type;
                                 <tr>
                                     <th>
                                     <!--*Implementacion en caso que el usuario sea vacio-->
-                                        @if($userType === 'secretaria')
+                                        @if($userType ==='controlador')
                                         <span class="personaEvaluadora1" type="text" id="personaEvaluadora1"></span>
                                         @else
                                         <input class="personaEvaluadora1" type="text" id="personaEvaluadora1">

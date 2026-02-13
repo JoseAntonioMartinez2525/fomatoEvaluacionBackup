@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --------------------------------------------------
     // Check inicial: prioridad
     // 1) si blade dice hasData true -> mostrar Edit
-    // 2) si userType === 'secretaria' -> mostrar Edit (role rule)
+    // 2) si userType ==='controlador' -> mostrar Edit (role rule)
     // 3) si window.existingDictData (llenado por docente-autocomplete) -> mostrar Edit
     // 4) si none -> llamar getExistingData() -> si existe -> mostrar Edit
     // --------------------------------------------------
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (userType === 'secretaria') {
+        if (userType ==='controlador') {
             console.log('[edit-button] userType secretaria -> showEdit');
             showEdit();
             return;

@@ -186,7 +186,7 @@ class ResponseJson extends Controller
         // Obtiene las respuestas de los formularios generados por dictaminadores
         // Para dictaminadores, filtra por su propio ID; para secretaria, muestra todas
         $user = Auth::user();
-        $queryFilter = $user->user_type === 'secretaria' ? [] : ['dictaminador_id' => $user->id];
+        $queryFilter = $user->user_type ==='controlador' ? [] : ['dictaminador_id' => $user->id];
 
         $dictaminators_responses2 = DictaminatorsResponseForm2::where($queryFilter)->get();
 

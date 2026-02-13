@@ -164,6 +164,47 @@ $filas3_9To3_19 = [
 
 ];
 
+// Integración de formularios dinámicos
+if (isset($dynamicData) && is_array($dynamicData)) {
+    foreach ($dynamicData as $df) {
+        $name = $df['form_name'];
+        $match = [];
+        if (preg_match('/^(\d+)\.(\d+)(\.(\d+))?/', $name, $match)) {
+            $section = (int)$match[1];
+            $item = (int)$match[2];
+            $sub = isset($match[4]) ? (int)$match[4] : null;
+
+            $newItem = [
+                'actividad' => $df['form_name'],
+                'maximo' => $df['maximo'],
+                'puntaje' => $df['puntaje']
+            ];
+
+            if ($sub !== null) {
+                // Formulario derivado (ej: 3.1.1) -> Insertar en $filas1To3_8_1 si corresponde
+                // Buscamos el padre en $filas1To3_8_1
+                $inserted = false;
+                foreach ($filas1To3_8_1 as $i => $fila) {
+                    if (strpos($fila['actividad'], "$section.$item ") === 0) {
+                        array_splice($filas1To3_8_1, $i + 1, 0, [$newItem]);
+                        $inserted = true;
+                        break;
+                    }
+                }
+                // Si no se insertó ahí, podría ser de la segunda tabla, pero 3.1.1 suele ser primera tabla.
+            } else {
+                // Formulario independiente (ej: 3.20) -> Insertar al final de $filas3_9To3_19
+                // Asumimos que va después de 3.19
+                if ($item >= 19) {
+                    // Insertar al final de la lista de cuerpos colegiados (o donde corresponda)
+                    // Simplemente lo agregamos al final del array $filas3_9To3_19
+                    $filas3_9To3_19[] = $newItem;
+                }
+            }
+        }
+    }
+}
+
 @endphp
 <!DOCTYPE html>
 <html lang="es">

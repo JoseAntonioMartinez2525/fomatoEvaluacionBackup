@@ -54,7 +54,7 @@ public function showResumen(Request $request)
         ];
     }
 
-    if ($userType === 'secretaria') {
+    if ($userType ==='controlador') {
         $docenteId = $request->input('docente_id');
 
         if (!$docenteId) abort(400, 'Debe especificar un docente');
@@ -278,7 +278,7 @@ public function getSignatures(Request $request)
     }
 
     // ===== Secretaria: retorna todas las firmas de los dictaminadores de un docente =====
- if ($userType === 'secretaria') {
+ if ($userType ==='controlador') {
     $docente = User::where('email', $email)->where('user_type', 'docente')->first();
 
     if (!$docente) {

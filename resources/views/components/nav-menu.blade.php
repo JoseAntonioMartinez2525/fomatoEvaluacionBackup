@@ -24,7 +24,7 @@ body.dark-mode .nav {
             <div>
                 <ul style="list-style: none;">
                     @if($user->user_type != 'docente')
-                        @if($user->user_type === 'secretaria')
+                        @if($user->user_type ==='controlador')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('secretaria') }}"><i class="fa-solid fa-table-columns"></i>  Dashboard </a>
                         </li>
@@ -48,7 +48,7 @@ body.dark-mode .nav {
                         {{-- @if($user->user_type === 'dictaminador')
                             <a class="nav-link active enlaceSN" style="width: 200px;"
                                 href="{{ route('comision_dictaminadora') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a> --}}
-                        @if($user->user_type === 'secretaria')
+                        @if($user->user_type ==='controlador')
                             <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('docente.forms.index') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
                         @endif
                     </li>

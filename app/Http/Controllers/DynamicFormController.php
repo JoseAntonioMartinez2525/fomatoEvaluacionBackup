@@ -804,5 +804,35 @@ public function saveResponse(Request $request)
     }
 }
 
+    /**
+     * Obtiene todos los formularios dinámicos y sus puntajes de comisión para un usuario.
+     */
+    public function getAllDynamicFormsWithScores(Request $request)
+    {
+        $email = $request->query('email');
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return response()->json([]);
+        }
+
+        $forms = DynamicForm::all();
+        $results = [];
+
+        foreach ($forms as $form) {
+            $commissionScore = DynamicFormCommission::where('dynamic_form_id', $form->id)
+                ->where('email_docente', $email)
+                ->sum('puntaje_comision');
+
+            $results[] = [
+                'id' => $form->id,
+                'form_name' => $form->form_name,
+                'puntaje_maximo' => $form->puntaje_maximo,
+                'score' => $commissionScore
+            ];
+        }
+
+        return response()->json($results);
+    }
 
 }

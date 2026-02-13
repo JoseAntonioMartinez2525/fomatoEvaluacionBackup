@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('signature_path_3')->nullable();
             // Campo para indicar el orden de las firmas enviadas
             $table->boolean('signature_order')->default(0); //0 significa verdader 
-            $table->enum('user_type', ['docente', 'dictaminador', 'secretaria'])->nullable();
+            $table->enum('user_type', ['docente', 'dictaminador','controlador'])->nullable();
             $table->timestamps();
         });
     }
