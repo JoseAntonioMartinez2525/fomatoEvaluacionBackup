@@ -301,16 +301,19 @@ public function getFormData2(Request $request)
                 $periodo2 = $form1 ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
 
                 // Obtener Nombre, Área y Departamento desde config/docentes.php
-                $docenteEmails = array_values(config('docentes.emails', []));
-                $docenteNombres = array_values(config('docentes.nombres', []));
-                $docenteAreas = array_values(config('docentes.areas', []));
-                $docenteDeptos = array_values(config('docentes.departamentos', []));
+                $docentesConfig = config('docentes', []);
+                $emailKey = strtolower($emailFromUrl);
 
-                $dIndex = array_search(strtolower($emailFromUrl), array_map('strtolower', $docenteEmails));
-
-                $nombre2 = ($dIndex !== false && isset($docenteNombres[$dIndex])) ? $docenteNombres[$dIndex] : $user->name;
-                $area2 = ($dIndex !== false && isset($docenteAreas[$dIndex])) ? $docenteAreas[$dIndex] : ($user->area ?? 'No definida');
-                $departamento2 = ($dIndex !== false && isset($docenteDeptos[$dIndex])) ? $docenteDeptos[$dIndex] : ($user->departamento ?? 'No definido');
+                if (isset($docentesConfig[$emailKey])) {
+                    $dData = $docentesConfig[$emailKey];
+                    $nombre2 = $dData['nombre'] ?? $user->name;
+                    $area2 = $dData['area'] ?? ($user->area ?? 'No definida');
+                    $departamento2 = $dData['departamento'] ?? ($user->departamento ?? 'No definido');
+                } else {
+                    $nombre2 = $user->name;
+                    $area2 = $user->area ?? 'No definida';
+                    $departamento2 = $user->departamento ?? 'No definido';
+                }
             }
         }
 
