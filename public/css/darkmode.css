@@ -55,9 +55,9 @@ body.light-mode button[id^="btn3_"]:hover {
 
 }
 
-body.dark-mode #toggle-dark-mode{
+/* body.dark-mode #toggle-dark-mode{
     margin-left: 95rem !important;
-}
+} */
 
 
 body.light.mode .custom-btn{

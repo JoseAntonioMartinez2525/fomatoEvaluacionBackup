@@ -66,7 +66,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             
-            <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass" style="margin-left: 100px;">
+            <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass" >
                 <i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro
             </button>
 
