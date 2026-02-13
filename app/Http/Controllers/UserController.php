@@ -220,7 +220,7 @@ class UserController extends Controller
         Excel::store(new UsersExport($users), $tempDirName . '/' . $excelFilename);
 
         // 5. Crear archivo ZIP
-        $zipFilename = 'reportes_evaluacion_docentes_'.$periodoArchivo . $timestamp . '.zip';
+        $zipFilename = 'reportes_pedpd_'.$periodoArchivo . '_' . $timestamp . '.zip';
         $zipPath = storage_path('app/' . $zipFilename);
         
         $zip = new ZipArchive;
