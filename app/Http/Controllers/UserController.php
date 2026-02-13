@@ -133,7 +133,8 @@ class UserController extends Controller
             }
         }
         
-        $periodoArchivo = $globalPeriod ? Str::slug($globalPeriod, '_') : 'SinPeriodo';
+        // Usar str_replace y preg_replace en lugar de Str::slug para mantener las mayúsculas (ej. 2025-I)
+        $periodoArchivo = $globalPeriod ? preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '-', $globalPeriod)) : 'SinPeriodo';
 
         // 3. Generar PDFs individuales
         foreach ($users as $user) {
