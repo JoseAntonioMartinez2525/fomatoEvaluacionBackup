@@ -18,6 +18,7 @@ if (!isset($periodo)) {
     $form1 = UsersResponseForm1::where('user_id', $targetUser->id)->first();
    
     $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
+    $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
     
     $periodo2 = $periodo;
 }
@@ -432,7 +433,7 @@ $formNumber = '32';
                 @if(isset($convocatoria))
 
                     <div style="margin-right: -700px;">
-                        <h1>Convocatoria: {{ $convocatoria->convocatoria }}</h1>
+                        <h1>Convocatoria: {{ $convocatoria }}</h1>
                     </div>
                 @endif
             </div>
