@@ -106,7 +106,11 @@ class UserController extends Controller
         }
 
         // 2. Obtener usuarios (filtrar solo docentes si es necesario)
-        $users = User::where('user_type', 'docente')->get();
+        $docenteEmails = array_keys(config('docentes', []));
+        $users = User::where(function ($query) use ($docenteEmails) {
+            $query->where('user_type', 'docente')
+                  ->orWhereIn('email', $docenteEmails);
+        })->get();
 
         // Pre-cargar logo para los reportes
         $logoUrl = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
