@@ -122,7 +122,19 @@ class UserController extends Controller
             }
         } catch (\Exception $e) {}
 
-        $periodoArchivo ='';
+        // Calcular periodo global para el nombre del archivo ZIP
+        $globalPeriod = \App\Models\UsersResponseForm1::calculateCurrentPeriod();
+        
+        // Fallback: si no hay periodo global activo (ej. fuera de fechas), intentar obtenerlo del primer registro existente
+        if (!$globalPeriod) {
+            $firstForm = \App\Models\UsersResponseForm1::whereNotNull('periodo')->latest('updated_at')->first();
+            if ($firstForm) {
+                $globalPeriod = $firstForm->periodo;
+            }
+        }
+        
+        $periodoArchivo = $globalPeriod ? Str::slug($globalPeriod, '_') : 'SinPeriodo';
+
         // 3. Generar PDFs individuales
         foreach ($users as $user) {
             // Obtener datos consolidados para el reporte
@@ -140,7 +152,8 @@ class UserController extends Controller
             // Obtener datos del Formulario 1 para Convocatoria y Periodo
             $form1 = \App\Models\UsersResponseForm1::where('user_id', $user->id)->first();
             $convocatoria = $form1 ? ($form1->convocatoria ?? 'SinConvocatoria') : 'SinConvocatoria';
-            $periodo = $form1 ? ($form1->periodo ?? 'SinPeriodo') : 'SinPeriodo';
+            // Usar periodo del usuario o el global si no tiene
+            $periodo = $form1 ? ($form1->periodo ?? $globalPeriod) : ($globalPeriod ?? 'SinPeriodo');
             
             // Obtener firmas de dictaminadores
             $dictaminadores = collect([]);
@@ -198,7 +211,6 @@ class UserController extends Controller
 
             // Asignar el nombre del archivo al modelo de usuario para que el Excel lo sepa
             $user->pdf_filename = $pdfFilename;
-            $periodoArchivo = $safePeriodo;
         }
 
         // 4. Generar Excel en la misma carpeta temporal

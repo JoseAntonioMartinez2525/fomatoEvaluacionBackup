@@ -22,6 +22,7 @@ class Docente extends Model
         'departamento',
         'area',
         'fecha_convocatoria',
+        'periodo',
     ];
 
     protected $casts = [

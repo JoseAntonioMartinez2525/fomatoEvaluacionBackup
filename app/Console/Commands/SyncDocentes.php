@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Docente;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class SyncDocentes extends Command
 {
@@ -46,6 +47,9 @@ class SyncDocentes extends Command
             $this->warn('No se encontraron fechas en evaluation_dates para docentes_llenado.');
         }
 
+        // Obtener periodo actual
+        $periodo = \App\Models\UsersResponseForm1::calculateCurrentPeriod();
+
         // 2. Obtener datos (Simulación API usando el archivo de configuración config/docentes.php)
         $apiData = config('docentes', []);
 
@@ -78,18 +82,23 @@ class SyncDocentes extends Command
             // - Si existe: actualiza el usuario.
             // - Si no existe: crea el usuario nuevo.
             // Por lo tanto, solo necesitamos guardar el Docente aquí.
+
+            $docenteData = [
+                'nombre' => $nombre,
+                'apellido_1' => $apellido1,
+                'apellido_2' => $apellido2,
+                'departamento' => $data['departamento'] ?? null,
+                'area' => $data['area'] ?? null,
+                'fecha_convocatoria' => $jsonFechas,
+            ];
+
+            if (Schema::hasColumn('docentes', 'periodo')) {
+                $docenteData['periodo'] = $periodo;
+            }
             
             Docente::updateOrCreate(
                 ['email' => $email], // Condición de búsqueda única
-                [
-                    'nombre' => $nombre,
-                    'apellido_1' => $apellido1,
-                    'apellido_2' => $apellido2,
-                    'departamento' => $data['departamento'] ?? null,
-                    'area' => $data['area'] ?? null,
-                    // Pasamos las fechas explícitamente para evitar la consulta interna del modelo
-                    'fecha_convocatoria' => $jsonFechas, 
-                ]
+                $docenteData
             );
 
             $this->info("Sincronizado: {$email}");

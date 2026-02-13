@@ -7,6 +7,7 @@ use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ResumenComisionController extends Controller
 {
@@ -163,11 +164,18 @@ public function getFirmasYResumen(Request $request)
 
             // Actualizar todos los registros existentes
             \App\Models\UsersResponseForm1::query()->update(['periodo' => $periodo]);
+            
+            // Actualizar también la tabla de docentes si existe la columna
+            if (Schema::hasColumn('docentes', 'periodo')) {
+                \App\Models\Docente::query()->update(['periodo' => $periodo]);
+            } else {
+                \Log::warning('La tabla docentes no tiene la columna periodo. Se omitió la actualización para docentes.');
+            }
 
             return response()->json(['success' => true, 'message' => "Periodo '$periodo' asignado a todos los docentes correctamente."]);
         } catch (\Exception $e) {
             \Log::error('Error actualizando periodos: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Error al actualizar periodos.'], 500);
+            return response()->json(['success' => false, 'message' => 'Error al actualizar periodos: ' . $e->getMessage()], 500);
         }
     }
 
