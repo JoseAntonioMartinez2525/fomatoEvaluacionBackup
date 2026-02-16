@@ -26,6 +26,7 @@ class SiaApiService
     {
         // --- CÓDIGO REAL DE LA API ---
         if (!$this->token) {
+            if (app()->runningInConsole()) echo "\n[ERROR] Token no configurado.";
             \Log::error('SIAA API Token no está configurado.');
             return $this->getMockUserData($email);
         }
@@ -35,10 +36,21 @@ class SiaApiService
                 ->acceptJson()
                 ->withoutVerifying() // <-- AÑADE ESTA LÍNEA
                 ->timeout(10) // Timeout explícito de 10 segundos
-                ->get("{$this->baseUrl}/personal/{$email}");
+                ->get("{$this->baseUrl}/personal", [
+                    'email' => $email
+                ]);
 
             if ($response->successful()) {
-                return $response->json(); // Retorna los datos del usuario
+                $data = $response->json();
+                // Si la API devuelve una lista de resultados (array numérico), tomamos el primero
+                if (isset($data[0]) && is_array($data[0])) {
+                    return $data[0];
+                }
+                return $data; // Retorna los datos si ya es un objeto único
+            }
+
+            if (app()->runningInConsole()) {
+                echo "\n[API ERROR {$response->status()}] {$email}: " . substr($response->body(), 0, 200);
             }
 
             \Log::error("Fallo en la petición a la API SIAA para el email: {$email}", [
@@ -46,6 +58,9 @@ class SiaApiService
                 'body' => $response->body()
             ]);
         } catch (\Exception $e) {
+            if (app()->runningInConsole()) {
+                echo "\n[API EXCEPTION] {$email}: " . $e->getMessage();
+            }
             \Log::error("Error de conexión con API SIAA para {$email}: " . $e->getMessage());
         }
 

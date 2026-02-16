@@ -1,0 +1,36 @@
+{
+    "id": "b82dbb635108477cbfc4abe6225572d0",
+    "name": "formatos.pedpd",
+    "description": "formatos del programa de estimulo al desempeño del personal docente",
+    "roles": [
+        {
+            "rol": "administrador",
+            "alias": "Administrador",
+            "tipo": "Empleado",
+            "isDefault": false,
+            "enabled": true
+        },
+        {
+            "rol": "controlador",
+            "alias": "Controlador(a)",
+            "tipo": "Empleado",
+            "isDefault": false,
+            "enabled": true
+        },
+        {
+            "rol": "dictaminador",
+            "alias": "Dictaminador(a)",
+            "tipo": "Profesor",
+            "isDefault": false,
+            "enabled": true
+        },
+        {
+            "rol": "docente",
+            "alias": "Docente",
+            "tipo": "Profesor",
+            "isDefault": false,
+            "enabled": true
+        }
+    ],
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJiODJkYmI2MzUxMDg0NzdjYmZjNGFiZTYyMjU1NzJkMCIsInVuaXF1ZV9uYW1lIjoiZm9ybWF0b3MucGVkcGQiLCJyb2xlIjoiYXBwbGljYXRpb24iLCJuYmYiOjE3NzEwMTE5NTgsImV4cCI6MTc3MTAxNTU1OCwiaWF0IjoxNzcxMDExOTU4LCJpc3MiOiJodHRwOi8vc2lpYS51YWJjcy5teC8iLCJhdWQiOiJodHRwOi8vc2lpYS51YWJjcy5teC8ifQ.G8jRLT9WtwYK4o4xLn6EwHTbYTUY4uFugVE_ujMojQ0"
+}
