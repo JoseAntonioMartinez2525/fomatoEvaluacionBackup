@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\SiaApiService;
 use App\Models\Docente;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -24,10 +25,17 @@ class SyncDocentes extends Command
     protected $description = 'Sincroniza usuarios y docentes desde una fuente externa (API/Config)';
 
     /**
+     * La instancia del servicio de API.
+     * @var SiaApiService
+     */
+    protected $apiService;
+
+    /**
      * Ejecuta el comando de consola.
      */
-    public function handle()
+    public function handle(SiaApiService $apiService)
     {
+        $this->apiService = $apiService;
         $this->info('Iniciando sincronización de docentes...');
 
         // 1. Obtener fechas de convocatoria para optimizar (evitar consultas repetitivas en el modelo)
@@ -51,12 +59,22 @@ class SyncDocentes extends Command
         $periodo = \App\Models\UsersResponseForm1::calculateCurrentPeriod();
 
         // 2. Obtener datos (Simulación API usando el archivo de configuración config/docentes.php)
-        $apiData = config('docentes', []);
+        $configDocentes = config('docentes', []);
 
-        foreach ($apiData as $email => $data) {
+        foreach (array_keys($configDocentes) as $email) {
+            $this->info("Procesando: {$email}");
+
+            // ---------------------------------------------------------------------------
+            // PASO CLAVE: Consultar la API externa para obtener los datos del usuario
+            // ---------------------------------------------------------------------------
+            $apiData = $this->apiService->getUserInfo($email);
+            if (!$apiData) {
+                $this->warn(" -> No se encontraron datos en la API para {$email}. Saltando...");
+                continue;
+            }
             
             // Lógica de limpieza y separación de nombres (similar a SyncComisionadores)
-            $nombreCompleto = $data['nombre'];
+            $nombreCompleto = $apiData['nombre'] ?? '';
             // Remover títulos académicos comunes
             $nombreLimpio = preg_replace('/^(Dr\.|Dra\.|M\.C\.?|M\.S\.C\.?|Lic\.|Ing\.)\s+/i', '', $nombreCompleto);
             $partes = explode(' ', trim($nombreLimpio));
@@ -87,8 +105,8 @@ class SyncDocentes extends Command
                 'nombre' => $nombre,
                 'apellido_1' => $apellido1,
                 'apellido_2' => $apellido2,
-                'departamento' => $data['departamento'] ?? null,
-                'area' => $data['area'] ?? null,
+                'departamento' => $apiData['departamento'] ?? null,
+                'area' => $apiData['area'] ?? null,
                 'fecha_convocatoria' => $jsonFechas,
             ];
 
@@ -101,7 +119,7 @@ class SyncDocentes extends Command
                 $docenteData
             );
 
-            $this->info("Sincronizado: {$email}");
+            $this->line(" -> Sincronizado: " . trim("{$nombre} {$apellido1} {$apellido2}"));
         }
 
         $this->info('Sincronización de docentes completada.');

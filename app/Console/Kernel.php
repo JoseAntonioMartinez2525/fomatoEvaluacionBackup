@@ -14,6 +14,10 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\TransferResponses::class,
+        \App\Console\Commands\ImportFormatos::class,
+        \App\Console\Commands\ImportProvider::class,
+        \App\Console\Commands\FetchProviderUsers::class,
+        \App\Console\Commands\CheckProviderNetwork::class,
         // Agrega aquí otros comandos Artisan que hayas creado
         \App\Console\Commands\RouteListOverride::class,
   

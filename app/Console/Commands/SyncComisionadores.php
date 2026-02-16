@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Services\SiaApiService;
 use App\Models\User;
 use App\Models\Comisionador;
 use Illuminate\Support\Facades\DB;
@@ -25,10 +26,17 @@ class SyncComisionadores extends Command
     protected $description = 'Sincroniza usuarios y comisionadores desde una fuente externa (API)';
 
     /**
+     * La instancia del servicio de API.
+     * @var SiaApiService
+     */
+    protected $apiService;
+
+    /**
      * Ejecuta el comando de consola.
      */
-    public function handle()
+    public function handle(SiaApiService $apiService)
     {
+        $this->apiService = $apiService;
         $this->info('Iniciando sincronización de comisionadores...');
 
         // 1. Obtener fechas de convocatoria desde docentes_evaluation_dates
@@ -51,9 +59,20 @@ class SyncComisionadores extends Command
         $configDictaminadores = config('dictaminadores', []);
         $idCounter = 1;
 
-        foreach ($configDictaminadores as $email => $info) {
-            // Limpieza de títulos para intentar extraer nombre y apellidos
-            $nombreCompleto = $info['nombre'];
+        foreach (array_keys($configDictaminadores) as $email) {
+            $this->info("Procesando: {$email}");
+
+            // ---------------------------------------------------------------------------
+            // PASO CLAVE: Consultar la API externa para obtener los datos del usuario
+            // ---------------------------------------------------------------------------
+            $apiData = $this->apiService->getUserInfo($email);
+
+            if (!$apiData) {
+                $this->warn(" -> No se encontraron datos en la API para {$email}. Saltando...");
+                continue;
+            }
+
+            $nombreCompleto = $apiData['nombre'] ?? '';
             // Remover títulos comunes (Dr., Dra., M.C., etc.)
             $nombreLimpio = preg_replace('/^(Dr\.|Dra\.|M\.C\.?|M\.S\.C\.?|Lic\.|Ing\.)\s+/i', '', $nombreCompleto);
             $partes = explode(' ', trim($nombreLimpio));
@@ -73,15 +92,11 @@ class SyncComisionadores extends Command
                 $nombre = $nombreLimpio;
             }
 
-            // ---------------------------------------------------------------------------
-            // SIMULACIÓN DE API EXTERNA
-            // En el futuro, los datos de departamento, área y firma vendrán de una API
-            // consultada mediante el ID o correo.
-            // ---------------------------------------------------------------------------
-            $departamento = $info['departamento'] ?? null; // Por ahora del config
-            $area = null; // Vendrá de la API
+            // Extraer datos desde la respuesta de la API
+            $departamento = $apiData['departamento'] ?? null;
+            $area = $apiData['area'] ?? null;
             $firmaGrafica = null; // Vendrá de la API (base64)
-            $idMaestro = $info['id_maestro'] ?? null; // Vendrá de la API (o config local mientras tanto)
+            $idMaestro = $apiData['id_maestro'] ?? null;
 
             $fullName = trim("{$nombre} {$apellido1} {$apellido2}");
 
@@ -121,7 +136,7 @@ class SyncComisionadores extends Command
                 ]
             );
 
-            $this->info("Sincronizado: {$email}");
+            $this->line(" -> Sincronizado: {$fullName} (ID Maestro: {$idMaestro})");
         }
 
         $this->info('Sincronización completada.');
