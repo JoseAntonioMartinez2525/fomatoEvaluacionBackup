@@ -108,6 +108,7 @@ class SyncDocentes extends Command
                 'departamento' => $apiData['departamento'] ?? null,
                 'area' => $apiData['area'] ?? null,
                 'fecha_convocatoria' => $jsonFechas,
+                'id_maestro' => $apiData['id_maestro'] ?? null, // <-- Añadido
             ];
 
             if (Schema::hasColumn('docentes', 'periodo')) {
@@ -119,7 +120,8 @@ class SyncDocentes extends Command
                 $docenteData
             );
 
-            $this->line(" -> Sincronizado: " . trim("{$nombre} {$apellido1} {$apellido2}"));
+            $fullName = trim("{$nombre} {$apellido1} {$apellido2}");
+            $this->line(" -> Sincronizado: {$fullName} (ID Maestro: " . ($apiData['id_maestro'] ?? '') . ")");
         }
 
         $this->info('Sincronización de docentes completada.');
