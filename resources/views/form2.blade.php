@@ -180,7 +180,7 @@ body.dark-mode .table-header {
 
 </style>
 <script>
-    window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
+    window.isDarkModeGlobal = {{ session('dark_mode', false) ? 'true' : 'false' }};
 </script>
 <body class="bg-gray-50 text-black/50">
     <div class="relative min-h-screen flex flex-col items-center justify-center">
@@ -210,7 +210,7 @@ $user_identity = $user->id;
 $formId = $docenteConfigForm['formId'] ?? 'form2';
 $formNumber = '2';
 @endphp
-<button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
+<button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button"><i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro</button>
 <div class="container mt-4 printButtonClass">
     @if(isset($showSearch) && $userType !== 'docente' && $showSearch)
         <!-- Buscando docentes -->
@@ -399,16 +399,9 @@ document.getElementById('horasActv2Input').value =
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-
-        const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-        if (toggleDarkModeButton) {
-            const widthDarkButton = window.outerWidth - 230;
-            toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-        }
-
-        toggleDarkMode();
-    });
+        document.addEventListener('DOMContentLoaded', function () {    
+            toggleDarkMode();
+        });
 
         document.addEventListener('DOMContentLoaded', function () {
             // Evento antes de imprimir

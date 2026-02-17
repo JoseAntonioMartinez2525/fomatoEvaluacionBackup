@@ -373,7 +373,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_9';
 $formNumber = '39';
 @endphp
 
-    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
+    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
 
     <div class="container mt-4" id="seleccionDocente">
         @if(isset($showSearch) && $userType !== 'docente' && $showSearch)
@@ -917,14 +917,8 @@ $formNumber = '39';
     
     document.addEventListener('DOMContentLoaded', function () {
 
-        const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-        if (toggleDarkModeButton) {
-            const widthDarkButton = window.outerWidth - 230;
-            toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-        }
-
         toggleDarkMode();
-    });    
+    });   
 </script>
 
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])

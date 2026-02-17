@@ -333,13 +333,6 @@ body.dark-mode #cantServicio, body.dark-mode #cantPracticas
     color: white!important;
 }
 
-button#toggle-dark-mode {
-    position: fixed;
-}
-
-body.light-mode button#toggle-dark-mode{
-    margin-left: 82rem!important;
-}
 th#seccion3_5 {
     padding: 0px !important;
 }

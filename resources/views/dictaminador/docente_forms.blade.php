@@ -14,6 +14,9 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
     <title>Formularios Completados - Evaluación docente</title>
 
     <x-head-resources />
+    <script>
+        window.isDarkModeGlobal = {{ session('dark_mode', false) ? 'true' : 'false' }};
+    </script>
     <style>
         .form-card {
             background-color: white;
@@ -106,7 +109,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             
-            <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass" style="margin-left: 100px;">
+            <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button">
                 <i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro
             </button>
 
@@ -188,12 +191,6 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-            if (toggleDarkModeButton) {
-                const widthDarkButton = window.outerWidth - 230;
-                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-            }
-
             toggleDarkMode();
         });
 

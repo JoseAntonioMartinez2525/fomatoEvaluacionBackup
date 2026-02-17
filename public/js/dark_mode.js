@@ -15,10 +15,13 @@ function toggleDarkMode() {
         toggleDarkModeButton.classList.toggle('btn-secondary', !isDarkMode);
     }
 
-    // Estado inicial desde el servidor (a través del middleware)
-    // La variable `isDarkMode` debe ser definida en tus vistas Blade.
-    // Ejemplo: <script>const isDarkMode = {{ session('dark_mode', false) ? 'true' : 'false' }};</script>
-    updateButtonState(window.isDarkModeGlobal);
+    // Estado inicial desde el servidor. La variable `window.isDarkModeGlobal` debe ser definida en las vistas Blade.
+    const initialDarkMode = typeof window.isDarkModeGlobal !== 'undefined' ? window.isDarkModeGlobal : false;
+    if (typeof window.isDarkModeGlobal === 'undefined') {
+        console.warn('La variable global `window.isDarkModeGlobal` no está definida. Se usará el modo claro por defecto. Defínala en su vista Blade para persistir el estado del tema, por ejemplo: <script>window.isDarkModeGlobal = {{ session(\'dark_mode\', false) ? \'true\' : \'false\' }};<\/script>');
+    }
+
+    updateButtonState(initialDarkMode);
 
     toggleDarkModeButton.addEventListener('click', function () {
         const isDarkMode = document.body.classList.toggle('dark-mode');

@@ -129,6 +129,9 @@ if (!isset($docenteConfigForm)) {
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <x-head-resources />
+    <script>
+        window.isDarkModeGlobal = {{ session('dark_mode', false) ? 'true' : 'false' }};
+    </script>
 </head>
 <style>
     body.chrome @media print {
@@ -358,8 +361,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_19';
 $formNumber = '319';
     @endphp
 
-    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo
-        Obscuro</button>
+    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button"><i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro</button>
 
     <div class="container mt-4" id="seleccionDocente">
         @if(isset($showSearch) && $userType !== 'docente' && $showSearch)
@@ -1239,14 +1241,7 @@ $formNumber = '319';
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-            if (toggleDarkModeButton) {
-                const widthDarkButton = window.outerWidth - 230;
-                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-            }
-
+        document.addEventListener('DOMContentLoaded', function () {    
             toggleDarkMode();
         });    
     </script>

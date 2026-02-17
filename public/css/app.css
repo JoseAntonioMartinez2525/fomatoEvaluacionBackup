@@ -1703,3 +1703,22 @@ body.dark-mode .bgComision input {
     color: white !important;
 }
 
+/* 
+ * Estilo unificado para el botón de modo oscuro.
+ * Se posiciona de forma fija en la esquina superior derecha de la ventana,
+ * aplicando a todas las vistas que usen el botón con su ID y la clase .dark-mode-button.
+ */
+/* #toggle-dark-mode.dark-mode-button {
+
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+} */
+
+/* Botón de modo oscuro */
+.dark-mode-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}

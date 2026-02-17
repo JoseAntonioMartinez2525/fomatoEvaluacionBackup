@@ -91,12 +91,7 @@ foreach ($allowedEmails as $email) {
         body.dark-mode #puntajeComisionValues, body.dark-mode #observacionesNForm{
             color: black;
         }
-        /* Botón de modo oscuro */
-        .dark-mode-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
+
 
         /* Hierarchy Layout Styles */
         .hierarchy-container {
@@ -934,13 +929,7 @@ foreach ($allowedEmails as $email) {
             lastScrollLeft = currentScrollLeft <= 0 ? 0 : currentScrollLeft; // For Mobile or negative scrolling
         });
 
-    document.addEventListener('DOMContentLoaded', function () {
-            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-            if (toggleDarkModeButton) {
-                const widthDarkButton = window.outerWidth - 230;
-                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-            }
-
+        document.addEventListener('DOMContentLoaded', function () {    
             toggleDarkMode();
         });
         

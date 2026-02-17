@@ -266,6 +266,9 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <x-head-resources />
+    <script>
+        window.isDarkModeGlobal = {{ session('dark_mode', false) ? 'true' : 'false' }};
+    </script>
 
     <style>
         body.chrome @media print {
@@ -367,12 +370,12 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         color: #497ad4!important;
     }
 
-        #toggle-dark-mode {
+        /* #toggle-dark-mode {
         position: fixed;
         top: 7rem;
         right: 1.5rem;
-        z-index: 1050; /* Lo pone por encima de otros elementos */
-    }
+        z-index: 1050; /* Lo pone por encima de otros elementos }*/
+
 
     </style>
 </head>
@@ -407,8 +410,7 @@ $formId = $docenteConfigForm['formId'] ?? 'form3_12';
 $formNumber = '312';
     @endphp
 {{-- @php dd($userType) @endphp --}}
-    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo
-        Obscuro</button>
+    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button"><i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro</button>
 
     <div class="container mt-4" id="seleccionDocente">
         @if(isset($showSearch) && $userType !== 'docente' && $showSearch)

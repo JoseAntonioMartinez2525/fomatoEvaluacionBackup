@@ -164,6 +164,9 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <x-head-resources />
+    <script>
+        window.isDarkModeGlobal = {{ session('dark_mode', false) ? 'true' : 'false' }};
+    </script>
 
     <link href="{{ asset('css/onePage.css') }}" rel="stylesheet">
     <style>
@@ -235,7 +238,7 @@ $formNumber = '313';
 
 @endphp
 
-    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
+    <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button"><i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro</button>
 
     <div class="container mt-4" id="seleccionDocente">
         @if(isset($showSearch) && $userType !== 'docente' && $showSearch)
@@ -472,16 +475,9 @@ $formNumber = '313';
 
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-
-            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-            if (toggleDarkModeButton) {
-                const widthDarkButton = window.outerWidth - 230;
-                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-            }
-
+        document.addEventListener('DOMContentLoaded', function () {    
             toggleDarkMode();
-        });    
+        }); 
     </script>
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])
     @include('partials.submit-form', ['config' => $docenteConfigForm])

@@ -66,7 +66,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
             <x-nav-menu :user="Auth::user()"/>
             <x-general-header />
             
-            <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass" >
+            <button id="toggle-dark-mode" class="btn btn-secondary printButtonClass dark-mode-button" >
                 <i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro
             </button>
 
@@ -145,12 +145,6 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-            if (toggleDarkModeButton) {
-                const widthDarkButton = window.outerWidth - 230;
-                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-            }
-
             toggleDarkMode();
 
             // Si no hay docentes cargados por el servidor, intentar cargarlos vía API
