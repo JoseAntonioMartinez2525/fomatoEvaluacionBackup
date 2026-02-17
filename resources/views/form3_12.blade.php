@@ -367,6 +367,13 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
         color: #497ad4!important;
     }
 
+        #toggle-dark-mode {
+        position: fixed;
+        top: 7rem;
+        right: 1.5rem;
+        z-index: 1050; /* Lo pone por encima de otros elementos */
+    }
+
     </style>
 </head>
 
@@ -794,16 +801,9 @@ $formNumber = '312';
 
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
-            if (toggleDarkModeButton) {
-                const widthDarkButton = window.outerWidth - 230;
-                toggleDarkModeButton.style.marginLeft = `${widthDarkButton}px`;
-            }
-
+        document.addEventListener('DOMContentLoaded', function () {    
             toggleDarkMode();
-        });    
+        });
     </script>
 
     @include('partials.docente-autocomplete', ['config' => $docenteConfig])

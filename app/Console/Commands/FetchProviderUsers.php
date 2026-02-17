@@ -14,7 +14,7 @@ class FetchProviderUsers extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'providers:fetch-users {provider : provider id or name} {--dry-run : Do not persist changes} {--timeout=10 : HTTP timeout in seconds}';
+    protected $signature = 'providers:fetch-users {provider : provider id or name} {0--dry-run : Do not persist changes} {--timeout=10 : HTTP timeout in seconds}';
 
     /**
      * The console command description.
