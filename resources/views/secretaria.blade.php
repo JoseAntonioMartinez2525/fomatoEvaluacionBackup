@@ -259,6 +259,9 @@ foreach ($allowedEmails as $email) {
             color: white !important;
         }
 
+        body.dark-mode .form-label {
+            color: black!important;
+        }
     </style>
     
 </head>

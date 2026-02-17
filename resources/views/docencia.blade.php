@@ -92,7 +92,7 @@ $staticFormTypes = [
         @if (Auth::check())
 
             <nav class="nav flex-column"
-                style="padding-top: 0.125rem; height: 100.25rem; background: linear-gradient(90deg, #afc7ce, #4281a4); width:330px;">
+                style="padding-top: 0.125rem; height: calc(100vh - 20px); overflow-y: auto; background: linear-gradient(90deg, #afc7ce, #4281a4); width:330px; position: fixed;">
                 <div class="nav-header" style="display: flex;padding-top: 2rem;justify-content: flex-start;align-content: flex-start;flex-direction: row-reverse;align-items: baseline;">
                     <li style="list-style: none; margin-right: 20px;">
                         <a href="{{ route('login') }}" style="display:inline;padding-left:1rem;" title="cerrar_sesion">
@@ -112,7 +112,7 @@ $staticFormTypes = [
 
 </head> 
 <body class="font-sans antialiased">
-    <x-general-header />
+ 
     @if (Auth::check())
         <x-nav-docentes :user="Auth::user()">
             <li class="nav-item">
@@ -186,7 +186,7 @@ $staticFormTypes = [
         </nav>
 
         <body class="font-sans antialiased" style="margin-left: 300px;">
-            <x-general-header />
+            
              <ul class="actv3"><i class="fas fa-chalkboard-teacher"></i>&nbsp;Calidad en la docencia:
                  <li><a href="javascript:void(0);" onclick="showStep(1)">3.1 Participación en actividades de diseño curricular</a></li>
                  <li><a href="javascript:void(0);" onclick="showStep(2)">3.2 Calidad del desempeño docente evaluada por el alumnado</a></li>
@@ -227,6 +227,7 @@ $staticFormTypes = [
              </ul>
         </x-nav-docentes>
     @endif
+    <x-general-header />
     <div class="bg-gray-50 text-black/50" style="margin-left: 330px;">
             <div id="instrucionEdit">
             <p>*Nota: Para editar una de las tablas de los formularios, haga clic en el botón ✎ Editar Formulario. <br> También podrá dirigirse a este elemento haciendo clic en cualquiera de los formularios deseados, ubicados en la barra de menú al lado izquierdo.</p>
@@ -237,7 +238,7 @@ $staticFormTypes = [
             <div class="bg-gray-50 text-black/50">
                 <div class="relative min-h-screen flex flex-col items-center justify-center">
                     <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
+                        <div class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
                             <div class="flex lg:justify-center lg:col-start-2"></div>
 
                             <nav class="-mx-3 flex flex-1 justify-end"></nav>
@@ -3146,8 +3147,7 @@ $staticFormTypes = [
                             @endif
                         @endforeach
 
-
-</main>
+</div>
 
 <footer>
     <p class="text-center">Convocatoria actual: {{ $convocatoria ?? 'No asignada' }}</p>
