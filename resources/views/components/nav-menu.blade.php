@@ -1,5 +1,19 @@
 {{-- filepath: resources/views/components/nav-menu.blade.php --}}
-@props(['user', 'navClass' => '', 'emailClass' => ''])
+@props(['user', 'navClass' => '', 'emailClass' => '', 'applyDateRules' => false])
+@php
+    $isDictaminadorPeriodActive = \DB::table('docentes_evaluation_dates')
+        ->where('type', 'dictaminadores_capturando_datos')
+        ->where('start_date', '<=', now())
+        ->where('end_date', '>=', now())
+        ->exists();
+
+    $docentePeriod = \DB::table('evaluation_dates')
+        ->where('type', 'docentes_llenado')
+        ->latest('id')
+        ->first();
+    
+    $isDocentePeriodFinished = $docentePeriod ? now()->gt(\Carbon\Carbon::parse($docentePeriod->end_date)->endOfDay()) : false;
+@endphp
 <style>
 body.dark-mode .nav {
     background: linear-gradient(90deg, #4a4a4a, #2c2c2c);
@@ -52,7 +66,7 @@ body.dark-mode .nav {
                             <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('docente.forms.index') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
                         @endif
                     </li>
-                    @if($user->user_type === 'dictaminador')
+                    @if($user->user_type === 'dictaminador' && (!$applyDateRules || ($isDictaminadorPeriodActive && $isDocentePeriodFinished)))
                     <li class="nav-item">
                         <a class="nav-link active enlaceSN" style="width: 200px;" 
                            href="{{ route('docente.forms.index') }}">
