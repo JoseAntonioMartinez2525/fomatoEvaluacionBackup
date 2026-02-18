@@ -113,7 +113,7 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
                 <i class="fa-solid fa-moon"></i>&nbsp;Modo Obscuro
             </button>
 
-            <div class="container mt-4" style="margin-left: 250px; max-width: 900px;">
+            <div class="container mt-4 main-content-area" style="max-width: 900px;">
                 <!-- Back Button -->
                 <div class="back-button">
                     <a href="{{ route('docente.forms.index') }}" class="btn btn-secondary">

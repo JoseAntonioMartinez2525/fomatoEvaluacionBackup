@@ -1,5 +1,9 @@
+:root {
+    --nav-width: 250px;
+}
+
 body {
-    margin-left: 12.5rem;
+    margin-left: var(--nav-width);
     margin-bottom: 37.5rem;
     font-size: 1rem;
 
@@ -227,9 +231,7 @@ nav::after{
 }
 
 nav.fixed {
-  /*position: fixed;*/
-  top: 1.25rem;
-  left: 12.5rem;
+  /* This class seems to be part of an old layout system and can likely be removed. */
 }
 
 nav.show-nav {

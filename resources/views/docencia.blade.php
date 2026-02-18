@@ -54,6 +54,10 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
         window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
     </script>
     <style>
+        body {
+            --nav-width: 330px;
+        }
+
         div#step11,
         div#step12,
         div#step13,
@@ -104,8 +108,8 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
 <body class="font-sans antialiased">
 
     @if (Auth::check())
-    <nav class="nav flex-column"
-        style="padding-top: 0.125rem; height: calc(100vh - 20px); overflow-y: auto; background: linear-gradient(90deg, #afc7ce, #4281a4); width:330px; position: fixed;">
+    <nav class="nav flex-column" id="docencia-nav"
+        style="width: var(--nav-width); position: fixed; left: 0; top: 0; margin-left: 0; padding-top: 0.125rem; height: 100vh; overflow-y: auto; background: linear-gradient(90deg, #afc7ce, #4281a4);">
         <div class="nav-header"
             style="display: flex;padding-top: 2rem;justify-content: flex-start;align-content: flex-start;flex-direction: row-reverse;align-items: baseline;">
             <li style="list-style: none; margin-right: 20px;">
@@ -259,7 +263,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
         </x-nav-docentes>
         @endif
         <x-general-header />
-        <div class="bg-gray-50 text-black/50" style="margin-left: 330px;">
+        <div class="bg-gray-50 text-black/50 main-content-area">
             <div id="instrucionEdit">
                 <p>*Nota: Para editar una de las tablas de los formularios, haga clic en el botón ✎ Editar Formulario.
                     <br> También podrá dirigirse a este elemento haciendo clic en cualquiera de los formularios

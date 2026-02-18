@@ -10,9 +10,8 @@
 <section role="region" aria-label="Response form">
     <form class="printButtonClass">
         @csrf
-        <nav class="nav flex-column {{ $navClass }}"
-            style="padding-top: 0.125rem; height: 100.25rem; background: linear-gradient(90deg, #afc7ce, #4281a4); width:15%;"
-            id="navPrint">
+        <nav class="nav flex-column {{ $navClass }}" id="main-nav"
+            style="width: var(--nav-width); position: fixed; left: 0; top: 0; margin-left: 0; padding-top: 0.125rem; height: 100vh; overflow-y: auto; background: linear-gradient(90deg, #afc7ce, #4281a4);">
             <div class="nav-header" style="display: flex;padding-top: 2rem;justify-content: flex-start;align-content: flex-start;flex-direction: row-reverse;align-items: baseline;">
                 <li style="list-style: none; margin-right: 20px;">
                     <a href="{{ route('login') }}" style="display:inline;padding-left:1rem;" title="cerrar_sesion">
