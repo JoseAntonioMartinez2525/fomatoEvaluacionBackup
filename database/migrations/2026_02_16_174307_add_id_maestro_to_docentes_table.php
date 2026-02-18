@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('docentes', function (Blueprint $table) {
             if (!Schema::hasColumn('docentes', 'id_maestro')) {
                 // Se usa bigInteger (camelCase) y se agrega index() para búsquedas rápidas
-                $table->bigInteger('id_maestro')->nullable()->index()->after('id');
+                $table->string('id_maestro',10)->nullable()->after('id');
             }
         });
     }

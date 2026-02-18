@@ -1,6 +1,6 @@
 body {
-    margin-left: 200px;
-    margin-bottom: 600px;
+    margin-left: 12.5rem;
+    margin-bottom: 37.5rem;
     font-size: 1rem;
 
 }
@@ -46,14 +46,14 @@ margin-bottom: 3rem;
 
 
 #convocatoriaPeriodoLabel {
-    margin-top: 200px;
-    margin-left: 900px;
+    margin-top: 12.5rem;
+    margin-left: 56.25rem;
 }
 
 #convocatoria input {
     font-weight: bold;
-    font-size: 16px;
-    margin-top: 10px;
+    font-size: 1rem;
+    margin-top: 0.625rem;
     text-align: left;
     
 }
@@ -61,25 +61,25 @@ margin-bottom: 3rem;
 /* Diseño móvil pequeño */
 @media (max-width: 480px) {
     #convocatoria input {
-        font-size: 12px;
-        margin-top: 5px;
-        padding: 5px;
+        font-size: 0.75rem;
+        margin-top: 0.3125rem;
+        padding: 0.3125rem;
     }
 }
 
 #convocatoria footer {
     font-weight: bold;
-    font-size: 16px;
-    margin-top: 10px;
+    font-size: 1rem;
+    margin-top: 0.625rem;
     text-align: center;
 }
 
 /* Diseño móvil pequeño */
 @media (max-width: 480px) {
     #convocatoria footer {
-        font-size: 12px;
-        margin-top: 5px;
-        padding: 5px;
+        font-size: 0.75rem;
+        margin-top: 0.3125rem;
+        padding: 0.3125rem;
     }
 }
 
@@ -88,9 +88,9 @@ margin-bottom: 3rem;
 
     #convocatoria input,
     #convocatoria footer {
-        font-size: 14px;
-        margin-top: 7px;
-        padding: 7px;
+        font-size: 0.875rem;
+        margin-top: 0.4375rem;
+        padding: 0.4375rem;
     }
 }
 
@@ -159,7 +159,7 @@ margin-bottom: 3rem;
 .navbar-nav, .nav-link {
     color: white;
     font-size: 1rem;
-    margin-right: 15px;
+    margin-right: 0.9375rem;
     transition: color 0.3s ease;
 }
 .horasActv2 input:focus,
@@ -190,7 +190,7 @@ margin-bottom: 3rem;
     }
 
     #seccion3_2{
-        padding: -20px 0 0 0;
+        padding: -1.25rem 0 0 0;
     }
 
     td.text-center.bg-transparent{
@@ -207,13 +207,13 @@ margin-bottom: 3rem;
 
 nav {
     position: fixed;
-    top: 20px;
-    left: 200px;
-    width: 200px;
+    top: 1.25rem;
+    left: 12.5rem;
+    width: 12.5rem;
     /* ancho del menú */
-    margin-left: -180px;
+    margin-left: -11.25rem;
     /* ajusta la posición horizontal */
-    padding-top: 50px;
+    padding-top: 3.125rem;
     background-color: #fff;
     /* agrega un fondo blanco para que se vea bien */
     z-index: 1;
@@ -228,43 +228,43 @@ nav::after{
 
 nav.fixed {
   /*position: fixed;*/
-  top: 20px;
-  left: 200px;
+  top: 1.25rem;
+  left: 12.5rem;
 }
 
 nav.show-nav {
     display: none;
 }
 header{
-    margin-left: 80px;
+    margin-left: 5rem;
 }
 
 #form1, #form2, #form2_2, #pMax60, #form4, #form6{
-   margin-top: 70px;
+   margin-top: 4.375rem;
 }
 
 #form4{
-    margin-bottom: 100px;
+    margin-bottom: 6.25rem;
 }
 
 #form6{
-    margin-left: 50px;
+    margin-left: 3.125rem;
 }
 
 #form3{
-    margin-top: 50px;
+    margin-top: 3.125rem;
 }
 
 #btn1{
-    padding-left: 100px;
-    padding-right: 100px;
-    border-radius: 90px 90px 90px 90px;
+    padding-left: 6.25rem;
+    padding-right: 6.25rem;
+    border-radius: 5.625rem;
 
 }
 [id^="btn3_"] {
-    padding-left: 80px;
-    padding-right: 70px;
-    border-radius: 90px 90px 90px 90px;
+    padding-left: 5rem;
+    padding-right: 4.375rem;
+    border-radius: 5.625rem;
     background-color: #7fb6d6;
     color: whitesmoke;
 
@@ -282,8 +282,8 @@ body.dark-mode [id^="btn3_"]:hover , body.dark-mode .dynamicBtn:hover{
 }
 
 #btn3_8{
-    margin-left: 1000px;
-    border-radius: 90px 90px 90px 90px;
+    margin-left: 62.5rem;
+    border-radius: 5.625rem;
 
     
 }
@@ -291,7 +291,7 @@ body.dark-mode [id^="btn3_"]:hover , body.dark-mode .dynamicBtn:hover{
 button.edit-button{
     color: whitesmoke!important;
     background-color: #146775!important;
-    border-radius: 90px 90px 90px 90px;
+    border-radius: 5.625rem;
     padding: .5rem 2rem .5rem 2rem;
     border: none thin transparent;
     margin-left: 70rem;
@@ -302,18 +302,18 @@ button#btn3_15 {
 }
 
 #btn3_19{
-    margin-left: 950px;
+    margin-left: 59.375rem;
 }
 
 
 #btn3_10{
-margin-left: 900px;
+margin-left: 56.25rem;
 }
 
 
 #btn3_2{
-    margin-left: -230px;
-    border-radius: 90px 90px 90px 90px;
+    margin-left: -14.375rem;
+    border-radius: 5.625rem;
 
 }
 
@@ -327,7 +327,7 @@ margin-left: 900px;
 
 .input-header {
     background-color: #ced4da;
-    margin-bottom: 3px;
+    margin-bottom: 0.1875rem;
     width: 100%;
 
 }
@@ -347,13 +347,13 @@ margin-left: 900px;
     display: grid;
     grid-template-columns: 1fr 2fr;
     /* Define the columns */
-    grid-gap: 10px;
+    grid-gap: 0.625rem;
     /* Add some space between the elements */
     align-items: center;
     /* Center the elements vertically */
-    padding: 20px;
+    padding: 1.25rem;
     /* Add padding to the container */
-    margin-top: 50px;
+    margin-top: 3.125rem;
 }
 
 
@@ -375,7 +375,7 @@ margin-left: 900px;
     background-color: #d6fff7;
     border: none;
     text-align: right;
-    padding: 0 40px;
+    padding: 0 2.5rem;
 
 }
 
@@ -384,7 +384,7 @@ margin-left: 900px;
     background-color: #d6fff7;
     border: none;
     text-align: center;
-    padding: 0 40px;
+    padding: 0 2.5rem;
 
 }
 
@@ -393,7 +393,7 @@ input#comIncisoA, input#comIncisoB, input#comIncisoC, input#comIncisoD{
     background-color: #d6fff7;
     border: none;
     text-align: center;
-    padding: 0 27px;  
+    padding: 0 1.6875rem;  
 }
 
 /* #comIncisoA,#comIncisoB,#comIncisoC,#comIncisoD */
@@ -535,9 +535,9 @@ body.dark-mode #comIncisoA, body.dark-mode #comIncisoB, body.dark-mode #comIncis
 }
 
 .send1{
-    padding-left: 200px;
-    padding-right: 200px;
-    margin-top: 20px;
+    padding-left: 12.5rem;
+    padding-right: 12.5rem;
+    margin-top: 1.25rem;
 }
 
 .score3_1, #score3_1, #score3_2, #score3_3, #score3_3_copy, #score3_4, #score3_5, #score3_6, #score3_7, #score3_8, #score3_8_1, #score3_9, #score3_9_0, #score3_9_1, #score3_10, 
@@ -569,7 +569,7 @@ body.dark-mode #comIncisoA, body.dark-mode #comIncisoB, body.dark-mode #comIncis
 .label-container span {
     margin-left: auto;
     /* Push the labels to the right side */
-    margin-bottom: 5px;
+    margin-bottom: 0.3125rem;
     /* Add some space between the labels */
 }
 
@@ -578,7 +578,7 @@ body.dark-mode #comIncisoA, body.dark-mode #comIncisoB, body.dark-mode #comIncis
 text-align: right;
 background-color: #c1cfd3;
 border: none;
-padding: 0 30px;
+padding: 0 1.875rem;
 
 
 }
@@ -603,7 +603,7 @@ justify-content: flex-start;
 }
 
 #elaboracion3, #elaboracion4, #elaboracion5{
-    padding-left: 30px;
+    padding-left: 1.875rem;
 }
 
 
@@ -611,7 +611,7 @@ justify-content: flex-start;
 #elaboracionSubTotal1 label, #elaboracionSubTotal3 label, #elaboracionSubTotal4 label, #elaboracionSubTotal5 label{
 border: none;
 text-align: right;
-padding-left: 100px;
+padding-left: 6.25rem;
 
 }
 
@@ -665,20 +665,20 @@ text-align: right;
 
 /*Puntaje de la Comision Dictaminadora*/
 .cd{
-   width: 100px; 
+   width: 6.25rem; 
    text-align: center;
    
 }
 
 
 .obra {
-    width: 300px;
+    width: 18.75rem;
     /* Ancho deseado para la columna 'Obra' */
 }
 .incisos, .punto3_4, .punto3_5, .punto3_6, .punto3_7, .p3_9{
     white-space: nowrap;
     width: 1%;
-    height: 20px;
+    height: 1.25rem;
     font-weight: normal;
 }
 
@@ -689,46 +689,46 @@ text-align: right;
 
 .acreditacion{
     font-weight: normal;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .acreditacionObsv {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .descripcion, .descripcionCAAC{
     font-weight: normal;
-    padding-left: 100px;
-    padding-right: 560px;
+    padding-left: 6.25rem;
+    padding-right: 35rem;
 }
 
 
 .descripcionDDIE{
     font-weight: normal;
-        padding-left: 100px;
-        padding-right: 880px;
+        padding-left: 6.25rem;
+        padding-right: 55rem;
 }
 
 #convocatoriaPeriodoLabel{
-   margin-top: 200px;
-   margin-left: 900px;
+   margin-top: 12.5rem;
+   margin-left: 56.25rem;
 }
 
 
 
 #resumen h2{
-margin-bottom: 20px;
+margin-bottom: 1.25rem;
 }
 
 #evaluator_name_1, #evaluator_name_2, #evaluator_name_3, #signature_path_1,
 #signature_path_2,
 #signature_path_3{
-    margin-left: 30px;
+    margin-left: 1.875rem;
 }
 
 #signature_path_1, #signature_path_2, #signature_path_3{
-    margin-top: 50px;
+    margin-top: 3.125rem;
 }
 
 .d-none {
@@ -736,8 +736,8 @@ margin-bottom: 20px;
 }
 
 #userReports{
-    margin-top: 20px;
-    margin-left: 100px;
+    margin-top: 1.25rem;
+    margin-left: 6.25rem;
 }
 
 .footer-number {
@@ -745,8 +745,8 @@ margin-bottom: 20px;
     bottom: 0;
     right: 0;
     background-color: white;
-    padding: 10px;
-    margin: 10px;
+    padding: 0.625rem;
+    margin: 0.625rem;
     border: 1px solid #ccc;
 }
 
@@ -768,7 +768,7 @@ margin-bottom: 20px;
             margin: 0;
             /* Elimina márgenes adicionales */
             padding: 0;
-            font-size: 10px;
+            font-size: 0.625rem;
             /* Tamaño de letra base para impresión */
         }
 
@@ -811,36 +811,36 @@ margin-bottom: 20px;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 12px;
+            font-size: 0.75rem;
             /* Ajusta el tamaño de letra del footer */
         }
     
         main {
-            font-size: 10px;
+            font-size: 0.625rem;
             /* Tamaño de letra reducido para el contenido principal */
         }
 
 }
 
 form[id^="form3_"] {
-    margin-bottom: 400px;
+    margin-bottom: 25rem;
 }
 
 #form2, #form2_2{
-    margin-bottom: 200px;
+    margin-bottom: 12.5rem;
 }
 
 #form2_2Button, #form3_1Button, #form3_2Button{
-    margin-left: 260px;
-    width: 200px;
-    border-radius: 90px 90px 90px 90px;
+    margin-left: 16.25rem;
+    width: 12.5rem;
+    border-radius: 5.625rem;
     
 }
 
 #form2_1Button{
-    margin-left: 950px;
-    width: 200px;
-    border-radius: 90px 90px 90px 90px;
+    margin-left: 59.375rem;
+    width: 12.5rem;
+    border-radius: 5.625rem;
 }
 
 body.light-mode #form2_1Button, body.light-mode #form2_2Button, body.light-mode #btn1, body.light-mode #form3_1Button, body.light-mode #form3_2Button{
@@ -864,11 +864,11 @@ body.dark-mode #form2_2Button:hover, body.dark-mode #form3_1Button:hover, body.d
     background-color: #6a5b9f;
     font-weight: bold;
 }
-.menu{padding-top: 50px; height: 800px;}
+.menu{padding-top: 3.125rem; height: 50rem;}
 
 @media (min-width: 768px) {
     .container {
-        max-width: 1200px;
+        max-width: 75rem;
         padding: 0 4rem;
     }
 
@@ -886,7 +886,7 @@ body.dark-mode #form2_2Button:hover, body.dark-mode #form3_1Button:hover, body.d
 
 @media (min-width: 1024px) {
     .container {
-        max-width: 1200px;
+        max-width: 75rem;
         padding: 0 4rem;
     }
 
@@ -945,7 +945,7 @@ body.dark-mode #form2_2Button:hover, body.dark-mode #form3_1Button:hover, body.d
 
 input[id^="obs3_2_"]{
     width: 75%;
-    padding-inline-end: 31px;
+    padding-inline-end: 1.9375rem;
     background-color: transparent;
     border-color: transparent;
 }
@@ -975,7 +975,7 @@ td#cantDA2, td#cantCAAC2{
 }
 
 span#cantInternacional, span#cantNacional, span#cantidadRegional, span#cantPreparacion{
-    padding-inline-start: 20px;
+    padding-inline-start: 1.25rem;
 }
 
 .fas.fa-power-off {
@@ -1000,16 +1000,16 @@ td[id^="puntaje3_9_"]{
 
 @media (min-width: 1024px){
 #puntaje60{
-    margin-left: 70px;
+    margin-left: 4.375rem;
     
 }
 
 
 #puntaje40, #puntaje10, #puntaje20, #p10{
-    margin-left: 5px;
+    margin-left: 0.3125rem;
 }
 #cantidadActv, #cantidadform3_3{
-    margin-left: 350px;
+    margin-left: 21.875rem;
     text-align: center;
     
 }
@@ -1050,7 +1050,7 @@ td[id^="puntaje3_9_"]{
 #nombre2, #periodo2,
 #area2,
 #departamento2{
-    margin-left: 30px;
+    margin-left: 1.875rem;
 }
 
 #convocatoria2{
@@ -1058,10 +1058,10 @@ td[id^="puntaje3_9_"]{
 }
 
 .form3_1LabelActv{
-    height:84px; width: 170px;
+    height:5.25rem; width: 10.625rem;
 }
 .form3_1LabelDoc{
-height:94px; width: 180px;
+height:5.875rem; width: 11.25rem;
 }
 
 body.dark {
@@ -1128,25 +1128,25 @@ body.dark-mode nav.nav.flex-column a:hover {
 }
 
 .dynamicBtn {
-    margin-left: calc(100vw - 740px);
-    padding: 0 100px  0 100px; 
+    margin-left: calc(100vw - 46.25rem);
+    padding: 0 6.25rem  0 6.25rem; 
     text-align: center;
-    border-radius: 90px 90px 90px 90px;
+    border-radius: 5.625rem;
 }
 
 .logo-icon {
-    width: 32px;
+    width: 2rem;
     /* Tamaño pequeño como un emoji */
-    height: 32px;
-    margin-right: 10px;
+    height: 2rem;
+    margin-right: 0.625rem;
     /* Espacio entre el logo y el texto */
 }
 
 .datosConvocatoria {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 13.75rem 1fr;
     /* Ajusta el ancho de la columna de los labels */
-    gap: 2px 0;
+    gap: 0.125rem 0;
 }
 
 .datosConvocatoria .row {
@@ -1158,7 +1158,7 @@ body.dark-mode nav.nav.flex-column a:hover {
 .datosConvocatoria label {
     text-align: left;
     align-self: start;
-    margin-bottom: 2px;
+    margin-bottom: 0.125rem;
 
 }.datosConvocatoria .valor {
     display: flex;
@@ -1168,7 +1168,7 @@ body.dark-mode nav.nav.flex-column a:hover {
 
 .datosConvocatoria .input-header {
     background-color: #ced4da;
-    margin-bottom: 2px;
+    margin-bottom: 0.125rem;
     margin-left: 0;
     display: inline;
     /* Solo el texto tiene fondo */
@@ -1197,15 +1197,15 @@ body.dark-mode .btn-outline-primary{
 }
 
 td#score3_8, td#comision3_8, td#comision3_2 , th#score3_12_0, th#comision3_12_0, th#score3_12_1, th#comision3_12_1, th#score3_14, th#comision3_14, th#score3_18_0, th#comision3_18_0, th#score3_18_1, th#comision3_18_1{
-    padding-bottom: 20px;
+    padding-bottom: 1.25rem;
 }
 
 td#score3_2, td#comision3_2{
-    padding-bottom: 5px!important;
+    padding-bottom: 0.3125rem!important;
 }
 
 input#obs3_8_1_1 {
-    padding-right: 200px;
+    padding-right: 12.5rem;
 }
 
 th.obsv.cd , th.seccion3_9{
@@ -1220,7 +1220,7 @@ input#obsCGUtitular, input#obsCGUespecial, input#obsCGUpermanente, input#obsCAAC
 input#obsComPEDPD, input#obsComPartPos, input#obsRespPos, input#obsRespCarrera, input#obsRespProd, input#obsRespLab, input#obsExamProf, input#obsExamAcademicos,
 input#obsPRODEPformResp, input#obsPRODEPformInteg, input#obsPRODEPenconsResp, input#obsPRODEPenconsInteg, input#obsPRODEPconsResp, input#obsPRODEPconsInteg{
 
-    padding-top: 20px;
+    padding-top: 1.25rem;
 }
 
 td.cantidad {
@@ -1298,7 +1298,7 @@ body.dark-mode #comInternacional, body.dark-mode #comNacional, body.dark-mode #c
 
 td.cantidad2{
     text-align: center;
-    padding-inline-start: 30px
+    padding-inline-start: 1.875rem
 }
 
 span#obs3_8_1_1, td.td_form3_15, #comisionIndividual, #comisionGrupal, #obsGrupal, #obsIndividual, td#subtotalPatentes,td#subtotalPrototipos,
@@ -1307,7 +1307,7 @@ td#puntajeHoras3_6{
 }
 
 th.obsv.cd {
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 [id^="tutorias"],  td.obsv_3_14, #comisionPatententes, #comisionPrototipos, #obsPatentes, #obsPrototipos,
@@ -1463,8 +1463,8 @@ td#puntajeHoras3_8, #comisionDict3_8{
 }
 
     .select2-container--default .select2-selection--single {
-        height: 38px;
-        padding: 5px 10px;
+        height: 2.375rem;
+        padding: 0.3125rem 0.625rem;
         border: 1px solid #ced4da;
     }
 
@@ -1719,6 +1719,6 @@ body.dark-mode .bgComision input {
 /* Botón de modo oscuro */
 .dark-mode-button {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 1.25rem;
+    right: 1.25rem;
 }

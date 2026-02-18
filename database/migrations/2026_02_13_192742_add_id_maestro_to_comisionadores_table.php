@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::table('comisionadores', function (Blueprint $table) {
             if (!Schema::hasColumn('comisionadores', 'id_maestro')) {
                 // Se usa bigInteger (camelCase) y se agrega index() para búsquedas rápidas
-                $table->bigInteger('id_maestro')->nullable()->index()->after('id');
+                $table->string('id_maestro',10)->nullable()->after('id');
+                
             }
         });
     }
