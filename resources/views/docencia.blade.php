@@ -58,21 +58,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
             --nav-width: 330px;
         }
 
-        div#step11,
-        div#step12,
-        div#step13,
-        div#step14,
-        div#step15,
-        div#step16,
-        div#step17,
-        div#step18,
-        div#step19,
-        div#step20 {
-            margin-inline-start: 10rem;
-        }
-
         button#edit-form-btn {
-            margin-inline-start: 10rem;
             background-color: #82bdb2;
             border-color: transparent;
             color: white;
@@ -108,24 +94,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
 <body class="font-sans antialiased">
 
     @if (Auth::check())
-    <nav class="nav flex-column" id="docencia-nav"
-        style="width: var(--nav-width); position: fixed; left: 0; top: 0; margin-left: 0; padding-top: 0.125rem; height: 100vh; overflow-y: auto; background: linear-gradient(90deg, #afc7ce, #4281a4);">
-        <div class="nav-header"
-            style="display: flex;padding-top: 2rem;justify-content: flex-start;align-content: flex-start;flex-direction: row-reverse;align-items: baseline;">
-            <li style="list-style: none; margin-right: 20px;">
-                <a href="{{ route('login') }}" style="display:inline;padding-left:1rem;" title="cerrar_sesion">
-                    <i class="fas fa-power-off" style="font-size: 20px; color:white;" name="cerrar_sesion"></i>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled enlaceSN" style="font-size: large; color: white;padding-left: 1rem;"
-                    href="#">
-                    <i class="fa-solid fa-user"></i>&nbsp&nbsp{{ Auth::user()->email }}
-                </a>
-            </li>
-        </div>
-
-        <br>
+        {{-- El componente x-nav-docentes ya incluye la estructura <nav>, el header y los estilos necesarios --}}
         <x-nav-docentes :user="Auth::user()">
             <li class="nav-item">
                 @if(Auth::user()->user_type ==='controlador')
@@ -202,68 +171,10 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                 @endif
                 @endforeach
             </ul>
-    </nav>
-
-    <div class="font-sans antialiased" style="margin-left: 300px;">
-
-        <ul class="actv3"><i class="fas fa-chalkboard-teacher"></i>&nbsp;Calidad en la docencia:
-            <li><a href="javascript:void(0);" onclick="showStep(1)">3.1 Participación en actividades de diseño
-                    curricular</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(2)">3.2 Calidad del desempeño docente evaluada por el
-                    alumnado</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(3)">3.3 Publicaciones relacionadas con la docencia</a>
-            </li>
-            <li><a href="javascript:void(0);" onclick="showStep(4)">3.4 Distinciones académicas recibidas por el
-                    docente</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(5)">3.5 Asistencia, puntualidad y permanencia en el
-                    desempeño docente, evaluada por el JD y por CAAC</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(6)">3.6 Capacitación y actualización pedagógica
-                    recibida</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(7)">3.7 Cursos de actualización disciplinaria recibidos
-                    dentro de su área de conocimiento</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(8)">3.8 Impartición de cursos, diplomados, seminarios,
-                    talleres extracurriculares, de educación, continua o de formación y capacitación docente</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(9)">3.8.1 RSU </a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(10)">3.9 Trabajos dirigidos para la titulación de
-                    estudiantes</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(11)">3.10 Tutorías a estudiantes</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(12)">3.11 Asesoría a estudiantes</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(13)">3.12 Publicaciones de investigación relacionadas
-                    con el contenido de los PE que imparte el docente</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(14)">3.13 Proyectos académicos de investigación</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(15)">3.14 Participación como ponente en congresos o
-                    eventos académicos del Área de Conocimiento o afines del docente</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(16)">3.15 Registro de patentes y productos de
-                    investigación tecnológica y educativa</a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(17)">3.16 Actividades de arbitraje, revisión, correción
-                    y edición </a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(18)">3.17 Proyectos académicos de extensión y difusión
-                </a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(19)">3.18 Organización de congresos o eventos
-                    institucionales del área de conocimiento de la ó el Docente </a></li>
-            <li><a href="javascript:void(0);" onclick="showStep(20)">3.19 Participación en cuerpos colegiados</a></li>
-
-            {{-- Bucle para formularios dinámicos de la sección 3 (segundo menú) --}}
-
-
-
-            @foreach($dynamicForms as $form)
-            @if((Str::startsWith((string)$form->form_type, '3.%') || Str::startsWith($form->form_name, '3.%')) &&
-            !in_array($form->form_type, $staticFormTypes))
-            @php $dynamicIndex++; @endphp
-
-            <li>
-                <a href="javascript:void(0);" onclick="showStep({{ $dynamicIndex }})">
-                    {{ $form->form_name }}
-                </a>
-            </li>
-            @endif
-            @endforeach
-        </ul>
         </x-nav-docentes>
         @endif
         <x-general-header />
-        <div class="bg-gray-50 text-black/50 main-content-area">
+        <div class="bg-gray-50 text-black/50 main-content-area" style="padding-left: 6rem;">
             <div id="instrucionEdit">
                 <p>*Nota: Para editar una de las tablas de los formularios, haga clic en el botón ✎ Editar Formulario.
                     <br> También podrá dirigirse a este elemento haciendo clic en cualquiera de los formularios

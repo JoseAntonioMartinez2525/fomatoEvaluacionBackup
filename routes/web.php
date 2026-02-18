@@ -103,7 +103,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
  
 Route::middleware(['auth','resolve.role'])->group(function (){
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('rules', function () {return view('rules'); })->name('rules');
+    
      Route::get('/welcome', [DashboardController::class, 'index'])->name('welcome');
     Route::get('resumen', function () {return view('resumen'); })->name('resumen');
     Route::get('perfil', function () {return view('perfil'); })->name('perfil');
@@ -205,7 +205,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware([\App\Http\Middleware\CheckEvaluationPeriod::class])->group(function () {
         // Rutas GET para mostrar los formularios
         Route::get('docencia', function () {return view('docencia'); })->name('docencia');
-
+        Route::get('rules', function () {return view('rules'); })->name('rules');
         // Rutas POST para guardar los datos de los formularios
         Route::post('/store', [ResponseController::class, 'store'])->name('store');
         Route::post('/store2', [ResponseForm2Controller::class, 'store2'])->name('store2');
@@ -244,7 +244,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store-form33', [DictaminatorForm3_3Controller::class, 'storeform33'])->name('form3_3.store')->withoutMiddleware('auth');
     Route::post('/store-form34', [DictaminatorForm3_4Controller::class, 'storeform34'])->name('form3_4.store')->withoutMiddleware('auth');
     Route::post('/store-form35', [DictaminatorForm3_5Controller::class, 'storeform35'])->name('form3_5.store')->withoutMiddleware('auth');
-    Route::post('/store-form36', [DictaminatorForm3_6Controller ::class, 'storeform36'])->name('form3_6.store')->withoutMiddleware('auth');
+    Route::post('/store-form36', [DictaminatorForm3_6Controller::class, 'storeform36'])->name('form3_6.store')->withoutMiddleware('auth');
     Route::post('/store-form37', [DictaminatorForm3_7Controller::class, 'storeform37'])->name('form3_7.store')->withoutMiddleware('auth');
     Route::post('/store-form38', [DictaminatorForm3_8Controller::class, 'storeform38'])->name('form3_8.store')->withoutMiddleware('auth');
     Route::get('/get-form38', [DictaminatorForm3_8Controller::class, 'getFormData38'])->name('form3_8.get')->withoutMiddleware('auth');

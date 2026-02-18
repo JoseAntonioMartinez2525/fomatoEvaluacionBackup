@@ -230,9 +230,7 @@ nav::after{
     outline: none;
 }
 
-nav.fixed {
-  /* This class seems to be part of an old layout system and can likely be removed. */
-}
+
 
 nav.show-nav {
     display: none;
