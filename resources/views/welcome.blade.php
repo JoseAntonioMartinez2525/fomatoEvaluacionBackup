@@ -56,9 +56,9 @@ button#edit-form-btn{
       @if (Route::has('login'))
         @if (Auth::check())
         <x-nav-docentes :user="Auth::user()">
-          <li class="nav-item">
+          {{-- <li class="nav-item">
             <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="javascript:void(0);" onclick="showStep(1)" title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Evaluación</a>
-          </li>
+          </li> --}}
           <ul class="actv3"><i class="fa-solid fa-clipboard-user"></i>&nbsp;Actividades/Apartados:
             <li><a href="javascript:void(0);" onclick="showStep(2)">1. Permanencia en las actividades de la docencia</a></li>
             <li><a href="javascript:void(0);" onclick="showStep(3)">2. Dedicación en el desempeño docente</a></li>

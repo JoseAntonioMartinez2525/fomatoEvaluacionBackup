@@ -78,13 +78,6 @@ if (!isset($convocatoria) || !isset($periodo)) {
                                 <li id="reportLink" class="nav-item d-none">
                                     <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('perfil') }}">Mostrar Reporte</a>
                                 </li>
-                                <li class="nav-item">
-                                @if(Auth::user()->user_type === 'dictaminador')
-                                    <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('comision_dictaminadora') }}">Selección de Formatos</a>
-                                @else
-                                    <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}">Selección de Formatos</a>
-                                @endif
-                                </li>
                             </nav>
                         </form>
                     </section>

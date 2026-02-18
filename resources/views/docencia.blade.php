@@ -124,35 +124,19 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
         <br>
         <x-nav-docentes :user="Auth::user()">
             <li class="nav-item">
-                @if(Auth::user()->user_type === 'dictaminador')
-                <a class="nav-link active enlaceSN" style="width: 200px;"
-                    href="{{ route('comision_dictaminadora') }}">Selección de Formatos</a>
-                @elseif(Auth::user()->user_type ==='controlador')
+                @if(Auth::user()->user_type ==='controlador')
                 <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}">Selección de
                     Formatos</a>
                 @endif
                 <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="{{ route('welcome') }}"
-                    title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Evaluación</a>
-            </li>
-            @if($userType !== 'docente')
-            <li class="nav-item">
-                <a class="nav-link active enlaceSN" href="{{ route('resumen') }}">Resumen</a>
-                <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="javascript:void(0);"
-                    onclick="showStep(1)" title="Formato de Evaluación docente"><i
-                        class="fas fa-chalkboard-teacher"></i>&nbsp;Calidad en la docencia</a>
-            </li>
-            @else
+                    title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Inicio</a>
+            </li>           
             <li class=" nav-item">
                 <a class="nav-link active enlaceSN" aria-current="page" style="width: 200px;"
                     href="{{ route('rules') }}" title="Reglamento deacuerdo al artículo 10 de PEDPD"><i
                         class="fas fa-book"></i>&nbspReglamento</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="{{ route('welcome') }}"
-                    title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbspEvaluación</a>
-            </li>
-            @endif
-            <ul class="actv3"><i class="fas fa-chalkboard-teacher"></i>&nbspCalidad en la docencia:
+            <ul class="actv3"><i class="fas fa-chalkboard-teacher"></i>&nbsp3. Calidad en la docencia:
                 <li><a href="javascript:void(0);" onclick="showStep(1)">3.1 Participación en actividades de diseño
                         curricular</a></li>
                 <li><a href="javascript:void(0);" onclick="showStep(2)">3.2 Calidad del desempeño docente evaluada por

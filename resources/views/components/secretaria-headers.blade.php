@@ -32,16 +32,6 @@
                                                 class="fas fa-chart-bar"></i>Mostrar
                                             Reporte</a>
                                     </li>
-                                    <li class="nav-item">
-                                        @if($user->user_type === 'dictaminador')
-                                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('comision_dictaminadora') }}"><i
-                                                    class="fa-regular fa-folder-open"></i>&nbspSelección de Formatos</a>
-                                        @else
-                                            <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('secretaria') }}"><i
-                                                    class="fa-regular fa-folder-open"></i>&nbspSelección de
-                                                Formatos</a>
-                                        @endif
-                                    </li>
                                     <!-- Funcionalidad en caso de nuevos formularios
                                     @if(Auth::user()->user_type ==='controlador')
                                     <li class="nav-item">
