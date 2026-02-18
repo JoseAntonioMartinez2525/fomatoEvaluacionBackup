@@ -95,6 +95,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
 
     @if (Auth::check())
         {{-- El componente x-nav-docentes ya incluye la estructura <nav>, el header y los estilos necesarios --}}
+            
         <x-nav-docentes :user="Auth::user()">
             <li class="nav-item">
                 @if(Auth::user()->user_type ==='controlador')
@@ -173,6 +174,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
             </ul>
         </x-nav-docentes>
         @endif
+        <button id="toggle-dark-mode" class="btn btn-secondary mt-3"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
         <x-general-header />
         <div class="bg-gray-50 text-black/50 main-content-area" style="padding-left: 6rem;">
             <div id="instrucionEdit">
@@ -180,8 +182,6 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                     <br> También podrá dirigirse a este elemento haciendo clic en cualquiera de los formularios
                     deseados, ubicados en la barra de menú al lado izquierdo.</p>
             </div>
-            <button id="toggle-dark-mode" class="btn btn-secondary"><i class="fa-solid fa-moon"></i>&nbspModo
-                Obscuro</button>
             <button id="edit-form-btn" class="btn btn-info"><i class="fa-solid fa-pencil"></i>&nbsp;Editar
                 Formulario</button>
 
