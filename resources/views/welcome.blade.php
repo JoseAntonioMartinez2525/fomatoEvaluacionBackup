@@ -807,12 +807,18 @@ function onChange() {
   document.addEventListener('DOMContentLoaded', function () {
     // Get the canvas element
     var canvas = document.getElementById('convocatoriaCanvas');
+    if (!canvas) return;
+
     var context = canvas.getContext('2d');
 
-    // Function to update the canvas with 'Convocatoria' value
-    function updateCanvas(text) {
+    // Get the input elements
+    var convocatoriaInput = document.getElementById('convocatoria');
+    var periodoInput = document.getElementById('periodo');
+
+    // Function to update the canvas
+    function updateCanvas() {
       // Clear the canvas
-      context.clearRect(200, 100, canvas.width, canvas.height);
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
       // Set text properties
       context.font = '20px Arial';
@@ -820,21 +826,23 @@ function onChange() {
       context.textAlign = 'center';
       context.textBaseline = 'middle';
 
+      var convocatoriaText = convocatoriaInput ? (convocatoriaInput.value || convocatoriaInput.placeholder || '') : '';
+      var periodoText = periodoInput ? (periodoInput.value || periodoInput.placeholder || '') : '';
+
       // Draw the text
-      context.fillText(text, canvas.width / 2, canvas.height / 2);
+      context.fillText(convocatoriaText, canvas.width / 2, (canvas.height / 2) - 15);
+      context.fillText(periodoText, canvas.width / 2, (canvas.height / 2) + 15);
     }
 
-    // Get the input element with id 'convocatoria'
-    var convocatoriaInput = document.getElementById('convocatoria');
-    if (convocatoriaInput) {
-      // Update the canvas initially with the placeholder value or empty
-      updateCanvas(convocatoriaInput.value || convocatoriaInput.placeholder);
+    // Initial update
+    updateCanvas();
 
-      // Listen for input events to dynamically update the canvas
-      convocatoriaInput.addEventListener('input', function () {
-        var newValue = convocatoriaInput.value;
-        updateCanvas(newValue);
-      });
+    // Listen for input events to dynamically update the canvas
+    if (convocatoriaInput) {
+      convocatoriaInput.addEventListener('input', updateCanvas);
+    }
+    if (periodoInput) {
+      periodoInput.addEventListener('input', updateCanvas);
     }
   });
 
