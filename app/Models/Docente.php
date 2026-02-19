@@ -21,6 +21,7 @@ class Docente extends Model
         'email',
         'departamento',
         'area',
+        'maestroId',
         'fecha_convocatoria',
         'periodo',
     ];

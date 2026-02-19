@@ -84,9 +84,21 @@ class SyncComisionadores extends Command
 
         $this->info("\nSe encontraron " . count($dictaminadoresList) . " registros únicos. Procesando...");
 
-        $this->withProgressBar($dictaminadoresList, function ($apiData) use ($jsonFechas) {
+        // Obtener la lista blanca de correos desde config/dictaminadores.php
+        $whitelist = array_map('strtolower', array_keys(config('dictaminadores', [])));
+        if (empty($whitelist)) {
+            $this->warn('La lista de dictaminadores en config/dictaminadores.php está vacía. No se aplicará filtro.');
+        }
+
+        $this->withProgressBar($dictaminadoresList, function ($apiData) use ($jsonFechas, $whitelist) {
             $email = $apiData['email'] ?? null;
             if (!$email) return;
+
+            // Si hay whitelist definida, filtrar los emails que NO estén en la lista
+            if (!empty($whitelist) && !in_array(strtolower($email), $whitelist)) {
+                // No está en la lista, ignorar
+                return;
+            }
 
             // Datos básicos desde la lista de búsqueda
             $nombre = $apiData['nombre'] ?? '';
