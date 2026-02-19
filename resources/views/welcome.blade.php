@@ -37,6 +37,7 @@ button#edit-form-btn{
  background-color: #82bdb2;
  border-color: transparent;
  color: white;
+ margin-inline-start: 5rem;
 }
 
 {

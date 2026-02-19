@@ -6,13 +6,6 @@
         ->where('start_date', '<=', now())
         ->where('end_date', '>=', now())
         ->exists();
-
-    $docentePeriod = \DB::table('evaluation_dates')
-        ->where('type', 'docentes_llenado')
-        ->latest('id')
-        ->first();
-    
-    $isDocentePeriodFinished = $docentePeriod ? now()->gt(\Carbon\Carbon::parse($docentePeriod->end_date)->endOfDay()) : false;
 @endphp
 <style>
 body.dark-mode .nav {
@@ -66,7 +59,7 @@ body.dark-mode .nav {
                             <a class="nav-link active enlaceSN" style="width: 200px;" href="{{ route('docente.forms.index') }}"><i class="fa-regular fa-folder-open"></i>&nbspBuscar evaluaciones</a>
                         @endif
                     </li>
-                    @if($user->user_type === 'dictaminador' && (!$applyDateRules || ($isDictaminadorPeriodActive && $isDocentePeriodFinished)))
+                    @if($user->user_type === 'dictaminador' && (!$applyDateRules || $isDictaminadorPeriodActive))
                     <li class="nav-item">
                         <a class="nav-link active enlaceSN" style="width: 200px;" 
                            href="{{ route('docente.forms.index') }}">
