@@ -60,19 +60,37 @@ class SyncDocentes extends Command
 
         // 2. Obtener lista de usuarios desde la API (Fuente de verdad)
         $this->info("Consultando API para obtener lista de docentes...");
-        // Usamos el endpoint de búsqueda de dictaminadores/maestros como fuente
-        $docentesList = $this->apiService->searchDictaminadores(['nombre' => '', 'primerApellido' => '', 'segundoApellido' => '']);
+        // La API requiere un filtro de búsqueda. Iteramos por el alfabeto para obtener todos los registros.
+        $alphabet = range('A', 'Z');
+        $allDocentes = [];
+
+        $this->output->progressStart(count($alphabet));
+
+        foreach ($alphabet as $letter) {
+            $results = $this->apiService->searchDictaminadores(['primerApellido' => $letter]);
+            if (!empty($results)) {
+                foreach ($results as $result) {
+                    if (isset($result['maestroId'])) {
+                        $allDocentes[$result['maestroId']] = $result; // Usar ID como clave para evitar duplicados
+                    }
+                }
+            }
+            $this->output->progressAdvance();
+        }
+
+        $this->output->progressFinish();
+        $docentesList = array_values($allDocentes);
 
         if (empty($docentesList)) {
             $this->warn('La API no devolvió ningún registro.');
             return;
         }
 
-        foreach ($docentesList as $apiData) {
-            $email = $apiData['email'] ?? null;
-            if (!$email) continue;
+        $this->info("\nSe encontraron " . count($docentesList) . " registros únicos. Procesando...");
 
-            $this->info("Procesando: {$email}");
+        $this->withProgressBar($docentesList, function ($apiData) use ($jsonFechas, $periodo) {
+            $email = $apiData['email'] ?? null;
+            if (!$email) return;
 
             // Datos básicos desde la lista de búsqueda
             $nombre = $apiData['nombre'] ?? '';
@@ -109,11 +127,8 @@ class SyncDocentes extends Command
                 ['email' => $email], // Condición de búsqueda única
                 $docenteData
             );
+        });
 
-            $fullName = trim("{$nombre} {$apellido1} {$apellido2}");
-            $this->line(" -> Sincronizado: {$fullName} (ID Maestro: " . ($apiData['maestroId'] ?? '') . ")");
-        }
-
-        $this->info('Sincronización de docentes completada.');
+        $this->info("\nSincronización de docentes completada.");
     }
 }

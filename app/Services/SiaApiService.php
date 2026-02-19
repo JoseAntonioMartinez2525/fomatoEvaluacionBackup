@@ -12,8 +12,14 @@ class SiaApiService
     public function __construct()
     {
         // Lee la configuración o usa variables de entorno directamente
-        $this->baseUrl = config('siaa.api_url', env('SIAA_API_URL', 'https://siia-develop.uabcs.mx'));
+        // Usamos rtrim para asegurar que no haya doble slash al final
+        $this->baseUrl = rtrim(config('siaa.api_url', env('SIAA_API_URL', 'https://siia-develop.uabcs.mx')), '/');
         $this->token = config('siaa.api_token', env('SIAA_API_TOKEN'));
+
+        // Diagnóstico para consola: Verificar si el token se cargó
+        if (app()->runningInConsole() && empty($this->token)) {
+            $this->logConsole("⚠️ ADVERTENCIA: El token SIAA_API_TOKEN está vacío o nulo. Si usas config:cache, ejecuta 'php artisan config:clear'.");
+        }
     }
 
     /**
@@ -26,16 +32,16 @@ class SiaApiService
     {
         // --- CÓDIGO REAL DE LA API ---
         if (!$this->token) {
-            if (app()->runningInConsole()) echo "\n[ERROR] Token no configurado.";
-            \Log::error('SIAA API Token no está configurado.');
+            $this->logError('Token no configurado en getUserInfo.');
             return $this->getMockUserData($email);
         }
 
         try {
             $response = Http::withToken($this->token)
                 ->acceptJson()
+                ->withHeaders(['User-Agent' => 'FormatoEvaluacion/1.0'])
                 ->withoutVerifying() // <-- AÑADE ESTA LÍNEA
-                ->timeout(10) // Timeout explícito de 10 segundos
+                ->timeout(30) // Aumentamos timeout
                 ->get("{$this->baseUrl}/personal", [
                     'email' => $email
                 ]);
@@ -49,23 +55,13 @@ class SiaApiService
                 return $data; // Retorna los datos si ya es un objeto único
             }
 
-            if (app()->runningInConsole()) {
-                echo "\n[API ERROR {$response->status()}] {$email}: " . substr($response->body(), 0, 200);
-            }
-
-            \Log::error("Fallo en la petición a la API SIAA para el email: {$email}", [
-                'status' => $response->status(),
-                'body' => $response->body()
-            ]);
+            $this->logError("Fallo getUserInfo ({$response->status()}) para {$email}: " . substr($response->body(), 0, 100));
         } catch (\Exception $e) {
-            if (app()->runningInConsole()) {
-                echo "\n[API EXCEPTION] {$email}: " . $e->getMessage();
-            }
-            \Log::error("Error de conexión con API SIAA para {$email}: " . $e->getMessage());
+            $this->logError("Excepción getUserInfo {$email}: " . $e->getMessage());
         }
 
         // Fallback: Si la API falla, intenta usar los datos simulados/locales
-        //return $this->getMockUserData($email);
+        return $this->getMockUserData($email);
     }
 
     /**
@@ -93,23 +89,49 @@ class SiaApiService
     public function searchDictaminadores(array $filters = []): array
     {
         if (!$this->token) {
+            $this->logError("Token no configurado. No se puede buscar dictaminadores.");
             return [];
         }
 
-        try {
-            $response = Http::withToken($this->token)
-                ->acceptJson()
-                ->withoutVerifying()
-                ->timeout(10)
-                ->get("{$this->baseUrl}/ProgramaEstimulos/dictaminadores/search", $filters);
+        // Forzamos la estructura de filtros para que siempre incluya los 3 campos,
+        // que es lo que la API parece requerir para no devolver un 404.
+        $finalFilters = [
+            'nombre' => $filters['nombre'] ?? '',
+            'primerApellido' => $filters['primerApellido'] ?? '',
+            'segundoApellido' => $filters['segundoApellido'] ?? '',
+        ];
 
-            if ($response->successful()) {
-                return $response->json();
+        $url = "{$this->baseUrl}/ProgramaEstimulos/dictaminadores/search";
+        $fullUrlForLog = $url . '?' . http_build_query($finalFilters);
+
+        try {
+            if (app()->runningInConsole()) {
+                $this->logConsole("Consultando: GET $fullUrlForLog");
             }
 
-            \Log::error("Fallo en búsqueda de dictaminadores: " . $response->status());
+            $response = Http::withToken($this->token)
+                ->acceptJson()
+                ->withHeaders(['User-Agent' => 'FormatoEvaluacion/1.0'])
+                ->withoutVerifying()
+                ->timeout(30)
+                ->get($url, $finalFilters);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (is_array($data)) {
+                    return $data;
+                }
+                if ($data === null) {
+                    // Respuesta vacía (por ejemplo 204 No Content): devolver lista vacía
+                    return [];
+                }
+                // Si la API devuelve un objeto asociativo, convertir a array
+                return (array) $data;
+            }
+
+            $this->logError("Fallo búsqueda dictaminadores ({$response->status()}) en URL: {$fullUrlForLog}. Respuesta: " . substr($response->body(), 0, 200));
         } catch (\Exception $e) {
-            \Log::error("Error de conexión en búsqueda de dictaminadores: " . $e->getMessage());
+            $this->logError("Excepción búsqueda dictaminadores en URL: {$fullUrlForLog}. Error: " . $e->getMessage());
         }
 
         return [];
@@ -124,25 +146,45 @@ class SiaApiService
     public function getDictaminadorById(string $idMaestro): ?array
     {
         if (!$this->token) {
+            $this->logError("Token no configurado. No se puede obtener dictaminador $idMaestro.");
             return null;
         }
+
+        $url = "{$this->baseUrl}/ProgramaEstimulos/dictaminadores/{$idMaestro}";
 
         try {
             $response = Http::withToken($this->token)
                 ->acceptJson()
+                ->withHeaders(['User-Agent' => 'FormatoEvaluacion/1.0'])
                 ->withoutVerifying()
-                ->timeout(10)
-                ->get("{$this->baseUrl}/ProgramaEstimulos/dictaminadores/{$idMaestro}");
+                ->timeout(30)
+                ->get($url);
 
             if ($response->successful()) {
                 return $response->json();
             }
 
-            \Log::error("Fallo al obtener dictaminador {$idMaestro}: " . $response->status());
+            $this->logError("Fallo obtener dictaminador $idMaestro ({$response->status()}): " . substr($response->body(), 0, 100));
         } catch (\Exception $e) {
-            \Log::error("Error de conexión al obtener dictaminador {$idMaestro}: " . $e->getMessage());
+            $this->logError("Excepción obtener dictaminador $idMaestro: " . $e->getMessage());
         }
 
         return null;
+    }
+
+    /**
+     * Helper para imprimir en consola si se está ejecutando un comando.
+     */
+    private function logConsole($message)
+    {
+        if (app()->runningInConsole()) {
+            fwrite(STDERR, "  [API] $message\n");
+        }
+    }
+
+    private function logError($message)
+    {
+        \Log::error("[SiaApiService] $message");
+        $this->logConsole("ERROR: $message");
     }
 }

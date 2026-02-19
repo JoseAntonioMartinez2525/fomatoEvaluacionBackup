@@ -56,21 +56,37 @@ class SyncComisionadores extends Command
 
         // 2. Obtener lista de usuarios desde la API (Fuente de verdad)
         $this->info("Consultando API para obtener lista de dictaminadores...");
-        // Se envían filtros vacíos para obtener todos los registros disponibles
-        $dictaminadoresList = $this->apiService->searchDictaminadores(['nombre' => '', 'primerApellido' => '', 'segundoApellido' => '']);
+        // La API requiere un filtro de búsqueda. Iteramos por el alfabeto para obtener todos los registros.
+        $alphabet = range('A', 'Z');
+        $allDictaminadores = [];
+
+        $this->output->progressStart(count($alphabet));
+
+        foreach ($alphabet as $letter) {
+            $results = $this->apiService->searchDictaminadores(['primerApellido' => $letter]);
+            if (!empty($results)) {
+                foreach ($results as $result) {
+                    if (isset($result['maestroId'])) {
+                        $allDictaminadores[$result['maestroId']] = $result; // Usar ID como clave para evitar duplicados
+                    }
+                }
+            }
+            $this->output->progressAdvance();
+        }
+
+        $this->output->progressFinish();
+        $dictaminadoresList = array_values($allDictaminadores);
 
         if (empty($dictaminadoresList)) {
             $this->warn('La API no devolvió ningún dictaminador.');
             return;
         }
 
-        $this->info("Se encontraron " . count($dictaminadoresList) . " registros.");
+        $this->info("\nSe encontraron " . count($dictaminadoresList) . " registros únicos. Procesando...");
 
-        foreach ($dictaminadoresList as $apiData) {
+        $this->withProgressBar($dictaminadoresList, function ($apiData) use ($jsonFechas) {
             $email = $apiData['email'] ?? null;
-            if (!$email) continue;
-
-            $this->info("Procesando: {$email}");
+            if (!$email) return;
 
             // Datos básicos desde la lista de búsqueda
             $nombre = $apiData['nombre'] ?? '';
@@ -131,10 +147,8 @@ class SyncComisionadores extends Command
                     'fecha_convocatoria' => $jsonFechas, // JSON con start_date y end_date
                 ]
             );
+        });
 
-            $this->line(" -> Sincronizado: {$fullName} (ID Maestro: {$idMaestro})");
-        }
-
-        $this->info('Sincronización completada.');
+        $this->info("\nSincronización completada.");
     }
 }
