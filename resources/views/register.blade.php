@@ -66,6 +66,10 @@ Fecha de creación: 2024-06-03
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                         </div>
+                        <div class="d-flex justify-content-end mb-3">
+                            <button type="button" id="btnGeneratePass" class="btn btn-info btn-sm text-white" style="text-transform: none;">Generar contraseña segura</button>
+                        </div>
+
                         <!-- Password input -->
                         <div data-mdb-input-init class="mb-4">
                             <input type="password" id="registerPassword" name="registerPassword" class="form-control" />
@@ -106,6 +110,29 @@ Fecha de creación: 2024-06-03
             //console.log('Usuario:', document.getElementById('registerUsertype').value);
             console.log('Email:', document.getElementById('registerEmail').value);
            
+        });
+
+        document.getElementById('btnGeneratePass').addEventListener('click', function() {
+            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            const passwordLength = 8;
+            let password = "";
+            
+            for (let i = 0; i < passwordLength; i++) {
+                let randomNumber = Math.floor(Math.random() * chars.length);
+                password += chars.substring(randomNumber, randomNumber + 1);
+            }
+            
+            const passInput = document.getElementById('registerPassword');
+            const repeatInput = document.getElementById('registerRepeatPassword');
+            
+            passInput.value = password;
+            repeatInput.value = password;
+            
+            passInput.type = "text";
+            repeatInput.type = "text";
+            
+            passInput.dispatchEvent(new Event('input'));
+            repeatInput.dispatchEvent(new Event('input'));
         });
     </script>
 </body>
