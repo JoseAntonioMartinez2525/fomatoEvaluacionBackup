@@ -10,6 +10,7 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 use Illuminate\Support\Str;
 use App\Models\Docente;
 use App\Models\Comisionador;
+use App\Services\SiaApiService;
 
 $argc = $_SERVER['argc'];
 $argv = $_SERVER['argv'];
@@ -43,6 +44,9 @@ if (is_array($payload) && array_key_exists('users', $payload) && is_array($paylo
 }
 
 echo "Users found: " . count($users) . "\n";
+
+// Instanciar el servicio de API
+$apiService = $app->make(SiaApiService::class);
 
 $docCount = 0;
 $comCount = 0;
@@ -90,11 +94,21 @@ foreach ($users as $u) {
         $attrs = [
             'email' => $email,
             'nombre' => $find($u, ['nombre','name','given_name','first_name']),
-            'apellido_1' => $find($u, ['apellido_1','apellido1','last_name','apellido']),
-            'apellido_2' => $find($u, ['apellido_2','apellido2','second_last_name']),
+            'primerApellido' => $find($u, ['primerApellido','apellido1','last_name','apellido']),
+            'segundoApellido' => $find($u, ['segundoApellido','apellido2','second_last_name']),
             'departamento' => $find($u, ['departamento','department','area']),
+            'maestroId' => $find($u, ['maestroId','idmaestro','id','teacher_id','maestro_id']),
         ];
         $attrs = array_filter($attrs, fn($v) => $v !== null && $v !== '');
+
+        if (!empty($attrs['maestroId'])) {
+            $extra = $apiService->getDictaminadorById($attrs['maestroId']);
+            if ($extra) {
+                $attrs['area'] = $extra['area'] ?? ($attrs['area'] ?? null);
+                $attrs['departamento'] = $extra['departamento'] ?? ($attrs['departamento'] ?? null);
+            }
+        }
+
         echo "Docente: $email -> " . json_encode($attrs) . PHP_EOL;
         if (!$dry) {
             Docente::updateOrCreate(['email' => $email], $attrs);
@@ -104,12 +118,22 @@ foreach ($users as $u) {
         $attrs = [
             'email' => $email,
             'nombre' => $find($u, ['nombre','name','given_name','first_name']),
-            'apellido_1' => $find($u, ['apellido_1','apellido1','last_name','apellido']),
-            'apellido_2' => $find($u, ['apellido_2','apellido2','second_last_name']),
+            'primerApellido' => $find($u, ['primerApellido','apellido1','last_name','apellido']),
+            'segundoApellido' => $find($u, ['segundoApellido','apellido2','second_last_name']),
             'departamento' => $find($u, ['departamento','department','area']),
-            'id_maestro' => $find($u, ['id_maestro','idmaestro','id','teacher_id','maestro_id']),
+            'maestroId' => $find($u, ['maestroId','idmaestro','id','teacher_id','maestro_id']),
         ];
         $attrs = array_filter($attrs, fn($v) => $v !== null && $v !== '');
+
+        if (!empty($attrs['maestroId'])) {
+            $extra = $apiService->getDictaminadorById($attrs['maestroId']);
+            if ($extra) {
+                $attrs['area'] = $extra['area'] ?? ($attrs['area'] ?? null);
+                $attrs['departamento'] = $extra['departamento'] ?? ($attrs['departamento'] ?? null);
+                $attrs['firma_grafica'] = $extra['firma_gráfica'] ?? ($attrs['firma_grafica'] ?? null);
+            }
+        }
+
         echo "Comisionador: $email -> " . json_encode($attrs) . PHP_EOL;
         if (!$dry) {
             Comisionador::updateOrCreate(['email' => $email], $attrs);

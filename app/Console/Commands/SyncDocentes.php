@@ -58,57 +58,47 @@ class SyncDocentes extends Command
         // Obtener periodo actual
         $periodo = \App\Models\UsersResponseForm1::calculateCurrentPeriod();
 
-        // 2. Obtener datos (Simulación API usando el archivo de configuración config/docentes.php)
-        $configDocentes = config('docentes', []);
+        // 2. Obtener lista de usuarios desde la API (Fuente de verdad)
+        $this->info("Consultando API para obtener lista de docentes...");
+        // Usamos el endpoint de búsqueda de dictaminadores/maestros como fuente
+        $docentesList = $this->apiService->searchDictaminadores(['nombre' => '', 'primerApellido' => '', 'segundoApellido' => '']);
 
-        foreach (array_keys($configDocentes) as $email) {
+        if (empty($docentesList)) {
+            $this->warn('La API no devolvió ningún registro.');
+            return;
+        }
+
+        foreach ($docentesList as $apiData) {
+            $email = $apiData['email'] ?? null;
+            if (!$email) continue;
+
             $this->info("Procesando: {$email}");
 
-            // ---------------------------------------------------------------------------
-            // PASO CLAVE: Consultar la API externa para obtener los datos del usuario
-            // ---------------------------------------------------------------------------
-            $apiData = $this->apiService->getUserInfo($email);
-            if (!$apiData) {
-                $this->warn(" -> No se encontraron datos en la API para {$email}. Saltando...");
-                continue;
-            }
-            
-            // Lógica de limpieza y separación de nombres (similar a SyncComisionadores)
-            $nombreCompleto = $apiData['nombre'] ?? '';
-            // Remover títulos académicos comunes
-            $nombreLimpio = preg_replace('/^(Dr\.|Dra\.|M\.C\.?|M\.S\.C\.?|Lic\.|Ing\.)\s+/i', '', $nombreCompleto);
-            $partes = explode(' ', trim($nombreLimpio));
-            
-            $apellido2 = '';
-            $apellido1 = '';
-            $nombre = '';
+            // Datos básicos desde la lista de búsqueda
+            $nombre = $apiData['nombre'] ?? '';
+            $apellido1 = $apiData['primerApellido'] ?? '';
+            $apellido2 = $apiData['segundoApellido'] ?? '';
+            $departamento = $apiData['departamento'] ?? null;
+            $idMaestro = $apiData['maestroId'] ?? null;
+            $area = null;
 
-            if (count($partes) > 2) {
-                $apellido2 = array_pop($partes);
-                $apellido1 = array_pop($partes);
-                $nombre = implode(' ', $partes);
-            } elseif (count($partes) == 2) {
-                $apellido1 = array_pop($partes);
-                $nombre = implode(' ', $partes);
-            } else {
-                $nombre = $nombreLimpio;
+            // Enriquecer datos usando el endpoint de dictaminadores si tenemos ID de maestro
+            if ($idMaestro) {
+                $dictaminadorInfo = $this->apiService->getDictaminadorById($idMaestro);
+                if ($dictaminadorInfo) {
+                    $area = $dictaminadorInfo['area'] ?? $area;
+                    $departamento = $dictaminadorInfo['departamento'] ?? $departamento;
+                }
             }
-
-            // 3. Crear o Actualizar Docente
-            // NOTA: Tu modelo App\Models\Docente ya tiene un evento 'saved' en el método booted()
-            // que se encarga automáticamente de buscar el email en la tabla 'users':
-            // - Si existe: actualiza el usuario.
-            // - Si no existe: crea el usuario nuevo.
-            // Por lo tanto, solo necesitamos guardar el Docente aquí.
 
             $docenteData = [
                 'nombre' => $nombre,
-                'apellido_1' => $apellido1,
-                'apellido_2' => $apellido2,
-                'departamento' => $apiData['departamento'] ?? null,
-                'area' => $apiData['area'] ?? null,
+                'primerApellido' => $apellido1,
+                'segundoApellido' => $apellido2,
+                'departamento' => $departamento,
+                'area' => $area,
                 'fecha_convocatoria' => $jsonFechas,
-                'id_maestro' => $apiData['id_maestro'] ?? null, // <-- Añadido
+                'maestroId' => $idMaestro,
             ];
 
             if (Schema::hasColumn('docentes', 'periodo')) {
@@ -121,7 +111,7 @@ class SyncDocentes extends Command
             );
 
             $fullName = trim("{$nombre} {$apellido1} {$apellido2}");
-            $this->line(" -> Sincronizado: {$fullName} (ID Maestro: " . ($apiData['id_maestro'] ?? '') . ")");
+            $this->line(" -> Sincronizado: {$fullName} (ID Maestro: " . ($apiData['maestroId'] ?? '') . ")");
         }
 
         $this->info('Sincronización de docentes completada.');

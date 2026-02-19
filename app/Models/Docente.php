@@ -16,8 +16,8 @@ class Docente extends Model
 
     protected $fillable = [
         'nombre',
-        'apellido_1',
-        'apellido_2',
+        'primerApellido',
+        'segundoApellido',
         'email',
         'departamento',
         'area',
@@ -51,7 +51,7 @@ class Docente extends Model
         // Después de guardar, sincronizar con la tabla users
         static::saved(function ($docente) {
             $user = User::where('email', $docente->email)->first();
-            $fullName = trim("{$docente->nombre} {$docente->apellido_1} {$docente->apellido_2}");
+            $fullName = trim("{$docente->nombre} {$docente->primerApellido} {$docente->segundoApellido}");
 
             if ($user) {
                 // Actualizar usuario existente

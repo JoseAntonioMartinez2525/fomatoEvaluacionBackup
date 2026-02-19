@@ -12,7 +12,7 @@ class SiaApiService
     public function __construct()
     {
         // Lee la configuración o usa variables de entorno directamente
-        $this->baseUrl = config('siaa.api_url', env('SIAA_API_URL', 'http://siia.uabcs.mx/api'));
+        $this->baseUrl = config('siaa.api_url', env('SIAA_API_URL', 'https://siia-develop.uabcs.mx'));
         $this->token = config('siaa.api_token', env('SIAA_API_TOKEN'));
     }
 
@@ -65,7 +65,7 @@ class SiaApiService
         }
 
         // Fallback: Si la API falla, intenta usar los datos simulados/locales
-        return $this->getMockUserData($email);
+        //return $this->getMockUserData($email);
     }
 
     /**
@@ -82,5 +82,67 @@ class SiaApiService
         $docentes = config('docentes', []);
 
         return $dictaminadores[$email] ?? $docentes[$email] ?? null;
+    }
+
+    /**
+     * Busca dictaminadores en el Programa de Estímulos por nombre o apellidos.
+     *
+     * @param array $filters ['nombre' => '', 'primerApellido' => '', 'segundoApellido' => '']
+     * @return array
+     */
+    public function searchDictaminadores(array $filters = []): array
+    {
+        if (!$this->token) {
+            return [];
+        }
+
+        try {
+            $response = Http::withToken($this->token)
+                ->acceptJson()
+                ->withoutVerifying()
+                ->timeout(10)
+                ->get("{$this->baseUrl}/ProgramaEstimulos/dictaminadores/search", $filters);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            \Log::error("Fallo en búsqueda de dictaminadores: " . $response->status());
+        } catch (\Exception $e) {
+            \Log::error("Error de conexión en búsqueda de dictaminadores: " . $e->getMessage());
+        }
+
+        return [];
+    }
+
+    /**
+     * Obtiene información detallada de un dictaminador por su ID de maestro.
+     *
+     * @param string $idMaestro
+     * @return array|null
+     */
+    public function getDictaminadorById(string $idMaestro): ?array
+    {
+        if (!$this->token) {
+            return null;
+        }
+
+        try {
+            $response = Http::withToken($this->token)
+                ->acceptJson()
+                ->withoutVerifying()
+                ->timeout(10)
+                ->get("{$this->baseUrl}/ProgramaEstimulos/dictaminadores/{$idMaestro}");
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            \Log::error("Fallo al obtener dictaminador {$idMaestro}: " . $response->status());
+        } catch (\Exception $e) {
+            \Log::error("Error de conexión al obtener dictaminador {$idMaestro}: " . $e->getMessage());
+        }
+
+        return null;
     }
 }

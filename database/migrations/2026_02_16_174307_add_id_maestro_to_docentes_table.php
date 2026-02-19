@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('docentes', function (Blueprint $table) {
-            if (!Schema::hasColumn('docentes', 'id_maestro')) {
+            if (!Schema::hasColumn('docentes', 'maestroId')) {
                 // Se usa bigInteger (camelCase) y se agrega index() para búsquedas rápidas
-                $table->string('id_maestro',10)->nullable()->after('id');
+                $table->string('maestroId',10)->nullable()->after('id');
             }
         });
     }
@@ -26,8 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('docentes', function (Blueprint $table) {
-            if (Schema::hasColumn('docentes', 'id_maestro')) {
-                $table->dropColumn('id_maestro');
+            if (Schema::hasColumn('docentes', 'maestroId')) {
+                $table->dropColumn('maestroId');
             }
         });
     }

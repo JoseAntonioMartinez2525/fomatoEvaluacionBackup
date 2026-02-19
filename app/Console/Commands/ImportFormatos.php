@@ -158,7 +158,7 @@ class ImportFormatos extends Command
         $keys = array_map('strtolower', array_keys($obj));
         if (isset($obj['user_type']) && strtolower($obj['user_type']) === 'dictaminador') return true;
         if (isset($obj['tipo']) && stripos($obj['tipo'], 'dictamin') !== false) return true;
-        foreach (['id_maestro', 'idMaestro', 'firma', 'firma_grafica'] as $k) {
+        foreach (['maestroId', 'idMaestro', 'firma', 'firma_grafica'] as $k) {
             if (array_key_exists($k, $obj)) return true;
         }
         return false;
@@ -171,17 +171,17 @@ class ImportFormatos extends Command
         $out['email'] = $lower['email'] ?? null;
         if (isset($lower['nombre'])) $out['nombre'] = $lower['nombre'];
         elseif (isset($lower['name'])) $out['nombre'] = $lower['name'];
-        if (isset($lower['apellido_1'])) $out['apellido_1'] = $lower['apellido_1'];
-        elseif (isset($lower['apellido1'])) $out['apellido_1'] = $lower['apellido1'] ?? null;
-        if (isset($lower['apellido_2'])) $out['apellido_2'] = $lower['apellido_2'];
-        elseif (isset($lower['apellido2'])) $out['apellido_2'] = $lower['apellido2'] ?? null;
-        if (empty($out['apellido_1']) && empty($out['apellido_2']) && !empty($out['nombre'])) {
+        if (isset($lower['primerApellido'])) $out['primerApellido'] = $lower['primerApellido'];
+        elseif (isset($lower['apellido1'])) $out['primerApellido'] = $lower['apellido1'] ?? null;
+        if (isset($lower['segundoApellido'])) $out['segundoApellido'] = $lower['segundoApellido'];
+        elseif (isset($lower['apellido2'])) $out['segundoApellido'] = $lower['apellido2'] ?? null;
+        if (empty($out['primerApellido']) && empty($out['segundoApellido']) && !empty($out['nombre'])) {
             // Try to split full name
             $parts = preg_split('/\s+/', $out['nombre']);
             if (count($parts) >= 3) {
                 $out['nombre'] = array_shift($parts);
-                $out['apellido_1'] = array_shift($parts);
-                $out['apellido_2'] = implode(' ', $parts);
+                $out['primerApellido'] = array_shift($parts);
+                $out['segundoApellido'] = implode(' ', $parts);
             }
         }
         $out['departamento'] = $lower['departamento'] ?? $lower['department'] ?? null;
@@ -200,19 +200,19 @@ class ImportFormatos extends Command
         $out['email'] = $lower['email'] ?? null;
         if (isset($lower['nombre'])) $out['nombre'] = $lower['nombre'];
         elseif (isset($lower['name'])) $out['nombre'] = $lower['name'];
-        $out['apellido_1'] = $lower['apellido_1'] ?? ($lower['apellido1'] ?? null);
-        $out['apellido_2'] = $lower['apellido_2'] ?? ($lower['apellido2'] ?? null);
-        if (empty($out['apellido_1']) && empty($out['apellido_2']) && !empty($out['nombre'])) {
+        $out['primerApellido'] = $lower['primerApellido'] ?? ($lower['apellido1'] ?? null);
+        $out['segundoApellido'] = $lower['segundoApellido'] ?? ($lower['apellido2'] ?? null);
+        if (empty($out['primerApellido']) && empty($out['segundoApellido']) && !empty($out['nombre'])) {
             $parts = preg_split('/\s+/', $out['nombre']);
             if (count($parts) >= 3) {
                 $out['nombre'] = array_shift($parts);
-                $out['apellido_1'] = array_shift($parts);
-                $out['apellido_2'] = implode(' ', $parts);
+                $out['primerApellido'] = array_shift($parts);
+                $out['segundoApellido'] = implode(' ', $parts);
             }
         }
         $out['departamento'] = $lower['departamento'] ?? $lower['department'] ?? null;
         $out['area'] = $lower['area'] ?? null;
-        $out['id_maestro'] = $lower['id_maestro'] ?? ($lower['idmaestro'] ?? null);
+        $out['maestroId'] = $lower['maestroId'] ?? ($lower['idmaestro'] ?? null);
         $out['firma_grafica'] = $lower['firma_grafica'] ?? ($lower['firma'] ?? null);
         if (isset($lower['fecha_convocatoria'])) $out['fecha_convocatoria'] = $lower['fecha_convocatoria'];
         return array_filter($out, function ($v) { return $v !== null && $v !== ''; });

@@ -54,49 +54,44 @@ class SyncComisionadores extends Command
             $this->warn('No se encontraron fechas en docentes_evaluation_dates.');
         }
 
-        // 2. Obtener lista base de usuarios desde la configuración local (config/dictaminadores.php)
-        // Este archivo actúa como fuente de verdad temporal para nombres y correos.
-        $configDictaminadores = config('dictaminadores', []);
-        $idCounter = 1;
+        // 2. Obtener lista de usuarios desde la API (Fuente de verdad)
+        $this->info("Consultando API para obtener lista de dictaminadores...");
+        // Se envían filtros vacíos para obtener todos los registros disponibles
+        $dictaminadoresList = $this->apiService->searchDictaminadores(['nombre' => '', 'primerApellido' => '', 'segundoApellido' => '']);
 
-        foreach (array_keys($configDictaminadores) as $email) {
+        if (empty($dictaminadoresList)) {
+            $this->warn('La API no devolvió ningún dictaminador.');
+            return;
+        }
+
+        $this->info("Se encontraron " . count($dictaminadoresList) . " registros.");
+
+        foreach ($dictaminadoresList as $apiData) {
+            $email = $apiData['email'] ?? null;
+            if (!$email) continue;
+
             $this->info("Procesando: {$email}");
 
-            // ---------------------------------------------------------------------------
-            // PASO CLAVE: Consultar la API externa para obtener los datos del usuario
-            // ---------------------------------------------------------------------------
-            $apiData = $this->apiService->getUserInfo($email);
-
-            if (!$apiData) {
-                $this->warn(" -> No se encontraron datos en la API para {$email}. Saltando...");
-                continue;
-            }
-
-            $nombreCompleto = $apiData['nombre'] ?? '';
-            // Remover títulos comunes (Dr., Dra., M.C., etc.)
-            $nombreLimpio = preg_replace('/^(Dr\.|Dra\.|M\.C\.?|M\.S\.C\.?|Lic\.|Ing\.)\s+/i', '', $nombreCompleto);
-            $partes = explode(' ', trim($nombreLimpio));
-            
-            $apellido2 = '';
-            $apellido1 = '';
-            $nombre = '';
-
-            if (count($partes) > 2) {
-                $apellido2 = array_pop($partes);
-                $apellido1 = array_pop($partes);
-                $nombre = implode(' ', $partes);
-            } elseif (count($partes) == 2) {
-                $apellido1 = array_pop($partes);
-                $nombre = implode(' ', $partes);
-            } else {
-                $nombre = $nombreLimpio;
-            }
-
-            // Extraer datos desde la respuesta de la API
+            // Datos básicos desde la lista de búsqueda
+            $nombre = $apiData['nombre'] ?? '';
+            $apellido1 = $apiData['primerApellido'] ?? '';
+            $apellido2 = $apiData['segundoApellido'] ?? '';
             $departamento = $apiData['departamento'] ?? null;
-            $area = $apiData['area'] ?? null;
-            $firmaGrafica = null; // Vendrá de la API (base64)
-            $idMaestro = $apiData['id_maestro'] ?? null;
+            $idMaestro = $apiData['maestroId'] ?? null;
+            
+            $area = null;
+            $firmaGrafica = null;
+
+            // Si tenemos el ID del maestro, consultamos el endpoint específico de dictaminadores
+            // para obtener datos adicionales como la firma gráfica y el área específica.
+            if ($idMaestro) {
+                $dictaminadorInfo = $this->apiService->getDictaminadorById($idMaestro);
+                if ($dictaminadorInfo) {
+                    $firmaGrafica = $dictaminadorInfo['firma_gráfica'] ?? null;
+                    $area = $dictaminadorInfo['area'] ?? $area;
+                    $departamento = $dictaminadorInfo['departamento'] ?? $departamento;
+                }
+            }
 
             $fullName = trim("{$nombre} {$apellido1} {$apellido2}");
 
@@ -108,6 +103,7 @@ class SyncComisionadores extends Command
                 $user->update([
                     'name' => $fullName,
                     'departamento' => $departamento,
+                    'user_type' => 'dictaminador', // Asegurar rol
                 ]);
             } else {
                 // Si no existe, creamos el usuario
@@ -125,10 +121,10 @@ class SyncComisionadores extends Command
                 ['email' => $email], // Condición de búsqueda
                 [
                     'user_id' => $user->id,
-                    'id_maestro' => $idMaestro,
+                    'maestroId' => $idMaestro,
                     'nombre' => $nombre,
-                    'apellido_1' => $apellido1,
-                    'apellido_2' => $apellido2,
+                    'primerApellido' => $apellido1,
+                    'segundoApellido' => $apellido2,
                     'departamento' => $departamento,
                     'area' => $area,
                     'firma_grafica' => $firmaGrafica,

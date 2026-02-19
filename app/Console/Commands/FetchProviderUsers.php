@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\ExternalFormProvider;
 use App\Models\Docente;
 use App\Models\Comisionador;
+use App\Services\SiaApiService;
 
 class FetchProviderUsers extends Command
 {
@@ -21,7 +22,7 @@ class FetchProviderUsers extends Command
      */
     protected $description = 'Fetch users from an ExternalFormProvider endpoint and import into Docente/Comisionador';
 
-    public function handle()
+    public function handle(SiaApiService $apiService)
     {
         $providerArg = $this->argument('provider');
         $dry = $this->option('dry-run');
@@ -88,6 +89,15 @@ class FetchProviderUsers extends Command
                 if ($role === 'docente') {
                     $attrs = $this->mapToDocente($u);
                     if (empty($attrs['email'])) continue;
+
+                    if (!empty($attrs['maestroId'])) {
+                        $extra = $apiService->getDictaminadorById($attrs['maestroId']);
+                        if ($extra) {
+                            $attrs['area'] = $extra['area'] ?? ($attrs['area'] ?? null);
+                            $attrs['departamento'] = $extra['departamento'] ?? ($attrs['departamento'] ?? null);
+                        }
+                    }
+
                     if (!$dry) {
                         Docente::updateOrCreate(['email' => $attrs['email']], $attrs);
                     }
@@ -95,6 +105,16 @@ class FetchProviderUsers extends Command
                 } else {
                     $attrs = $this->mapToComisionador($u);
                     if (empty($attrs['email'])) continue;
+
+                    if (!empty($attrs['maestroId'])) {
+                        $extra = $apiService->getDictaminadorById($attrs['maestroId']);
+                        if ($extra) {
+                            $attrs['area'] = $extra['area'] ?? ($attrs['area'] ?? null);
+                            $attrs['departamento'] = $extra['departamento'] ?? ($attrs['departamento'] ?? null);
+                            $attrs['firma_grafica'] = $extra['firma_gráfica'] ?? ($attrs['firma_grafica'] ?? null);
+                        }
+                    }
+
                     if (!$dry) {
                         Comisionador::updateOrCreate(['email' => $attrs['email']], $attrs);
                     }
@@ -137,18 +157,19 @@ class FetchProviderUsers extends Command
         $lower = $this->lowerKeys($item);
         $out['email'] = $lower['email'] ?? ($lower['mail'] ?? null);
         $out['nombre'] = $lower['nombre'] ?? ($lower['name'] ?? null);
-        $out['apellido_1'] = $lower['apellido_1'] ?? ($lower['apellido1'] ?? null);
-        $out['apellido_2'] = $lower['apellido_2'] ?? ($lower['apellido2'] ?? null);
-        if (empty($out['apellido_1']) && empty($out['apellido_2']) && !empty($out['nombre'])) {
+        $out['primerApellido'] = $lower['primerApellido'] ?? ($lower['apellido1'] ?? null);
+        $out['segundoApellido'] = $lower['segundoApellido'] ?? ($lower['apellido2'] ?? null);
+        if (empty($out['primerApellido']) && empty($out['segundoApellido']) && !empty($out['nombre'])) {
             $parts = preg_split('/\s+/', $out['nombre']);
             if (count($parts) >= 3) {
                 $out['nombre'] = array_shift($parts);
-                $out['apellido_1'] = array_shift($parts);
-                $out['apellido_2'] = implode(' ', $parts);
+                $out['primerApellido'] = array_shift($parts);
+                $out['segundoApellido'] = implode(' ', $parts);
             }
         }
         $out['departamento'] = $lower['departamento'] ?? ($lower['department'] ?? null);
         $out['area'] = $lower['area'] ?? null;
+        $out['maestroId'] = $lower['maestroId'] ?? ($lower['idmaestro'] ?? null) ?? ($lower['id'] ?? null);
         if (isset($lower['fecha_convocatoria'])) $out['fecha_convocatoria'] = $lower['fecha_convocatoria'];
         if (isset($lower['periodo'])) $out['periodo'] = $lower['periodo'];
         return array_filter($out, function ($v) { return $v !== null && $v !== ''; });
@@ -160,19 +181,19 @@ class FetchProviderUsers extends Command
         $lower = $this->lowerKeys($item);
         $out['email'] = $lower['email'] ?? ($lower['mail'] ?? null);
         $out['nombre'] = $lower['nombre'] ?? ($lower['name'] ?? null);
-        $out['apellido_1'] = $lower['apellido_1'] ?? ($lower['apellido1'] ?? null);
-        $out['apellido_2'] = $lower['apellido_2'] ?? ($lower['apellido2'] ?? null);
-        if (empty($out['apellido_1']) && empty($out['apellido_2']) && !empty($out['nombre'])) {
+        $out['primerApellido'] = $lower['primerApellido'] ?? ($lower['apellido1'] ?? null);
+        $out['segundoApellido'] = $lower['segundoApellido'] ?? ($lower['apellido2'] ?? null);
+        if (empty($out['primerApellido']) && empty($out['segundoApellido']) && !empty($out['nombre'])) {
             $parts = preg_split('/\s+/', $out['nombre']);
             if (count($parts) >= 3) {
                 $out['nombre'] = array_shift($parts);
-                $out['apellido_1'] = array_shift($parts);
-                $out['apellido_2'] = implode(' ', $parts);
+                $out['primerApellido'] = array_shift($parts);
+                $out['segundoApellido'] = implode(' ', $parts);
             }
         }
-        $out['departamento'] = $lower['departamento'] ?? ($lower['department'] ?? null);
+        $out['departamento'] = $lower['departamento'] ?? ($lower['departmento'] ?? null);
         $out['area'] = $lower['area'] ?? null;
-        $out['id_maestro'] = $lower['id_maestro'] ?? ($lower['idmaestro'] ?? null) ?? ($lower['id'] ?? null);
+        $out['maestroId'] = $lower['maestroId'] ?? ($lower['idmaestro'] ?? null) ?? ($lower['id'] ?? null);
         $out['firma_grafica'] = $lower['firma_grafica'] ?? ($lower['firma'] ?? null);
         if (isset($lower['fecha_convocatoria'])) $out['fecha_convocatoria'] = $lower['fecha_convocatoria'];
         return array_filter($out, function ($v) { return $v !== null && $v !== ''; });

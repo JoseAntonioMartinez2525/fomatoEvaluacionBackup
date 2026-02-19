@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('comisionadores', function (Blueprint $table) {
-            if (!Schema::hasColumn('comisionadores', 'id_maestro')) {
+            if (!Schema::hasColumn('comisionadores', 'maestroId')) {
                 // Se usa bigInteger (camelCase) y se agrega index() para búsquedas rápidas
-                $table->string('id_maestro',10)->nullable()->after('id');
+                $table->string('maestroId',10)->nullable()->after('id');
                 
             }
         });
@@ -27,8 +27,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('comisionadores')) {
             Schema::table('comisionadores', function (Blueprint $table) {
-                if (Schema::hasColumn('comisionadores', 'id_maestro')) {
-                    $table->dropColumn('id_maestro');
+                if (Schema::hasColumn('comisionadores', 'maestroId')) {
+                    $table->dropColumn('maestroId');
                 }
             });
         }
