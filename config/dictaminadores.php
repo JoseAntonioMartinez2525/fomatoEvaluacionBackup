@@ -3,74 +3,93 @@
 return [
 
     'bramirez@uabcs.mx' => [
-        'nombre' => 'Dra. Brenda Elizabeth Ramírez Díaz',
-        'departamento' => 'Ciencias Sociales y Juridicas',
+        'nombre' => 'Brenda Elizabeth',
+        'primerApellido' => 'Ramirez',
+        'segundoApellido' => 'Diaz',
+        'departamento' => 'Departamento Academico de Ciencias Sociales y Juridicas',
     ],
 
     'jperez@uabcs.mx' => [
-        'nombre' => 'M.C Juan Carlos Pérez Concha',
-        'departamento' => 'Ciencias Sociales y Juridicas',
+        'nombre' => 'Juan Carlos',
+        'primerApellido' => 'Perez',
+        'segundoApellido' => 'Concha',
+        'departamento' => 'Departamento Academico de Ciencias Sociales y Juridicas',
     ],
 
     'sandoval@uabcs.mx' => [
-        'nombre' => 'Dr. Jesús Andrés Sandoval Bringas',
-        'departamento' => 'Sistemas Computacionales',
+        'nombre' => 'Jesus Andres',
+        'primerApellido' => 'Sandoval',
+        'segundoApellido' => 'Bringas',
+        'departamento' => 'Departamento Academico de Sistemas Computacionales',
     ],
 
     'mcoronado@uabcs.mx' => [
-        'nombre' => 'Dr. Manuel Arturo Coronado García',
-        'departamento' => 'Ciencias Sociales y Juridicas',
+        'nombre' => 'Manuel Arturo',
+        'primerApellido' => 'Coronado',
+        'segundoApellido' => 'Garcia',
+        'departamento' => 'Departamento Academico de Ciencias Sociales y Juridicas',
     ],
 
     'isaias@uabcs.mx' => [
-        'nombre' => 'Dr. Francisco Isaías Ruiz Ceseña',
-        'departamento' => 'Ciencias Sociales y Juridicas',
+        'nombre' => 'Francisco Isaias',
+        'primerApellido' => 'Ruiz',
+        'segundoApellido' => 'CESEÑA',
+        'departamento' => 'Departamento Academico de Ciencias Sociales y Juridicas',
     ],
 
     'mpina@uabcs.mx' => [
-        'nombre' => 'Dra. Marta Piña Zentella',
-        'departamento' => 'Ciencia animal y Conservación del habitat',
+        'nombre' => 'Marta',
+        'primerApellido' => 'PIÑA',
+        'segundoApellido' => 'Zentella',
+        'departamento' => 'Departamento Academico de Ciencia animal y Conservación del habitat',
     ],
 
     'mycortes@uabcs.mx' => [
-        'nombre' => 'Dra. Mara Yadira Cortés Martínez',
-        'departamento' => 'Ciencias de la tierra',
+        'nombre' => 'Mara Yadira',
+        'primerApellido' => 'Cortes',
+        'segundoApellido' => 'Martinez',
+        'departamento' => 'Departamento Academico de Ciencias de la tierra',
     ],
 
     'imaz@uabcs.mx' => [
-        'nombre' => 'Dr. Miguel Ángel Imaz Lamadrid',
-        'departamento' => 'Ciencias Marinas y Costeras',
+        'nombre' => 'Miguel Angel',
+        'primerApellido' => 'Imaz',
+        'segundoApellido' => 'Lamadrid',
+        'departamento' => 'Departamento Academico de Ciencias Marinas y Costeras',
     ],
 
     'gbrabata@uabcs.mx' => [
-        'nombre' => 'Dra. Georgina Brabata Domínguez',
-        'departamento' => 'Humanidades',
+        'nombre' => 'Georgina',
+        'primerApellido' => 'Brabata',
+        'segundoApellido' => 'Dominguez',
+        'departamento' => 'Departamento Academico de Humanidades',
     ],
 
     'rdeluna@uabcs.mx' => [
-        'nombre' => 'Dr. Rafael de Luna de la Peña',
-        'departamento' => 'Humanidades',
+        'nombre' => 'Rafael',
+        'primerApellido' => 'de Luna',
+        'segundoApellido' => 'de la PEÑA',
+        'departamento' => 'Departamento Academico de Humanidades',
     ],
 
     'abeltran@uabcs.mx' => [
-        'nombre' => 'Dr. Félix Alfredo Beltrán Morales',
-        'departamento' => 'Ingenieria en Pesquerias',
+        'nombre' => 'Felix Alfredo',
+        'primerApellido' => 'Beltran',
+        'segundoApellido' => 'Morales',
+        'departamento' => 'Departamento Academico de Ingenieria en Pesquerias',
     ],
 
     'iestrada@uabcs.mx' => [
-        'nombre' => 'M.S.C. Italia Estrada Cota',
-        'departamento' => 'Sistemas Computacionales',
+        'nombre' => 'Italia',
+        'primerApellido' => 'Estrada',
+        'segundoApellido' => 'Cota',
+        'departamento' => 'Departamento Academico de Sistemas Computacionales',
     ],
 
     'rborquez@uabcs.mx' => [
-        'nombre' => 'Dr. Ricardo Bórquez Reyes',
-        'departamento' => 'Ingenieria en Pesquerias',
+        'nombre' => 'Ricardo',
+        'primerApellido' => 'Borquez',
+        'segundoApellido' => 'Reyes',
+        'departamento' => 'Departamento Academico de Ingenieria en Pesquerias',
     ],
-
-    // Pruebas
-    'brendaran@uabcs.mx' => [
-        'nombre' => 'Dra. Brenda Díaz Romo',
-        'departamento' => 'Ciencias Sociales y Juridicas',
-    ],
-
 ];

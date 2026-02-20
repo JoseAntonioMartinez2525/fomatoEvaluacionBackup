@@ -52,7 +52,22 @@ class SiaApiService
                 if (isset($data[0]) && is_array($data[0])) {
                     return $data[0];
                 }
-                return $data; // Retorna los datos si ya es un objeto único
+                return is_array($data) ? $data : (array) $data; // Retorna los datos si ya es un objeto único
+            }
+
+            // Si la ruta /personal no existe (404) o no aporta datos, no logueamos el HTML completo.
+            if ($response->status() === 404) {
+                // Intentar fallback: buscar en el endpoint de dictaminadores y filtrar por email
+                $this->logConsole("GET /personal returned 404 for {$email}, trying search fallback");
+                $candidates = $this->searchDictaminadores(['primerApellido' => '%']);
+                if (!empty($candidates) && is_array($candidates)) {
+                    foreach ($candidates as $cand) {
+                        if (!empty($cand['email']) && strtolower($cand['email']) === strtolower($email)) {
+                            return $cand;
+                        }
+                    }
+                }
+                // si no se encontró, caerá al fallback de mock abajo
             }
 
             $this->logError("Fallo getUserInfo ({$response->status()}) para {$email}: " . substr($response->body(), 0, 100));

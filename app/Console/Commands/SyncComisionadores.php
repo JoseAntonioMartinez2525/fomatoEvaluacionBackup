@@ -55,34 +55,125 @@ class SyncComisionadores extends Command
         }
 
         // 2. Obtener lista de usuarios desde la API (Fuente de verdad)
-        $this->info("Consultando API para obtener lista de dictaminadores...");
-        // La API requiere un filtro de búsqueda. Iteramos por el alfabeto para obtener todos los registros.
-        $alphabet = range('A', 'Z');
+        $this->info("Consultando API para obtener datos de los dictaminadores listados en config/dictaminadores.php...");
+
+        // Lista blanca de correos (emails) desde config
+        $whitelistEmails = array_map('strtolower', array_keys(config('dictaminadores', [])));
+        if (empty($whitelistEmails)) {
+            $this->warn('No hay correos definidos en config/dictaminadores.php. Nada que sincronizar.');
+            return;
+        }
+
+        // Preparar mapa de config para usar nombres como fuente de verdad cuando existan
+        $configMap = array_change_key_case(config('dictaminadores', []), CASE_LOWER);
+
+        $this->output->progressStart(count($whitelistEmails));
+
         $allDictaminadores = [];
 
-        $this->output->progressStart(count($alphabet));
+        foreach ($whitelistEmails as $email) {
+            $result = null;
 
-        foreach ($alphabet as $letter) {
-            $results = $this->apiService->searchDictaminadores(['primerApellido' => $letter]);
-            if (!empty($results)) {
-                foreach ($results as $result) {
-                    if (isset($result['maestroId'])) {
-                        $allDictaminadores[$result['maestroId']] = $result; // Usar ID como clave para evitar duplicados
+            // Si en config hay un nombre completo para este email, intentar buscar por nombre y apellidos
+            $cfg = $configMap[strtolower($email)] ?? null;
+            if (!empty($cfg) && !empty($cfg['nombre'])) {
+                // If config already provides split last names, use them directly
+                if (!empty($cfg['primerApellido']) || !empty($cfg['segundoApellido'])) {
+                    $given = $cfg['nombre'];
+                    $pApellido = $cfg['primerApellido'] ?? '';
+                    $sApellido = $cfg['segundoApellido'] ?? '';
+                } else {
+                    // Limpiar prefijos honoríficos y títulos comunes
+                    $nameRaw = preg_replace('/\b(Dr|Dra|Dra\.|Dr\.|M\.S\.C\.?|M\.C\.?|MSc|Lic|Ing)\b/i', '', $cfg['nombre']);
+                    $nameRaw = trim($nameRaw);
+
+                    // Intentar remover acentos para mejorar coincidencias (transliterate)
+                    $nameNorm = @iconv('UTF-8', 'ASCII//TRANSLIT', $nameRaw) ?: $nameRaw;
+
+                    // Split into parts: assume first is given names, last two are surnames
+                    $parts = preg_split('/\s+/', $nameNorm);
+                    $given = '';
+                    $pApellido = '';
+                    $sApellido = '';
+                    if (count($parts) >= 3) {
+                        $given = $parts[0] . (isset($parts[1]) ? ' ' . $parts[1] : '');
+                        $pApellido = $parts[count($parts)-2];
+                        $sApellido = $parts[count($parts)-1];
+                    } elseif (count($parts) === 2) {
+                        $given = $parts[0];
+                        $pApellido = $parts[1];
+                    } else {
+                        $given = $parts[0] ?? '';
+                    }
+                }
+
+                // Hacer búsqueda específica por nombre y apellidos
+                $searchFilters = [
+                    'nombre' => $given,
+                    'primerApellido' => $pApellido,
+                    'segundoApellido' => $sApellido,
+                ];
+
+                $this->line('  [API] Buscando en API por nombre/apellidos: ' . json_encode($searchFilters));
+                $candidates = $this->apiService->searchDictaminadores($searchFilters);
+                if (!empty($candidates) && is_array($candidates)) {
+                    // Preferir candidato con email que coincida
+                    foreach ($candidates as $cand) {
+                        if (!empty($cand['email']) && strtolower($cand['email']) === strtolower($email)) {
+                            $result = $cand;
+                            break;
+                        }
+                    }
+                    // Si no encontramos por email, tomar el primer candidato
+                    if (empty($result)) {
+                        $result = $candidates[0];
                     }
                 }
             }
+
+            // Si no obtuvimos resultado por nombre/config, intentar obtener por email (getUserInfo)
+            if (empty($result)) {
+                $result = $this->apiService->getUserInfo($email);
+                if ($result && !is_array($result)) $result = (array) $result;
+            }
+
+            // Si aún no hay resultado, usar búsqueda amplia por primer apellido como último recurso
+            if (empty($result)) {
+                $candidates = $this->apiService->searchDictaminadores(['primerApellido' => '%']);
+                if (!empty($candidates) && is_array($candidates)) {
+                    foreach ($candidates as $cand) {
+                        if (!empty($cand['email']) && strtolower($cand['email']) === strtolower($email)) {
+                            $result = $cand;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!empty($result)) {
+                $key = $result['maestroId'] ?? $email;
+                $allDictaminadores[$key] = $result;
+            } else {
+                // Registrar advertencia si no se encontró en la API
+                $this->warn("No se encontró información en la API para: {$email}");
+            }
+
             $this->output->progressAdvance();
         }
 
         $this->output->progressFinish();
+
         $dictaminadoresList = array_values($allDictaminadores);
 
         if (empty($dictaminadoresList)) {
-            $this->warn('La API no devolvió ningún dictaminador.');
+            $this->warn('No se obtuvo información de la API para ninguno de los correos listados.');
             return;
         }
 
-        $this->info("\nSe encontraron " . count($dictaminadoresList) . " registros únicos. Procesando...");
+        // Normalizar map de configuración para lookup por email (case-insensitive)
+        $configMap = array_change_key_case(config('dictaminadores', []), CASE_LOWER);
+
+        $this->info("\nSe procesarán " . count($dictaminadoresList) . " dictaminadores (según config/dictaminadores.php).");
 
         // Obtener la lista blanca de correos desde config/dictaminadores.php
         $whitelist = array_map('strtolower', array_keys(config('dictaminadores', [])));
@@ -90,7 +181,7 @@ class SyncComisionadores extends Command
             $this->warn('La lista de dictaminadores en config/dictaminadores.php está vacía. No se aplicará filtro.');
         }
 
-        $this->withProgressBar($dictaminadoresList, function ($apiData) use ($jsonFechas, $whitelist) {
+        $this->withProgressBar($dictaminadoresList, function ($apiData) use ($jsonFechas, $whitelist, $configMap) {
             $email = $apiData['email'] ?? null;
             if (!$email) return;
 
@@ -100,11 +191,33 @@ class SyncComisionadores extends Command
                 return;
             }
 
-            // Datos básicos desde la lista de búsqueda
+            // Datos básicos desde la lista de búsqueda (preferir API, usar config solo como fallback)
             $nombre = $apiData['nombre'] ?? '';
             $apellido1 = $apiData['primerApellido'] ?? '';
             $apellido2 = $apiData['segundoApellido'] ?? '';
             $departamento = $apiData['departamento'] ?? null;
+
+            // Lookup config entry for this email (case-insensitive)
+            $cfg = $configMap[strtolower($email)] ?? null;
+            if ($cfg) {
+                // Si la API no entregó nombre/apellidos, intentar parsear el nombre completo de la config
+                if (empty($nombre) && !empty($cfg['nombre'])) {
+                    $parts = preg_split('/\s+/', $cfg['nombre']);
+                    if (count($parts) >= 3) {
+                        $nombre = array_shift($parts);
+                        $apellido1 = array_shift($parts);
+                        $apellido2 = implode(' ', $parts);
+                    } else {
+                        // Fallback simple
+                        $nombre = $cfg['nombre'];
+                    }
+                }
+
+                // Si no hay departamento desde la API, usar el de la config
+                if (empty($departamento) && !empty($cfg['departamento'])) {
+                    $departamento = $cfg['departamento'];
+                }
+            }
             $idMaestro = $apiData['maestroId'] ?? null;
             
             $area = null;
