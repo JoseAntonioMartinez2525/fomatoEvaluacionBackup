@@ -24,42 +24,52 @@ class AuthController extends Controller
         // Validate and register the user
         //dd($request->all());
         $request->validate([
-            'registerName' => 'required|string|max:255',
-            //'registerUsertype' => 'required|in:dictaminador,docente',
-            'registerEmail' => 'required|string|email|max:255|unique:users,email',
-            'registerPassword' => 'required|string|min:6|confirmed',
+            'registerName' => 'required|string|max:255', // Nombre del usuario
+            'registerEmail' => 'required|string|email|max:255', // Correo electrónico (ya no es único)
+            'registerPassword' => 'required|string|min:8|confirmed', // Contraseña (mínimo 8 caracteres)
         ],[
             'registerName.required' => 'El nombre es obligatorio.',
-            //'registerUsertype.required' => 'El tipo de usuario es obligatorio.',
             'registerEmail.required' => 'El correo electrónico es obligatorio.',
+            'registerEmail.email' => 'El correo electrónico debe ser una dirección válida.',
             'registerPassword.required' => 'La contraseña es obligatoria.',
-            'registerPassword.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'registerPassword.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'registerPassword.confirmed' => 'Las contraseñas no coinciden.',
-    ]);
-
-            // 🔹 USO DEL NORMALIZADOR (única fuente de verdad)
-            $email = strtolower($request->registerEmail);
-            $dictaminador = DictaminadoresConfig::byEmail($email);
-
-            $isDictaminador = (bool) $dictaminador;
-            
-            // Verificar si está en la configuración de docentes
-            $isDocenteConfig = array_key_exists($email, config('docentes', []));
-
-            // Determinar tipo de usuario: si es dictaminador puro (y no está en docentes), asignar 'dictaminador', sino 'docente'
-            $userType = ($isDictaminador && !$isDocenteConfig) ? 'dictaminador' : 'docente';
-
-            $user = User::create([
-            'name'            => $request->registerName,
-            'email'           => $email,
-            'password'        => Hash::make($request->registerPassword),
-            'user_type'       => $userType,
-            'is_dictaminador' => $isDictaminador,
-            'departamento'    => $dictaminador['departamento'] ?? null,
         ]);
 
-        Auth::login($user);
+        // 🔹 USO DEL NORMALIZADOR (única fuente de verdad)
+        $email = strtolower($request->registerEmail);
+        $name = $request->registerName;
+        $password = Hash::make($request->registerPassword);
 
-        return redirect()->route('welcome');
+        // Determinar si el usuario es dictaminador o docente según la configuración
+        $dictaminadorConfig = DictaminadoresConfig::byEmail($email);
+        $isDictaminador = (bool) $dictaminadorConfig;
+        $isDocenteConfig = array_key_exists($email, config('docentes', []));
+        $userType = ($isDictaminador && !$isDocenteConfig) ? 'dictaminador' : 'docente';
+        $departamento = $dictaminadorConfig['departamento'] ?? null;
+
+        // Buscar si el usuario ya existe
+        $user = User::where('email', $email)->first();
+
+        if ($user) {
+            // Si el usuario existe, actualizar solo su nombre y contraseña.
+            // Preservamos departamento y roles que vienen de la sincronización.
+            $user->update([
+                'name' => $name,
+                'password' => $password,
+            ]);
+        } else {
+            // Si el usuario no existe, crearlo
+            $user = User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => $password,
+            'user_type'       => $userType,
+            'is_dictaminador' => $isDictaminador,
+            'departamento'    => $departamento,
+            ]);
+        }
+
+        return redirect()->route('login');
     }
 }

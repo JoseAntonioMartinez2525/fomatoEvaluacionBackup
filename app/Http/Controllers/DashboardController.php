@@ -11,6 +11,7 @@ use App\Http\Controllers\FirmaDictaminadorController;
 use App\Http\Controllers\DocenteFormsController;
 use App\Support\DictaminadoresConfig;
 use App\Models\UsersResponseForm1;
+use App\Models\Docente;
 
 class DashboardController extends Controller
 {
@@ -76,13 +77,16 @@ class DashboardController extends Controller
         $form1 = UsersResponseForm1::where('user_id', $user->id)->first();
         $convocatoria = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
 
+        // Obtener datos de la tabla docentes (sincronizada con API)
+        $docenteDb = Docente::where('email', $user->email)->first();
+
         // Cargar datos directamente del archivo de configuración de docentes
         $docente = config('docentes')[strtolower($user->email)] ?? null;
 
         // 1. Priorizar datos de UsersResponseForm1 si existen (ya sincronizados en login)
         $nombre = $form1->nombre ?? ($docente['nombre'] ?? $user->name);
-        $area = $form1->area ?? ($docente['area'] ?? $user->area ?? 'No definida');
-        $departamento = $form1->departamento ?? ($docente['departamento'] ?? $user->departamento ?? 'No definido');
+        $area = $docenteDb->area ?? ($form1->area ?? ($docente['area'] ?? $user->area ?? 'No definida'));
+        $departamento = $docenteDb->departamento ?? ($form1->departamento ?? ($docente['departamento'] ?? $user->departamento ?? 'No definido'));
 
         $areaOptions = ['Agropecuaria', 'Ciencias del Mar y Tierra', 'Ciencias Sociales y Humanidades'];
         $departamentoOptions = ['Agronomia', 'Ciencia animal y Conservación del habitat', 'Ciencias de la tierra', 'Ciencias Marinas y Costeras', 'Ciencias Sociales y Juridicas', 'Economia', 'Humanidades', 'Ingenieria en Pesquerias', 'Sistemas Computacionales'];
