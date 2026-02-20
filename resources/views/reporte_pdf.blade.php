@@ -498,7 +498,7 @@ if (isset($dynamicData) && is_array($dynamicData)) {
                     </td>
                     <td class="firma-evaluador" style="text-align:center; padding:6px; border:1px solid #ccc;">
                         @if($dictaminador['signature_image'])
-                            <img src="data:{{ $dictaminador['mime'] }};base64,{{ $dictaminador['signature_image'] }}"
+                            <img src="{{ Str::startsWith($dictaminador['signature_image'], 'data:') ? $dictaminador['signature_image'] : 'data:' . ($dictaminador['mime'] ?? 'image/png') . ';base64,' . $dictaminador['signature_image'] }}"
                                  alt="Firma"
                                  class="firma-img"
                                  style="width:120px; height:auto;">

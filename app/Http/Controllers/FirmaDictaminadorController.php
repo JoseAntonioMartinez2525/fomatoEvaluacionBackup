@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\DictaminadorSignature;
+use App\Models\Comisionador;
 
 class FirmaDictaminadorController extends Controller
 {
@@ -18,9 +19,13 @@ class FirmaDictaminadorController extends Controller
         $user = Auth::user();
 
         $firmaDictaminador = DictaminadorSignature::where('user_id', $user->id)->first();
+        $comisionador = Comisionador::where('user_id', $user->id)->first();
+
+        // Prioridad: 1. API (Comisionador), 2. Manual (DictaminadorSignature)
+        $firmaImagen = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($firmaDictaminador->signature_image ?? null);
 
         // Si ya tiene firma, toma su nombre de la BD; si no, usa el del usuario
-        $personaEvaluadora = $firmaDictaminador->evaluator_name ?? $user->name;
+        $personaEvaluadora = $firmaDictaminador->evaluator_name ?? $user->name; // El nombre manual suele ser más preciso para la firma, o se puede usar el del comisionador
 
         // Si ya tiene firma y no hemos mostrado el mensaje en esta sesión
             if ($firmaDictaminador && !session()->has('firma_msg_shown')) {
@@ -31,8 +36,8 @@ class FirmaDictaminadorController extends Controller
 
         return view('comision_dictaminadora', [
         'personaEvaluadora' => $personaEvaluadora,
-        'firma' => $firmaDictaminador->signature_image ?? null,
-        'tieneFirma' => $firmaDictaminador ? true : false,
+        'firma' => $firmaImagen,
+        'tieneFirma' => ($firmaImagen) ? true : false,
         ]);
     }
 
@@ -45,12 +50,15 @@ public function showResumen(Request $request)
 
     if ($userType === 'dictaminador') {
         $firmaDictaminador = DictaminadorSignature::where('user_id', $user->id)->first();
+        $comisionador = Comisionador::where('user_id', $user->id)->first();
+        
         $personaEvaluadora = $firmaDictaminador->evaluator_name ?? $user->name;
+        $firmaImagen = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($firmaDictaminador->signature_image ?? null);
 
         // Creamos un objeto dentro de un arreglo para que Blade pueda iterar
         $firmas[] = (object)[
             'evaluator_name' => $personaEvaluadora,
-            'signature_image' => $firmaDictaminador->signature_image ?? null,
+            'signature_image' => $firmaImagen,
         ];
     }
 
@@ -59,9 +67,20 @@ public function showResumen(Request $request)
 
         if (!$docenteId) abort(400, 'Debe especificar un docente');
 
-        $firmas = DictaminadorSignature::whereHas('docentes', function($q) use ($docenteId) {
+        // Obtener firmas manuales
+        $firmasManuales = DictaminadorSignature::whereHas('docentes', function($q) use ($docenteId) {
             $q->where('docente_id', $docenteId);
         })->get();
+
+        // Procesar prioridad con API
+        $firmas = $firmasManuales->map(function($firma) {
+            $comisionador = Comisionador::where('user_id', $firma->user_id)->first();
+            if ($comisionador && !empty($comisionador->firma_grafica)) {
+                // Sobrescribir imagen con la de la API
+                $firma->signature_image = $comisionador->firma_grafica;
+            }
+            return $firma;
+        });
     }
 
         return view('resumen_comision', [
@@ -222,8 +241,11 @@ public function showResumen(Request $request)
 
     // Busca si el dictaminador ya tiene firma registrada
     $firmaDictaminador = DictaminadorSignature::where('user_id', $user->id)->first();
+    $comisionador = Comisionador::where('user_id', $user->id)->first();
 
     $personaEvaluadora = $firmaDictaminador->evaluator_name ?? $user->name;
+    // Prioridad API
+    $firmaImagen = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($firmaDictaminador->signature_image ?? null);
 
     // Si ya tiene firma y no se ha mostrado el mensaje aún
     if ($firmaDictaminador && !session()->has('firma_msg_shown')) {
@@ -233,8 +255,8 @@ public function showResumen(Request $request)
 
     return view('resumen_comision', [
         'personaEvaluadora' => $personaEvaluadora,
-        'firma' => $firmaDictaminador->signature_image ?? null,
-        'tieneFirma' => $firmaDictaminador ? true : false,
+        'firma' => $firmaImagen,
+        'tieneFirma' => ($firmaImagen) ? true : false,
     ]);
 }
 
@@ -247,9 +269,18 @@ public function getFirmasPorDocente(Request $request)
     }
 
     // Obtener todas las firmas de dictaminadores que evaluaron a este docente
-    $firmas = DictaminadorSignature::whereHas('docentes', function ($q) use ($docenteId) {
+    $firmasManuales = DictaminadorSignature::whereHas('docentes', function ($q) use ($docenteId) {
         $q->where('docente_id', $docenteId);
     })->get();
+
+    $firmas = $firmasManuales->map(function($firma) {
+        $comisionador = Comisionador::where('user_id', $firma->user_id)->first();
+        if ($comisionador && !empty($comisionador->firma_grafica)) {
+            // Usar firma de API
+            $firma->signature_image = $comisionador->firma_grafica;
+        }
+        return $firma;
+    });
 
     return response()->json($firmas);
 }
@@ -265,14 +296,17 @@ public function getSignatures(Request $request)
     // ===== Dictaminador: solo retorna su propia firma =====
     if ($userType === 'dictaminador') {
         $firma = DictaminadorSignature::where('user_id', $userId)->first();
+        $comisionador = Comisionador::where('user_id', $userId)->first();
 
-        if (!$firma) {
+        $firmaImagen = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($firma->signature_image ?? null);
+
+        if (!$firmaImagen && !$firma) {
             return response()->json(['message' => 'No se encontró firma registrada'], 404);
         }
 
         return response()->json([[ // Return as an array to be consistent
             'evaluator_name' => $firma->evaluator_name ?? $user->name,
-            'signature_image' => $firma->signature_image ?? null,
+            'signature_image' => $firmaImagen,
             'mime' => $firma->mime ?? null,
         ]]);
     }
@@ -289,9 +323,12 @@ public function getSignatures(Request $request)
     $dictaminadores = $docente->dictaminadores()->with('dictaminadorSignature')->distinct()->get();
 
     $signatures = $dictaminadores->map(function ($dictaminador) {
+        $comisionador = Comisionador::where('user_id', $dictaminador->id)->first();
+        $apiSignature = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : null;
+
         return [
             'evaluator_name'  => $dictaminador->dictaminadorSignature->evaluator_name ?? $dictaminador->name,
-            'signature_image' => $dictaminador->dictaminadorSignature->signature_image ?? null,
+            'signature_image' => $apiSignature ?? ($dictaminador->dictaminadorSignature->signature_image ?? null),
             'mime'            => $dictaminador->dictaminadorSignature->mime ?? null,
         ];
     });

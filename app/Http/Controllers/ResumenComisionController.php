@@ -8,6 +8,8 @@ use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Comisionador;
+use App\Models\DictaminadorSignature;
 
 class ResumenComisionController extends Controller
 {
@@ -107,30 +109,43 @@ public function getFirmasYResumen(Request $request)
 
     // Si es secretaria/admin, obtiene todas las firmas
     if (in_array($user->user_type, ['admin','controlador'])) {
-        $firmas = DB::table('firma_dictaminadores')
-            ->select(
-                'id',
-                'user_id',
-                'evaluator_name',
-                'evaluator_name_2',
-                'evaluator_name_3',
-                'signature_path',
-                'signature_path_2',
-                'signature_path_3'
-            )
-            ->get();
+        // Obtener todos los usuarios dictaminadores
+        $dictaminadores = User::where('user_type', 'dictaminador')->get();
+
+        $firmas = $dictaminadores->map(function($d) {
+            $comisionador = Comisionador::where('user_id', $d->id)->first();
+            $manual = DictaminadorSignature::where('user_id', $d->id)->first();
+            
+            // Prioridad: 1. API, 2. Manual
+            $firmaPath = ($comisionador && !empty($comisionador->firma_grafica)) 
+                ? $comisionador->firma_grafica 
+                : ($manual->signature_image ?? null);
+            
+            // Si existe firma, retornamos el objeto con la estructura esperada por la vista
+            if ($firmaPath) {
+                return (object) [
+                    'id' => $d->id,
+                    'user_id' => $d->id,
+                    'evaluator_name' => $manual->evaluator_name ?? $d->name,
+                    'signature_path' => $firmaPath, // Contiene el string Base64
+                ];
+            }
+            return null;
+        })->filter()->values(); // Eliminar nulos y reindexar
     } 
     // Si es dictaminador, solo obtiene su propia firma
     else if ($user->user_type === 'dictaminador') {
-        $firmas = DB::table('firma_dictaminadores')
-            ->where('user_id', $user->id)
-            ->select(
-                'id',
-                'user_id',
-                'evaluator_name',
-                'signature_path'
-            )
-            ->get();
+        $comisionador = Comisionador::where('user_id', $user->id)->first();
+        $manual = DictaminadorSignature::where('user_id', $user->id)->first();
+        
+        $firmaPath = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($manual->signature_image ?? null);
+        
+        $firmas = $firmaPath ? collect([(object)[
+            'id' => $user->id,
+            'user_id' => $user->id,
+            'evaluator_name' => $manual->evaluator_name ?? $user->name,
+            'signature_path' => $firmaPath
+        ]]) : collect([]);
     } 
     else {
         return response()->json(['error' => 'No autorizado'], 403);

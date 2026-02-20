@@ -160,11 +160,17 @@ class UserController extends Controller
             $dictaminadores = collect([]);
             if (method_exists($user, 'dictaminadores')) {
                 $dictaminadores = $user->dictaminadores()->with('dictaminadorSignature')->get()->map(function ($d) {
+                    // Buscar datos de API (Comisionador)
+                    $comisionador = \App\Models\Comisionador::where('user_id', $d->id)->first();
+                    
                     $signature = $d->dictaminadorSignature;
+                    // Prioridad: 1. API, 2. Manual
+                    $finalSignatureImage = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($signature->signature_image ?? null);
+
                     return [
                         'name' => $signature->evaluator_name ?? $d->name,
-                        'signature_image' => $signature->signature_image ?? null,
-                        'mime' => $signature->mime ?? 'image/png',
+                        'signature_image' => $finalSignatureImage,
+                        'mime' => $signature->mime ?? 'image/png', // Si viene de API, asumimos png/jpg compatible
                     ];
                 })->unique('name')->values();
             }
