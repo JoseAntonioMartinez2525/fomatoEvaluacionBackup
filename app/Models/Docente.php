@@ -55,11 +55,23 @@ class Docente extends Model
             $fullName = trim("{$docente->nombre} {$docente->primerApellido} {$docente->segundoApellido}");
 
             if ($user) {
-                // Actualizar usuario existente
-                $user->update([
+                // Verificar excepciones: Dictaminadores (config) y Controladores
+                $dictaminadoresEmails = array_map('strtolower', array_keys(config('dictaminadores', [])));
+                $isDictaminador = in_array(strtolower($docente->email), $dictaminadoresEmails);
+                $isControlador = in_array($user->user_type, ['controlador', 'admin']);
+
+                $updateData = [
                     'name' => $fullName,
                     'departamento' => $docente->departamento,
-                ]);
+                ];
+
+                // Si no es una excepción, forzar tipo docente para corregir posibles errores
+                if (!$isDictaminador && !$isControlador) {
+                    $updateData['user_type'] = 'docente';
+                }
+
+                // Actualizar usuario existente
+                $user->update($updateData);
             } else {
                 // Crear nuevo usuario
                 User::create([

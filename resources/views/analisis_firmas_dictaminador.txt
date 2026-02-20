@@ -1,0 +1,86 @@
+================================================================================
+ANÁLISIS DE GESTIÓN DE FIRMAS DE DICTAMINADORES
+================================================================================
+
+Este documento detalla los archivos, relaciones y flujos de secuencia detectados
+en la aplicación "formato-evaluacion" relacionados con las firmas de los usuarios
+con rol de "dictaminador".
+
+--------------------------------------------------------------------------------
+1. ARCHIVOS INVOLUCRADOS
+--------------------------------------------------------------------------------
+
+A) Controladores (Lógica de Negocio)
+   - app/Http/Controllers/FirmaDictaminadorController.php
+     * Controlador principal. Gestiona la carga, visualización y almacenamiento
+       de la firma electrónica (imagen procesada en Base64).
+   - app/Http/Controllers/ResumenComisionController.php
+     * Recupera las firmas para mostrarlas en la vista de resumen de comisión.
+   - app/Http/Controllers/UserController.php
+     * Utiliza las firmas al generar los reportes PDF exportables.
+
+B) Modelos (Estructura de Datos)
+   - app/Models/User.php
+     * Modelo central. Define la relación `dictaminadorSignature()` y 
+       `dictaminadores()` (relación muchos a muchos con docentes).
+   - app/Models/DictaminadorSignature.php (Inferido por uso en controladores)
+     * Tabla que almacena la imagen de la firma (blob/base64) y el nombre del evaluador.
+   - app/Models/Comisionador.php
+     * Almacena datos traídos de la API externa, incluyendo `firma_grafica`.
+
+C) Vistas (Interfaz de Usuario)
+   - resources/views/secretaria.blade.php
+     * Interfaz administrativa para que la secretaría suba firmas de dictaminadores.
+   - resources/views/comision_dictaminadora.blade.php (Inferido)
+     * Interfaz para que el propio dictaminador suba su firma.
+
+D) Servicios y Comandos (Integración Externa)
+   - app/Services/SiaApiService.php
+     * Conecta con API SIAA para obtener datos del dictaminador (incluida firma si existe).
+   - app/Console/Commands/SyncComisionadores.php
+     * Sincroniza usuarios y datos de comisionadores (incluida firma gráfica) desde la API.
+
+--------------------------------------------------------------------------------
+2. RELACIONES DE BASE DE DATOS
+--------------------------------------------------------------------------------
+
+[User] (1) <---> (1) [DictaminadorSignature]
+   - Relación definida en User::dictaminadorSignature().
+   - Clave foránea: `user_id` en la tabla `dictaminador_signatures`.
+
+[User] (1) <---> (1) [Comisionador]
+   - Relación definida en User::comisionador().
+   - Se usa para datos sincronizados desde la API (SIAA).
+
+[User (Docente)] (M) <---> (M) [User (Dictaminador)]
+   - Tabla pivote: `dictaminador_docente`.
+   - Permite saber qué dictaminadores firmaron la evaluación de un docente.
+
+--------------------------------------------------------------------------------
+3. FLUJOS DE SECUENCIA
+--------------------------------------------------------------------------------
+
+FLUJO A: Carga de Firma por Secretaría (Administrador)
+   1. Usuario accede a vista `secretaria.blade.php`.
+   2. JS `uploadSignature()` captura el archivo y envía POST a ruta `store.signature.secretaria`.
+   3. `FirmaDictaminadorController@storeFirmaSecretaria`:
+      a. Recibe imagen y `user_id` (o email).
+      b. Procesa imagen (quita fondo blanco con `removeBackgroundAndReturnPngBytes`).
+      c. Guarda/Actualiza en `DictaminadorSignature`.
+
+FLUJO B: Carga de Firma por el propio Dictaminador
+   1. Dictaminador accede a `FirmaDictaminadorController@showForm`.
+   2. Sube su firma.
+   3. `FirmaDictaminadorController@storeFirma`:
+      a. Usa `Auth::user()->id`.
+      b. Procesa y guarda en `DictaminadorSignature`.
+
+FLUJO C: Sincronización Automática (API)
+   1. Ejecución de comando `php artisan sync:comisionadores`.
+   2. `SiaApiService` consulta endpoint `/personal` o `/dictaminadores/{id}`.
+   3. Si la API retorna `firma_gráfica`, se guarda en el modelo `Comisionador`.
+
+FLUJO D: Generación de Reporte PDF
+   1. `UserController@export` itera sobre los docentes.
+   2. Invoca `$user->dictaminadores()` para obtener evaluadores.
+   3. Carga relación `dictaminadorSignature` para incrustar la imagen en el PDF.
