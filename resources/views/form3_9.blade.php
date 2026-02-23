@@ -854,9 +854,9 @@ $formNumber = '39';
             <div id="convocatoria2" class="{{ $userType == 'dictaminador' ? 'dictaminador-style' : 'secretaria-style' }}">
                 @if(isset($convocatoria))
                     @if($userType == 'dictaminador')
-                        <div style="margin-right: -700px;"><span style="font-size: 1.5em;">{{ $convocatoria }}</span></div>
+                        <div style="margin-right: -700px;"><span style="font-size: 1rem;">{{ $convocatoria }}</span></div>
                     @elseif($userType =='controlador')
-                        <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1.5em;">{{ $convocatoria }}</span></div>
+                        <div style="margin-right: 60px; margin-left: 100px; padding-right: 12px; text-align:left;"><span style="font-size: 1rem;">{{ $convocatoria }}</span></div>
                     @else
                         <span>Convocatoria: {{ $convocatoria }}</span>
                     @endif

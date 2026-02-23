@@ -13,6 +13,8 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;// Corrected line without extraneous character
+use App\Models\DictaminatorsResponseForm3_8_1;
+use App\Models\UsersResponseForm3_8_1;
 use App\Models\DynamicFormResponse;
 
 class DynamicFormController extends Controller
@@ -381,8 +383,22 @@ class DynamicFormController extends Controller
         $periodo2 = $periodo;
         $teacherEmailFromUrl = $request->input('email');
 
+        // Data to pass to the view
+        $viewData = compact('convocatoria', 'periodo', 'convocatoria2', 'periodo2', 'teacherEmailFromUrl');
+
+        // Specific logic for form3_8_1 to define $mostrarSoloSpan
+        if ($formType === 'form3_8_1') {
+            // This logic is from PuntajeMaximosController to fix the undefined variable
+            $existenDatosDictaminador = DictaminatorsResponseForm3_8_1::exists();
+            $existenDatosDocente = UsersResponseForm3_8_1::exists();
+            $viewData['mostrarSoloSpan'] = $existenDatosDictaminador || $existenDatosDocente;
+        }
+        else {
+            $viewData['mostrarSoloSpan'] = false; // Default value for other forms
+        }
+
         // Esta función maneja los formularios estáticos
-        return view($formType, compact('convocatoria', 'periodo', 'convocatoria2', 'periodo2', 'teacherEmailFromUrl'));
+        return view($formType, $viewData);
     }
 
     public function getDynamicFormForSecretaria($formName)

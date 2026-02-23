@@ -6,6 +6,8 @@ $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
 use App\Models\UsersResponseForm1;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DictaminatorsResponseForm3_8_1;
+use App\Models\UsersResponseForm3_8_1;
 
 if (!isset($periodo)) {
     $targetUser = Auth::user();
@@ -19,6 +21,14 @@ if (!isset($periodo)) {
     $periodo = ($form1 && $form1->periodo) ? $form1->periodo : (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
     $convocatoria = ($form1 && $form1->convocatoria) ? $form1->convocatoria : 'Convocatoria no asignada';
 }
+
+// Lógica de respaldo: Si el controlador no envió la variable, la calculamos aquí.
+if (!isset($mostrarSoloSpan)) {
+    $existenDatosDictaminador = DictaminatorsResponseForm3_8_1::exists();
+    $existenDatosDocente = UsersResponseForm3_8_1::exists();
+    $mostrarSoloSpan = $existenDatosDictaminador || $existenDatosDocente;
+}
+
 $docenteConfig =  $docenteConfig ?? [
         'formKey' => 'form3_8_1',
         'docenteDataEndpoint' => '/formato-evaluacion/get-docente-data', 
