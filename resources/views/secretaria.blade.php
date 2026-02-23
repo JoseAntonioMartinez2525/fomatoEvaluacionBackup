@@ -1054,7 +1054,7 @@ foreach ($allowedEmails as $email) {
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        fetch('{{ url("/formato-evaluacion/update-periods") }}', {
+        fetch('{{ route("update.periods") }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
@@ -1090,7 +1090,7 @@ foreach ($allowedEmails as $email) {
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        fetch('{{ url("/formato-evaluacion/update-convocatoria") }}', {
+        fetch('{{ route("update.convocatoria") }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,

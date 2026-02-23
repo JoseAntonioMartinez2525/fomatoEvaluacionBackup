@@ -502,8 +502,8 @@ Route::post('/evaluation-dates/docentes-llenado', [EvaluationDateController::cla
 Route::post('/evaluation-dates/docentes-evaluacion', [EvaluationDateController::class, 'storeDocentesEvaluacion']);
 Route::post('/evaluation-dates/evaluadores-captura', [EvaluationDateController::class, 'storeEvaluadoresCaptura']);
 Route::get('/evaluation-dates', [EvaluationDateController::class, 'getFechas']);
-Route::post('/update-periods', [ResumenComisionController::class, 'updatePeriods'])->middleware('auth');
-Route::post('/update-convocatoria', [ResumenComisionController::class, 'updateConvocatoria'])->middleware('auth');
+Route::post('/update-periods', [ResumenComisionController::class, 'updatePeriods'])->name('update.periods')->middleware('auth');
+Route::post('/update-convocatoria', [ResumenComisionController::class, 'updateConvocatoria'])->name('update.convocatoria')->middleware('auth');
 Route::get('/evaluation-dates/history', [ResumenComisionController::class, 'getEvaluationDatesHistory'])->middleware('auth');
 
 for ($i = 1; $i <= 19; $i++) {
