@@ -94,8 +94,8 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
 <body class="font-sans antialiased">
 
     @if (Auth::check())
-        {{-- El componente x-nav-docentes ya incluye la estructura <nav>, el header y los estilos necesarios --}}
-            
+    {{-- El componente x-nav-docentes ya incluye la estructura <nav>, el header y los estilos necesarios --}}
+
         <x-nav-docentes :user="Auth::user()">
             <li class="nav-item">
                 @if(Auth::user()->user_type ==='controlador')
@@ -104,7 +104,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                 @endif
                 <a class="nav-link active enlaceSN" style="width: 300px;font-size: 20px;" href="{{ route('welcome') }}"
                     title="Formato de Evaluación docente"><i class="fa-solid fa-align-justify"></i>&nbsp;Inicio</a>
-            </li>           
+            </li>
             <li class=" nav-item">
                 <a class="nav-link active enlaceSN" aria-current="page" style="width: 200px;"
                     href="{{ route('rules') }}" title="Reglamento deacuerdo al artículo 10 de PEDPD"><i
@@ -174,13 +174,15 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
             </ul>
         </x-nav-docentes>
         @endif
-        <button id="toggle-dark-mode" class="btn btn-secondary mt-3"><i class="fa-solid fa-moon"></i>&nbspModo Obscuro</button>
+        <button id="toggle-dark-mode" class="btn btn-secondary mt-3"><i class="fa-solid fa-moon"></i>&nbspModo
+            Obscuro</button>
         <x-general-header />
         <div class="bg-gray-50 text-black/50 main-content-area" style="padding-left: 6rem;">
             <div id="instrucionEdit">
                 <p>*Nota: Para editar una de las tablas de los formularios, haga clic en el botón ✎ Editar Formulario.
                     <br> También podrá dirigirse a este elemento haciendo clic en cualquiera de los formularios
-                    deseados, ubicados en la barra de menú al lado izquierdo.</p>
+                    deseados, ubicados en la barra de menú al lado izquierdo.
+                </p>
             </div>
             <button id="edit-form-btn" class="btn btn-info"><i class="fa-solid fa-pencil"></i>&nbsp;Editar
                 Formulario</button>
@@ -750,15 +752,15 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                                 <td class="text-center table-ajust" scope="col">Observaciones</td>
                                             </tr>
                                             <tr>
-                                            <td class="punto3_5">a)</td>
-                                            <td>Evaluado por la persona titular de DA</td>
-                                            <td id="p35"><b>35</b></td>
-                                            <td><input type="number" id="cantDA" oninput="onActv3SubTotal3_5()"
-                                                    value="{{ oldValueOrDefault('cantDA') }}"></td>
-                                            <td id="cantDA2"></td>
-                                            <td class="td_obs"><span id="comDA"></span></td>
-                                            <td class="td_obs"><input id="obs3_5_1" class="table-header" type="text"
-                                                    placeholder="Comenta aqui"></td>
+                                                <td class="punto3_5">a)</td>
+                                                <td>Evaluado por la persona titular de DA</td>
+                                                <td id="p35"><b>35</b></td>
+                                                <td><input type="number" id="cantDA" oninput="onActv3SubTotal3_5()"
+                                                        value="{{ oldValueOrDefault('cantDA') }}"></td>
+                                                <td id="cantDA2"></td>
+                                                <td class="td_obs"><span id="comDA"></span></td>
+                                                <td class="td_obs"><input id="obs3_5_1" class="table-header" type="text"
+                                                        placeholder="Comenta aqui"></td>
                                             </tr>
                                             <tr>
                                                 <td class="punto3_5">b)</td>
@@ -844,20 +846,20 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                             </tr>
                                         </tbody>
                                     </table>
-                                            <!--Tabla informativa Acreditacion Actividad 3.6-->
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="acreditacion" scope="col">Acreditacion: </th>
+                                    <!--Tabla informativa Acreditacion Actividad 3.6-->
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="acreditacion" scope="col">Acreditacion: </th>
 
-                                                        <th class="descripcion"><b>DDIE</b>
+                                                <th class="descripcion"><b>DDIE</b>
 
-                                                        <th><button id="btn3_6" type="submit"
-                                                                class="btn custom-btn printButtonClass">Enviar</button>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
+                                                <th><button id="btn3_6" type="submit"
+                                                        class="btn custom-btn printButtonClass">Enviar</button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
                                 </form>
                             </div>
                             <div id="step7" style="display: none">
@@ -907,32 +909,32 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                                 <td colspan="2"></td>
                                                 <td class="text-center table-ajust" scope="col">Observaciones</td>
                                             </tr>
-                                                    <td>0.5 por cada hora</td>
-                                                    <td id="pMedio2">0.5</td>
-                                                    <td class="td_docente_cantidad"><input type="number" placeholder="0"
-                                                            id="puntaje3_7" oninput="onActv3SubTotal3_7()"
-                                                            value="{{ oldValueOrDefault('puntaje3_7') }}"></td>
-                                                    <td id="puntajeHoras3_7"></td>
-                                                    <td class="td_obs"><span id="comisionDict3_7"></span>
-                                                    </td>
-                                                    <td class="td_obs"><input id="obs3_7" class="table-header"
-                                                            type="text" placeholder="Comenta aqui"></td>                                                
+                                            <td>0.5 por cada hora</td>
+                                            <td id="pMedio2">0.5</td>
+                                            <td class="td_docente_cantidad"><input type="number" placeholder="0"
+                                                    id="puntaje3_7" oninput="onActv3SubTotal3_7()"
+                                                    value="{{ oldValueOrDefault('puntaje3_7') }}"></td>
+                                            <td id="puntajeHoras3_7"></td>
+                                            <td class="td_obs"><span id="comisionDict3_7"></span>
+                                            </td>
+                                            <td class="td_obs"><input id="obs3_7" class="table-header" type="text"
+                                                    placeholder="Comenta aqui"></td>
                                         </tbody>
                                     </table>
-                                            </thead>
-                                            <!--Tabla informativa Acreditacion Actividad 3.7-->
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="acreditacion" scope="col">Acreditacion: </th>
-                                                        <th class="descripcion"><b>JD,CAAC, instancia que organiza</b>
-                                                        </th>
-                                                        <th><button id="btn3_7" type="submit"
-                                                                class="btn custom-btn printButtonClass">Enviar</button>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
+                                    </thead>
+                                    <!--Tabla informativa Acreditacion Actividad 3.7-->
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="acreditacion" scope="col">Acreditacion: </th>
+                                                <th class="descripcion"><b>JD,CAAC, instancia que organiza</b>
+                                                </th>
+                                                <th><button id="btn3_7" type="submit"
+                                                        class="btn custom-btn printButtonClass">Enviar</button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
                                 </form>
                             </div>
 
@@ -983,35 +985,35 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                                 <td colspan="1"></td>
                                                 <td class="text-center table-ajust" scope="col">Observaciones</td>
                                             </tr>
-                                                    <td>1 por cada hora</td>
-                                                    <td id="p3_8">1</td>
-                                                    <td class="td_docente_cantidad"><input type="number" placeholder="0"
-                                                            id="puntaje3_8" oninput="onActv3SubTotal3_8()"
-                                                            value="{{ oldValueOrDefault('puntaje3_8') }}"></td>
-                                                    <td id="puntajeHoras3_8"></td>
-                                                    <td class="td_obs"><span id="comisionDict3_8"></span>
-                                                    </td>
-                                                    <td class="td_obs"><input class="table-header" id="obs3_8"
-                                                            type="text" placeholder="Comenta aqui"></td>                                                
+                                            <td>1 por cada hora</td>
+                                            <td id="p3_8">1</td>
+                                            <td class="td_docente_cantidad"><input type="number" placeholder="0"
+                                                    id="puntaje3_8" oninput="onActv3SubTotal3_8()"
+                                                    value="{{ oldValueOrDefault('puntaje3_8') }}"></td>
+                                            <td id="puntajeHoras3_8"></td>
+                                            <td class="td_obs"><span id="comisionDict3_8"></span>
+                                            </td>
+                                            <td class="td_obs"><input class="table-header" id="obs3_8" type="text"
+                                                    placeholder="Comenta aqui"></td>
                                         </tbody>
                                     </table>
-                                            </thead>
-                                            <!--Tabla informativa Acreditacion Actividad 3.8-->
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="acreditacion" scope="col">Acreditacion: </th>
+                                    </thead>
+                                    <!--Tabla informativa Acreditacion Actividad 3.8-->
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="acreditacion" scope="col">Acreditacion: </th>
 
-                                                        <th class="descripcion"><b>*JD,CAAC, DDCE, DDIE, SA,DIIP, según
-                                                                corresponda. Cuando sea en
-                                                                instituciones externas, presentar constancia de la
-                                                                institución y el convenio acuerdo con
-                                                                la
-                                                                UABCS.</b>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
+                                                <th class="descripcion"><b>*JD,CAAC, DDCE, DDIE, SA,DIIP, según
+                                                        corresponda. Cuando sea en
+                                                        instituciones externas, presentar constancia de la
+                                                        institución y el convenio acuerdo con
+                                                        la
+                                                        UABCS.</b>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
                                     <button id="btn3_8" type="submit"
                                         class="btn custom-btn printButtonClass">Enviar</button>
                                 </form>
@@ -1065,32 +1067,32 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                                 <td colspan="2"></td>
                                                 <td class="text-center table-ajust" scope="col">Observaciones</td>
                                             </tr>
-                                                    <td>1 por cada hora</td>
-                                                    <td id="p3_8_1">1</td>
-                                                    <td class="td_docente_cantidad"><input type="number" placeholder="0"
-                                                            id="puntaje3_8_1" oninput="onActv3SubTotal3_8_1()"
-                                                            value="{{ oldValueOrDefault('puntaje3_8_1') }}"></td>
-                                                    <td id="puntajeHoras3_8_1"></td>
-                                                    <td class="td_obs"><span id="comisionDict3_8_1"></span>
-                                                    </td>
-                                                    <td class="td_obs"><input class="table-header" id="obs3_8_1"
-                                                            type="text" placeholder="Comenta aqui"></td>                                                
+                                            <td>1 por cada hora</td>
+                                            <td id="p3_8_1">1</td>
+                                            <td class="td_docente_cantidad"><input type="number" placeholder="0"
+                                                    id="puntaje3_8_1" oninput="onActv3SubTotal3_8_1()"
+                                                    value="{{ oldValueOrDefault('puntaje3_8_1') }}"></td>
+                                            <td id="puntajeHoras3_8_1"></td>
+                                            <td class="td_obs"><span id="comisionDict3_8_1"></span>
+                                            </td>
+                                            <td class="td_obs"><input class="table-header" id="obs3_8_1" type="text"
+                                                    placeholder="Comenta aqui"></td>
                                         </tbody>
                                     </table>
-                                            </thead>
-                                            <!--Tabla informativa Acreditacion Actividad 3.8.1-->
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th class="acreditacion" scope="col">Acreditacion: </th>
+                                    </thead>
+                                    <!--Tabla informativa Acreditacion Actividad 3.8.1-->
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="acreditacion" scope="col">Acreditacion: </th>
 
-                                                        <th class="descripcion"><b>*RSU</b> </th>
-                                                        <th><button id="btn3_8_1" type="submit"
-                                                                class="btn custom-btn printButtonClass">Enviar</button>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                            </table>
+                                                <th class="descripcion"><b>*RSU</b> </th>
+                                                <th><button id="btn3_8_1" type="submit"
+                                                        class="btn custom-btn printButtonClass">Enviar</button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                    </table>
                                 </form>
                             </div>
                             <div id="step10" style="display: none">
@@ -1115,7 +1117,7 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                                 <th colspan="7" class="text-center">
                                                     <h3>Tutorias</h3>
                                                 </th>
-                                            </tr>                                        
+                                            </tr>
                                             <tr>
                                                 <th scope="col">Actividad</th>
                                                 <th colspan="5" class="table-ajust" scope="col"></th>
@@ -1855,13 +1857,14 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                             <th class="table-ajust cd" scope="col">Puntaje de la Comisión Dictaminadora
                                             </th>
                                         </tr>
-                                    <tr>
-                                        <th id="seccion3_13" class="acreditacion" colspan="7">3.13 Proyectos académicos
-                                            de
-                                            investigación</th>
-                                        <th id="score3_13">0</th>
-                                        <th id="comision3_13">0</th>
-                                    </tr>
+                                        <tr>
+                                            <th id="seccion3_13" class="acreditacion" colspan="7">3.13 Proyectos
+                                                académicos
+                                                de
+                                                investigación</th>
+                                            <th id="score3_13">0</th>
+                                            <th id="comision3_13">0</th>
+                                        </tr>
                                         <tr>
                                             <th class="acreditacion">Incisos</th>
                                             <th class="acreditacion">Documento</th>
@@ -2118,20 +2121,20 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                             <td class="td_obs"><input class="table-header" type="text"
                                                     placeholder="Comenta aqui" id="obsPatentes"></td>
                                         </tr>
-                                            <tr>
-                                                <td>b)</td>
-                                                <td>Desarrollo de prototipos</td>
-                                                <td id="puntajePrototipos"><b>30</b></td>
-                                                <td class="td_docente_cantidad"><input type="number" id="cantPrototipos"
-                                                        oninput="onActv3SubTotal3_15()"
-                                                        value="{{ oldValueOrDefault('cantPrototipos') }}"></td>
-                                                <td colspan="3"></td>
-                                                <td id="subtotalPrototipos">0</td>
-                                                <td class="td_obs"><span id="comisionPrototipos"></span>
-                                                </td>
-                                                <td class="td_obs"><input class="table-header" type="text"
-                                                        placeholder="Comenta aqui" id="obsPrototipos"></td>
-                                            </tr>
+                                        <tr>
+                                            <td>b)</td>
+                                            <td>Desarrollo de prototipos</td>
+                                            <td id="puntajePrototipos"><b>30</b></td>
+                                            <td class="td_docente_cantidad"><input type="number" id="cantPrototipos"
+                                                    oninput="onActv3SubTotal3_15()"
+                                                    value="{{ oldValueOrDefault('cantPrototipos') }}"></td>
+                                            <td colspan="3"></td>
+                                            <td id="subtotalPrototipos">0</td>
+                                            <td class="td_obs"><span id="comisionPrototipos"></span>
+                                            </td>
+                                            <td class="td_obs"><input class="table-header" type="text"
+                                                    placeholder="Comenta aqui" id="obsPrototipos"></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <!--Tabla informativa Acreditacion Actividad 3.15-->
@@ -3186,6 +3189,15 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                         if ($orderedStructure->isEmpty()) {
                         $orderedStructure = $structure;
                         }
+
+                        // Find the key of the column before 'puntaje_a_evaluar'
+                        $evalKey = 'puntaje_a_evaluar';
+                        $evalColIndex = $orderedStructure->search(fn($col) => ($col['key'] ?? '') === $evalKey);
+                        $prevColKey = null;
+                        if ($evalColIndex !== false && $evalColIndex > 0) {
+                            $prevCol = $orderedStructure->get($evalColIndex - 1);
+                            $prevColKey = $prevCol['key'] ?? null;
+                        }
                         @endphp
 
                         <div id="step{{ $stepNumber }}" style="display:none; margin-inline-start: 10rem;">
@@ -3273,27 +3285,29 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
                                                 $key = $column['key'];
                                                 $value = $row[$key] ?? '';
 
-                                                $isActividad = $key === 'actividad';
-                                                $isEvaluacion = $key === 'puntaje_a_evaluar';
+                                                $isActividad = ($column['group'] === 'actividad' && $column['key'] === 'actividad');
+                                                $isEvaluacion = $key === $evalKey;
+                                                $isPrevToEvaluacion = $key === $prevColKey;
                                                 $isComision = $key === 'puntaje_de_la_comision_dictaminadora';
                                                 $isObservaciones = $column['group'] === 'observaciones';
+                                                $isPrevToEvaluacion = ($key === $prevColKey);
                                                 @endphp
 
                                                 <td
-                                                    class="{{ $isEvaluacion ? 'bg-light fw-bold' : '' }} {{ ($isComision || $isObservaciones) ? 'bgComision' : '' }}">
+                                                    class="{{ $isEvaluacion ? 'fw-bold' : '' }} {{ ($isComision || $isObservaciones) ? 'bgComision' : '' }}">
                                                     @if($isActividad)
                                                     <span class="fw-bold">{{ $value }}</span>
                                                     <input type="hidden" name="data[{{ $rowIndex }}][{{ $key }}]"
                                                         value="{{ $value }}">
                                                     @elseif($isEvaluacion || $isComision)
                                                     <input type="text" class="form-control form-control-sm text-center"
-                                                        name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
+                                                        name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}" readonly>
                                                     @else
-                                                    <input type="text"
-                                                        class="form-control form-control-sm text-center
-                                                                                        {{ ($column['role'] ?? '') === 'sum' ? 'sum-input' : '' }}"
+                                                    <input type="text" class="form-control form-control-sm text-center
+                                                        {{ ($column['role'] ?? '') === 'sum' ? 'sum-input' : '' }}"
                                                         data-row="{{ $rowIndex }}"
-                                                        name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}">
+                                                        name="data[{{ $rowIndex }}][{{ $key }}]" value="{{ $value }}"
+                                                        style="{{ $isPrevToEvaluacion ? 'background-color: rgb(233, 236, 239);' : '' }}">
                                                     @endif
                                                 </td>
                                                 @endforeach
@@ -3354,10 +3368,10 @@ if (is_string($df->form_data)) $df->form_data = json_decode($df->form_data, true
             </div>
         </div>
         @endif
-    </div>
+        </div>
 
-    <script>
-        const placeholderObs = "Escribe tu comentario aquí";
+        <script>
+            const placeholderObs = "Escribe tu comentario aquí";
 
 const A40 = 6.25;
 const B56 = 17;
@@ -4738,7 +4752,6 @@ if (!isNaN(score3_9)) {
                 if (scoreInput) {
                     scoreInput.value = rowProduct.toFixed(2); // Asignar el producto calculado
                     scoreInput.readOnly = true; // Hacerlo de solo lectura para evitar errores
-                    scoreInput.style.backgroundColor = '#e9ecef';
                 }
 
                 totalTableScore += rowProduct;
@@ -4762,7 +4775,7 @@ if (!isNaN(score3_9)) {
         // Ejecutar el cálculo una vez al cargar la página
         recalcTable();
     }
-    </script>
+        </script>
 </body>
 
 </html>
