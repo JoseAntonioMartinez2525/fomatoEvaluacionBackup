@@ -90,6 +90,12 @@ class UserController extends Controller
 
     public function export() 
     {
+        // NOTA: La generación de reportes es un proceso que consume mucho tiempo y recursos,
+        // especialmente al generar un PDF para cada docente. Un timeout de FastCGI es probable.
+        // Aumentar el límite de tiempo de ejecución es una solución directa para este problema.
+        // La solución ideal a largo plazo sería mover este proceso a un job en cola.
+        set_time_limit(0);
+
         // Verificar si el usuario tiene permiso para exportar (está en la lista de permitidos)
         if (!in_array(Auth::user()->email, SessionsController::$allowedEmails)) {
             return redirect()->back()->with('incorrecto', 'Acceso denegado: No tiene permisos para generar este reporte.');
