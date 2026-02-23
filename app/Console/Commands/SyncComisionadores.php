@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Services\SiaApiService;
 use App\Models\User;
 use App\Models\Comisionador;
+use App\Models\DictaminadorSignature;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -272,6 +273,19 @@ class SyncComisionadores extends Command
                     'fecha_convocatoria' => $jsonFechas, // JSON con start_date y end_date
                 ]
             );
+
+            // 5. Replicar firma en dictaminador_signatures (Fuente de verdad: API)
+            // Esto asegura que la tabla de firmas siempre tenga la versión oficial de la API
+            if (!empty($firmaGrafica)) {
+                DictaminadorSignature::updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'evaluator_name' => $fullName,
+                        'signature_image' => $firmaGrafica,
+                        'mime' => 'image/png', // Se asume PNG o el formato base64 que venga de la API
+                    ]
+                );
+            }
         });
 
         $this->info("\nSincronización completada.");
