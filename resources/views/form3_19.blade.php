@@ -254,7 +254,7 @@ if (!isset($docenteConfigForm)) {
         .secretaria-style {
             font-size: 14px;
             margin-top: 10px;
-            text-align: left;
+            text-align: center;
         }
 
         .secretaria-style #piedepagina1 {

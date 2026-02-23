@@ -258,7 +258,7 @@ button#btn3_17{
     .secretaria-style {
         font-size: 14px;
         margin-top: 10px;
-        text-align: left;
+        text-align: center;
     }
     .dictaminador-style {
         font-size: 16px;

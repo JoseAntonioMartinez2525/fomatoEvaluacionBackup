@@ -249,7 +249,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
             font-weight: normal;
             font-size: 14px;
             margin-top: 10px;
-            text-align: left;
+            text-align: center;
         }
 
         .secretaria-style #piedepagina1 {

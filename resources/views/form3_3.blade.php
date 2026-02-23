@@ -322,7 +322,7 @@ if (isset($teacherEmailFromUrl) && $teacherEmailFromUrl) {
                 /* font-weight: bold; */
                 font-size: 14px;
                 margin-top: 10px;
-                text-align: left;
+                text-align: center;
                 
             }
 

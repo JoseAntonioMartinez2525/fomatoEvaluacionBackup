@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use App\Events\EvaluationCompleted;
 use App\Models\UsersResponseForm1;
 use App\Traits\ValidatesDictaminatorPeriod;
+use App\Models\Docente;
 use Illuminate\Support\Facades\Log;
 
 class DictaminatorForm2_Controller extends TransferController
@@ -295,24 +296,27 @@ public function getFormData2(Request $request)
         if ($emailFromUrl) {
             $user = \App\Models\User::where('email', $emailFromUrl)->first();
             if ($user) {
+                $docenteInfo = Docente::where('email', $emailFromUrl)->first();
                 // Obtener Convocatoria y Periodo desde UsersResponseForm1
                 $form1 = UsersResponseForm1::where('user_id', $user->id)->first();
                 $convocatoria2 = $form1 ? $form1->convocatoria : 'Convocatoria no asignada';
                 $periodo2 = $form1 ? $form1->periodo : (\App\Models\UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido');
 
-                // Obtener Nombre, Área y Departamento desde config/docentes.php
+                // Obtener Nombre, Área y Departamento
                 $docentesConfig = config('docentes', []);
                 $emailKey = strtolower($emailFromUrl);
 
                 if (isset($docentesConfig[$emailKey])) {
                     $dData = $docentesConfig[$emailKey];
                     $nombre2 = $dData['nombre'] ?? $user->name;
-                    $area2 = $dData['area'] ?? ($user->area ?? 'No definida');
-                    $departamento2 = $dData['departamento'] ?? ($user->departamento ?? 'No definido');
+                    // Prioridad: 1. Tabla 'docentes', 2. config/docentes.php, 3. tabla 'users'
+                    $area2 = $docenteInfo->area ?? $dData['area'] ?? ($user->area ?? 'No definida');
+                    $departamento2 = $docenteInfo->departamento ?? $dData['departamento'] ?? ($user->departamento ?? 'No definido');
                 } else {
                     $nombre2 = $user->name;
-                    $area2 = $user->area ?? 'No definida';
-                    $departamento2 = $user->departamento ?? 'No definido';
+                    // Prioridad: 1. Tabla 'docentes', 2. tabla 'users'
+                    $area2 = $docenteInfo->area ?? ($user->area ?? 'No definida');
+                    $departamento2 = $docenteInfo->departamento ?? ($user->departamento ?? 'No definido');
                 }
             }
         }

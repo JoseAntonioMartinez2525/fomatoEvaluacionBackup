@@ -2,6 +2,28 @@
 $locale = app()->getLocale() ?: 'en';
 $newLocale = str_replace('_', '-', $locale);
 $logo = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
+
+use App\Models\Docente;
+use App\Models\UsersResponseForm1;
+use Illuminate\Support\Facades\Auth;
+
+if (Auth::check()) {
+    $user = Auth::user();
+    // Cargar datos del docente desde la tabla 'docentes' para obtener el área de conocimiento.
+    $docente = Docente::where('email', $user->email)->first();
+    $form1 = UsersResponseForm1::where('user_id', $user->id)->first();
+
+    // Si las variables no están definidas por el controlador, se definen aquí como fallback.
+    $convocatoria = $convocatoria ?? ($form1->convocatoria ?? 'Convocatoria no asignada');
+    $periodo = $periodo ?? ($form1->periodo ?? (UsersResponseForm1::calculateCurrentPeriod() ?? 'Periodo no definido'));
+    $nombre = $nombre ?? $user->name;
+    
+    // Se prioriza el área de la tabla 'docentes', con fallback a la tabla 'users'.
+    $area = $area ?? ($docente->area ?? ($user->area ?? 'No definida'));
+    
+    // Se prioriza el departamento de la tabla 'docentes', con fallback a la tabla 'users'.
+    $departamento = $departamento ?? ($docente->departamento ?? ($user->departamento ?? 'No definido'));
+}
 @endphp
 <!DOCTYPE html>
 <html lang="{{ $newLocale }}">
@@ -40,10 +62,10 @@ button#edit-form-btn{
  margin-inline-start: 5rem;
 }
 
-{
-  width: min-content;
+span#convocatoria2 {
+  display: inline-block; /* Asegura que margin-left funcione como se espera */
+  margin-left: 2rem !important;
 }
-
 </style>
 <script>
     window.isDarkModeGlobal = {{ $darkMode ?? false ? 'true' : 'false' }};
@@ -106,7 +128,7 @@ button#edit-form-btn{
 
             <div class="container flex">
             <p class="instrucciones">1 La persona a ser evaluada deberá completar la información en
-            cantidades u horas en los campos
+            años, cantidades u horas en los campos
             marcados en <u><b>color gris</b></u>. <br>
             2 La Comisión Dictaminadora deberá llenar los campos marcados en color azul cielo (puntajes totales o
             subtotales, según sea el caso). <br>
@@ -129,6 +151,46 @@ button#edit-form-btn{
         <main class="container">
         <!--Actividad 1: Permanencia en las actividades de la docencia	-->
        <div id="step2" style="display:none;">   
+        <div>
+            <div class="datosConvocatoria">
+                <div class="row">
+                    <label for="convocatoria">Convocatoria:</label>
+                    <div class="valor" style="text-align: left;"><span class="input-header" id="convocatoria2">{{ $convocatoria ?? '' }}</span></div>
+                </div>
+                <div class="row">
+                    <label for="periodo">Periodo de evaluación:</label>
+                    <div class="valor"><span id="periodo2" class="input-header">{{ $periodo ?? '' }}</span></div>
+                </div>
+                <div class="row">
+                    <label for="nombre">Nombre del personal académico:</label>
+                    <div class="valor"><span id="nombre2" class="input-header">{{ $nombre ?? '' }}</span></div>
+                </div>
+                <div class="row">
+                    <label for="area">Área de Conocimiento:</label>
+                    <div class="valor"><span id="area2" class="input-header">{{ $area ?? 'No definida' }}</span></div>
+                </div>
+                <div class="row">
+                    <label for="departamento">Departamento Académico:</label>
+                    <div class="valor"><span id="departamento2" class="input-header">{{ $departamento ?? 'No definido' }}</span></div>
+                </div>
+            </div><br>
+            <center class="printCenter"><h5>Instrucciones</h5></center>
+            
+            <div class="container flex">
+                <p class="instrucciones">1 La persona a ser evaluada deberá completar la información en
+                    años, cantidades u horas en los campos
+                    marcados en <u>color gris</u>. <br>
+                    2 La Comisión Dictaminadora deberá llenar los campos marcados en color azul cielo (puntajes totales o
+                    subtotales, según sea el caso). <br>
+                    3 No se deberán modificar fórmulas, ni agregar o quitar renglones. <br>
+                    4 Este formato deberá presentarse en forma independiente de la documentación que acrediten las
+                    actividades realizadas. <b>Para la evaluación no es necesario entregar las obras completas-libros,
+                    manuales, publicaciones,etc.,</b> sino entregar el documento probatorio que se indique en la Guía de
+                    definiciones. <br>
+                    5 La Comisión Dictaminadora no tomará en cuenta documentación que no esté contemplada dentro del
+                    formato de evaluación, asimismo no se aceptará documentación presentada de forma extemporánea.
+            </div>
+        </div>
         <form id="form2" method="POST" onsubmit="event.preventDefault(); submitForm('store2', 'form2');">
           <div>
           <h4>Puntaje máximo
