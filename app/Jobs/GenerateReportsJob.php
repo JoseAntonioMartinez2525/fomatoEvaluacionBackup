@@ -96,10 +96,18 @@ class GenerateReportsJob implements ShouldQueue
                     ->orWhere('user_email', $user->email)
                     ->first() ?? (object)[];
 
-                // Obtener datos de UserResume para mínimas de calidad y total
-                $userResume = \App\Models\UserResume::where('user_id', $user->id)->first();
-                $minimaCalidad = $userResume ? $userResume->minima_calidad : 'N/A';
-                $minimaTotal = $userResume ? $userResume->minima_total : 'N/A';
+                // Calcular totales y niveles dinámicamente (replicando lógica de ConsolidatedResponseController)
+                // Esto asegura que los datos aparezcan aunque no se haya guardado el UserResume
+                $s3_1 = ($comisiones->actv3Comision ?? 0) + ($comisiones->comision3_2 ?? 0) + ($comisiones->comision3_3 ?? 0) + ($comisiones->comision3_4 ?? 0) + ($comisiones->comision3_5 ?? 0) + ($comisiones->comision3_6 ?? 0) + ($comisiones->comision3_7 ?? 0) + ($comisiones->comision3_8 ?? 0) + ($comisiones->comision3_8_1 ?? 0);
+                $s3_2 = ($comisiones->comision3_9 ?? 0) + ($comisiones->comision3_10 ?? 0) + ($comisiones->comision3_11 ?? 0);
+                $s3_3 = ($comisiones->comision3_12 ?? 0) + ($comisiones->comision3_13 ?? 0) + ($comisiones->comision3_14 ?? 0) + ($comisiones->comision3_15 ?? 0) + ($comisiones->comision3_16 ?? 0);
+                $s3_4 = ($comisiones->comision3_17 ?? 0) + ($comisiones->comision3_18 ?? 0) + ($comisiones->comision3_19 ?? 0);
+                
+                $totalCalidad = min($s3_1 + $s3_2 + $s3_3 + $s3_4, 700);
+                $totalGeneral = min(($comisiones->comision1 ?? 0) + ($comisiones->actv2Comision ?? 0) + $totalCalidad, 1000);
+
+                $minimaCalidad = $this->calculateLevelCalidad($totalCalidad);
+                $minimaTotal = $this->calculateLevelTotal($totalGeneral);
 
                 $form1 = \App\Models\UsersResponseForm1::where('user_id', $user->id)->first();
                 $convocatoria = $form1->convocatoria ?? 'SinConvocatoria';
@@ -120,7 +128,8 @@ class GenerateReportsJob implements ShouldQueue
                 }
 
                     $data = compact('user', 'logoBase64', 'comisiones', 'dictaminadores', 'convocatoria', 'periodo', 'minimaCalidad', 'minimaTotal');
-                $data['total'] = $comisiones->total_puntaje ?? 0;
+                    $data['total'] = $totalCalidad; // Total de la sección 3 (Calidad)
+                    $data['totalComisionRepetido'] = $totalGeneral; // Total Global
 
                 $html = view('reporte_pdf', $data)->render();
                 $dompdf = new Dompdf();
@@ -178,5 +187,34 @@ class GenerateReportsJob implements ShouldQueue
                 File::deleteDirectory($tempPath);
             }
         }
+    }
+
+    // Funciones auxiliares para calcular el nivel (copiadas de la lógica del controlador)
+    private function calculateLevelCalidad($total)
+    {
+        if ($total >= 650) return 'IX';
+        if ($total >= 595) return 'VIII';
+        if ($total >= 540) return 'VII';
+        if ($total >= 485) return 'VI';
+        if ($total >= 430) return 'V';
+        if ($total >= 375) return 'IV';
+        if ($total >= 320) return 'III';
+        if ($total >= 265) return 'II';
+        if ($total >= 210) return 'I';
+        return 'N/A';
+    }
+
+    private function calculateLevelTotal($total)
+    {
+        if ($total >= 924) return 'IX';
+        if ($total >= 846) return 'VIII';
+        if ($total >= 768) return 'VII';
+        if ($total >= 690) return 'VI';
+        if ($total >= 612) return 'V';
+        if ($total >= 534) return 'IV';
+        if ($total >= 456) return 'III';
+        if ($total >= 378) return 'II';
+        if ($total >= 301) return 'I';
+        return 'N/A';
     }
 }
