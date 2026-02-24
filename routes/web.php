@@ -79,6 +79,8 @@ use App\Http\Controllers\UserTimerController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Middleware\CheckTimer;
 use App\Http\Middleware\VerifyAdminPrivileges;
+use App\Http\Controllers\ReportDownloadController; 
+
 
 Route::get('/forzar-error', function () {
     throw new \Exception("Este es un error de prueba");
@@ -515,3 +517,7 @@ for ($i = 1; $i <= 19; $i++) {
 
 //Excel
 Route::get('users/export/', [UserController::class, 'export'])->name('users.export');
+
+//Rutas para la descarga de reportes generados en cola
+Route::get('reports', [ReportDownloadController::class, 'index'])->name('reports.index');
+Route::get('reports/download/{report}', [ReportDownloadController::class, 'download'])->name('reports.download');

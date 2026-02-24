@@ -16,6 +16,8 @@ use App\Exports\UsersExport;
 use Illuminate\Support\Facades\Hash; // Import Hash facade
 use Dompdf\Dompdf;
 use ZipArchive;
+use App\Jobs\GenerateReportsJob;
+use App\Models\GeneratedReport;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -90,167 +92,24 @@ class UserController extends Controller
 
     public function export() 
     {
-        // NOTA: La generación de reportes es un proceso que consume mucho tiempo y recursos,
-        // especialmente al generar un PDF para cada docente. Un timeout de FastCGI es probable.
-        // Aumentar el límite de tiempo de ejecución es una solución directa para este problema.
-        // La solución ideal a largo plazo sería mover este proceso a un job en cola.
-        set_time_limit(0);
-
         // Verificar si el usuario tiene permiso para exportar (está en la lista de permitidos)
         if (!in_array(Auth::user()->email, SessionsController::$allowedEmails)) {
             return redirect()->back()->with('incorrecto', 'Acceso denegado: No tiene permisos para generar este reporte.');
         }
 
-        // 1. Configuración inicial y directorio temporal
-        $timestamp = time();
-        $tempDirName = 'temp_export_' . $timestamp;
-        $tempPath = storage_path('app/' . $tempDirName);
-        
-        // Crear directorio si no existe
-        if (!File::exists($tempPath)) {
-            File::makeDirectory($tempPath, 0755, true);
-        }
+        // 1. Crear un registro en la base de datos para rastrear este trabajo.
+        $reportRecord = GeneratedReport::create([
+            'user_id' => Auth::id(),
+            'status' => 'pending',
+            'file_name' => 'Reportes PEDPD - ' . now()->format('Y-m-d H-i-s') . '.zip',
+        ]);
 
-        // 2. Obtener usuarios (filtrar solo docentes si es necesario)
-        $docenteEmails = array_keys(config('docentes', []));
-        $users = User::where(function ($query) use ($docenteEmails) {
-            $query->where('user_type', 'docente')
-                  ->orWhereIn('email', $docenteEmails);
-        })->get();
+        // 2. Despachar el trabajo a la cola.
+        GenerateReportsJob::dispatch(Auth::user(), $reportRecord);
 
-        // Pre-cargar logo para los reportes
-        $logoUrl = 'https://www.uabcs.mx/transparencia/assets/images/logo_uabcs.png';
-        $logoBase64 = '';
-        try {
-            $logoContent = @file_get_contents($logoUrl);
-            if ($logoContent) {
-                $logoBase64 = 'data:image/png;base64,' . base64_encode($logoContent);
-            }
-        } catch (\Exception $e) {}
-
-        // Calcular periodo global para el nombre del archivo ZIP
-        $globalPeriod = \App\Models\UsersResponseForm1::calculateCurrentPeriod();
-        
-        // Fallback: si no hay periodo global activo (ej. fuera de fechas), intentar obtenerlo del primer registro existente
-        if (!$globalPeriod) {
-            $firstForm = \App\Models\UsersResponseForm1::whereNotNull('periodo')->latest('updated_at')->first();
-            if ($firstForm) {
-                $globalPeriod = $firstForm->periodo;
-            }
-        }
-        
-        // Usar str_replace y preg_replace en lugar de Str::slug para mantener las mayúsculas (ej. 2025-I)
-        $periodoArchivo = $globalPeriod ? preg_replace('/[^A-Za-z0-9\-\_]/', '', str_replace(' ', '-', $globalPeriod)) : 'SinPeriodo';
-
-        // 3. Generar PDFs individuales
-        foreach ($users as $user) {
-            // Obtener datos consolidados para el reporte
-            // Intentamos buscar por user_id o email en la tabla de respuestas consolidadas
-            $comisiones = DB::table('consolidated_responses')
-                ->where('user_id', $user->id)
-                ->orWhere('user_email', $user->email)
-                ->first();
-            
-            // Si no hay datos, usamos un objeto vacío para evitar errores en la vista
-            if (!$comisiones) {
-                $comisiones = (object)[];
-            }
-
-            // Obtener datos del Formulario 1 para Convocatoria y Periodo
-            $form1 = \App\Models\UsersResponseForm1::where('user_id', $user->id)->first();
-            $convocatoria = $form1 ? ($form1->convocatoria ?? 'SinConvocatoria') : 'SinConvocatoria';
-            // Usar periodo del usuario o el global si no tiene
-            $periodo = $form1 ? ($form1->periodo ?? $globalPeriod) : ($globalPeriod ?? 'SinPeriodo');
-            
-            // Obtener firmas de dictaminadores
-            $dictaminadores = collect([]);
-            if (method_exists($user, 'dictaminadores')) {
-                $dictaminadores = $user->dictaminadores()->with('dictaminadorSignature')->get()->map(function ($d) {
-                    // Buscar datos de API (Comisionador)
-                    $comisionador = \App\Models\Comisionador::where('user_id', $d->id)->first();
-                    
-                    $signature = $d->dictaminadorSignature;
-                    // Prioridad: 1. API, 2. Manual
-                    $finalSignatureImage = ($comisionador && !empty($comisionador->firma_grafica)) ? $comisionador->firma_grafica : ($signature->signature_image ?? null);
-
-                    return [
-                        'name' => $signature->evaluator_name ?? $d->name,
-                        'signature_image' => $finalSignatureImage,
-                        'mime' => $signature->mime ?? 'image/png', // Si viene de API, asumimos png/jpg compatible
-                    ];
-                })->unique('name')->values();
-            }
-
-            // Preparar datos para la vista reporte_pdf
-            // Nota: Asegúrate de que la vista maneje variables nulas con ?? ''
-            $data = [
-                'user' => $user,
-                'logoBase64' => $logoBase64,
-                'comisiones' => $comisiones,
-                'total' => $comisiones->total_puntaje ?? 0,
-                'dictaminadores' => $dictaminadores,
-                // Variables adicionales que pueda requerir tu vista
-                'convocatoria' => $convocatoria,
-                'periodo' => $periodo,
-            ];
-
-            // Renderizar vista a HTML
-            $html = view('reporte_pdf', $data)->render();
-
-            // Generar PDF
-            $dompdf = new Dompdf();
-            $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'landscape');
-            $dompdf->render();
-
-            // --- ENCRIPTACIÓN (CANDADO) ---
-            // Generamos una contraseña aleatoria única para cada archivo
-            $password = Str::random(10); // Genera contraseña aleatoria de 10 caracteres
-            $user->pdf_password = $password; // Guardar para el Excel
-            $canvas = $dompdf->getCanvas();
-            if ($canvas instanceof \Dompdf\Adapter\CPDF) {
-                $canvas->get_cpdf()->setEncryption($password, $password, ['print', 'copy']);
-            }
-
-            // Construir nombre del archivo: Convocatoria_Periodo_NombreDocente.pdf
-            $safeConvocatoria = Str::slug($convocatoria, '_') ?: 'Convocatoria';
-            $safePeriodo = Str::slug($periodo, '_') ?: 'Periodo';
-            $safeNombre = Str::slug($user->name, '_') ?: 'Docente_' . $user->id;
-
-            $pdfFilename = "{$safePeriodo}_{$safeNombre}.pdf";
-
-            // Guardar PDF en carpeta temporal
-            file_put_contents($tempPath . '/' . $pdfFilename, $dompdf->output());
-
-            // Asignar el nombre del archivo al modelo de usuario para que el Excel lo sepa
-            $user->pdf_filename = $pdfFilename;
-        }
-
-        // 4. Generar Excel en la misma carpeta temporal
-        $excelFilename = 'Listado_Reportes.xlsx';
-        // Excel::store guarda relativo a 'storage/app', por eso usamos $tempDirName
-        Excel::store(new UsersExport($users), $tempDirName . '/' . $excelFilename);
-
-        // 5. Crear archivo ZIP
-        $zipFilename = 'reportes_pedpd_'.$periodoArchivo . '_' . $timestamp . '.zip';
-        $zipPath = storage_path('app/' . $zipFilename);
-        
-        $zip = new ZipArchive;
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-            // Agregar todos los archivos del directorio temporal al ZIP
-            $files = File::files($tempPath);
-            foreach ($files as $file) {
-                // Añadir archivo al zip con su nombre original (sin rutas de carpetas)
-                $zip->addFile($file->getRealPath(), $file->getFilename());
-            }
-            $zip->close();
-        }
-
-        // 6. Limpiar carpeta temporal
-        File::deleteDirectory($tempPath);
-
-        // 7. Descargar y eliminar el ZIP después del envío
-        return response()->download($zipPath)->deleteFileAfterSend(true);
+        // 3. Redirigir al usuario de vuelta al dashboard (secretaria) con un mensaje.
+        return redirect()->route('secretaria')
+            ->with('correcto', 'La generación de reportes ha comenzado en segundo plano. Verifique la sección de "Reportes Generados" en unos momentos.');
     }
 
 }

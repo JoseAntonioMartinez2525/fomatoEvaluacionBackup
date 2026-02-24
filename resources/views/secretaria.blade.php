@@ -646,6 +646,62 @@ foreach ($allowedEmails as $email) {
                                     </div>
                                 </a>
                             </div>
+
+                        <!-- Sección de Reportes Generados (Cola de Trabajo) -->
+                        @if(isset($reports) && $reports->count() > 0)
+                        <div class="col-12 mt-4">
+                            <div class="card shadow-sm border-primary">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0"><i class="fa-solid fa-file-zipper"></i> Historial de Reportes Generados</h5>
+                                    <button class="btn btn-sm btn-light text-primary" onclick="window.location.reload()"><i class="fa-solid fa-rotate"></i> Actualizar Estado</button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="ps-4">Fecha Solicitud</th>
+                                                    <th>Archivo</th>
+                                                    <th>Estado</th>
+                                                    <th class="text-end pe-4">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($reports as $report)
+                                                    <tr>
+                                                        <td class="ps-4">{{ $report->created_at->format('d/m/Y H:i') }}</td>
+                                                        <td>{{ $report->file_name }}</td>
+                                                        <td>
+                                                            @if($report->status == 'completed')
+                                                                <span class="badge bg-success">Listo para descargar</span>
+                                                            @elseif($report->status == 'processing')
+                                                                <span class="badge bg-warning text-dark"><i class="fa-solid fa-spinner fa-spin"></i> Procesando...</span>
+                                                            @elseif($report->status == 'failed')
+                                                                <span class="badge bg-danger" title="{{ $report->error_message }}">Error</span>
+                                                            @else
+                                                                <span class="badge bg-secondary">En cola</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="text-end pe-4">
+                                                            @if($report->status == 'completed')
+                                                                <a href="{{ route('reports.download', $report) }}" class="btn btn-success btn-sm">
+                                                                    <i class="fa-solid fa-download"></i> Descargar ZIP
+                                                                </a>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-muted small">
+                                    * Los reportes grandes pueden tardar varios minutos. Recargue la página para ver si el estado cambia a "Listo".
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
                         <!-- Selector para elegir el formulario -->
                         {{-- <label for="formGrid">Buscar Evaluación:</label>
                         
