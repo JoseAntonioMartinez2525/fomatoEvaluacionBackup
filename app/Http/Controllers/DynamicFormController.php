@@ -525,6 +525,21 @@ class DynamicFormController extends Controller
                 $response->save();
             }
 
+            // Registrar la evaluación en la tabla dictaminador_docente
+            if ($evaluator) {
+                DB::table('dictaminador_docente')->updateOrInsert(
+                    [
+                        'docente_id' => $docenteId,
+                        'dictaminador_id' => $evaluator->id,
+                        'form_type' => 'dynamic_form_' . $formId,
+                    ],
+                    [
+                        'docente_email' => $validatedData['email'],
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+
             return response()->json(['success' => true, 'message' => 'Datos actualizados correctamente.']);
         } catch (\Exception $e) {
             \Log::error('Error al actualizar datos de comisión: ' . $e->getMessage());
