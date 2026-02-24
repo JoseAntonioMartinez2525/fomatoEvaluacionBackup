@@ -47,10 +47,10 @@ class GenerateReportsJob implements ShouldQueue
             $timestamp = time();
             $tempDirName = 'temp_export_' . $timestamp;
             $tempPath = storage_path('app/' . $tempDirName);
-            File::makeDirectory($tempPath, 0755, true);
+            File::ensureDirectoryExists($tempPath, 0755, true);
 
             $reportsDir = storage_path('app/public/generated_reports');
-            File::makeDirectory($reportsDir, 0755, true);
+            File::ensureDirectoryExists($reportsDir, 0755, true);
 
             // 2. Obtener usuarios y datos globales
             \Log::info('GenerateReportsJob: Buscando usuarios para exportar.');
@@ -96,6 +96,11 @@ class GenerateReportsJob implements ShouldQueue
                     ->orWhere('user_email', $user->email)
                     ->first() ?? (object)[];
 
+                // Obtener datos de UserResume para mínimas de calidad y total
+                $userResume = \App\Models\UserResume::where('user_id', $user->id)->first();
+                $minimaCalidad = $userResume ? $userResume->minima_calidad : 'N/A';
+                $minimaTotal = $userResume ? $userResume->minima_total : 'N/A';
+
                 $form1 = \App\Models\UsersResponseForm1::where('user_id', $user->id)->first();
                 $convocatoria = $form1->convocatoria ?? 'SinConvocatoria';
                 $periodo = $form1->periodo ?? $globalPeriod;
@@ -114,7 +119,7 @@ class GenerateReportsJob implements ShouldQueue
                     })->unique('name')->values();
                 }
 
-                $data = compact('user', 'logoBase64', 'comisiones', 'dictaminadores', 'convocatoria', 'periodo');
+                    $data = compact('user', 'logoBase64', 'comisiones', 'dictaminadores', 'convocatoria', 'periodo', 'minimaCalidad', 'minimaTotal');
                 $data['total'] = $comisiones->total_puntaje ?? 0;
 
                 $html = view('reporte_pdf', $data)->render();
