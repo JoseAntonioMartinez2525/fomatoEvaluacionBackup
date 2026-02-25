@@ -35,12 +35,16 @@ class DynamicFormController extends Controller
                 'columnas' => 'required|integer|min:0',
             ]);
 
-            // Extraer form_type del form_name. Ej: "3.20 Convenios" -> "3.20"
+            // Extraer form_type del form_name. Ej: "3. 23 Convenios" -> "3.23"
             $formName = trim($validatedData['form_name']);
-            // Regex mejorado para capturar prefijos numéricos incluso con espacios (ej: "3. 20")
-            preg_match('/^[0-9.]+(\s*[0-9.]+)?/', $formName, $matches);
-            // Si se encuentra, se limpia cualquier punto al final. Si no, es null.
-            $formType = !empty($matches[0]) ? rtrim(str_replace(' ', '', $matches[0]), '.') : null;
+            // Capturar la parte inicial que contiene solo números, puntos y espacios.
+            preg_match('/^[\d\.\s]+/', $formName, $matches);
+            $numericPart = $matches[0] ?? '';
+            // Limpiar espacios y puntos al final para obtener un identificador limpio como "3.23"
+            $formType = rtrim(preg_replace('/\s+/', '', $numericPart), '.');
+            if (empty($formType)) {
+                $formType = null; // Asegurarse de que sea null si no se encuentra nada
+            }
 
             // 1. Preparar la estructura del formulario (columnas)
             $frontendColumnNames = $validatedData['column_names'];
@@ -527,11 +531,14 @@ class DynamicFormController extends Controller
 
             // Registrar la evaluación en la tabla dictaminador_docente
             if ($evaluator) {
+                // Usar el form_type (ej: "3.23") como identificador, con fallbacks
+                $formIdentifier = $form->form_type ?? $form->form_name ?? ('dynamic_form_' . $formId);
+
                 DB::table('dictaminador_docente')->updateOrInsert(
                     [
                         'docente_id' => $docenteId,
                         'dictaminador_id' => $evaluator->id,
-                        'form_type' => 'dynamic_form_' . $formId,
+                        'form_type' => $formIdentifier, // Ahora usará "3.23" en lugar de "3.23 Convenios"
                     ],
                     [
                         'docente_email' => $validatedData['email'],
