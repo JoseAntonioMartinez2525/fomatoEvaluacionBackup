@@ -669,7 +669,9 @@ foreach ($allowedEmails as $email) {
                                             <tbody>
                                                 @foreach($reports as $report)
                                                     <tr>
-                                                        <td class="ps-4">{{ $report->created_at->format('d/m/Y H:i') }}</td>
+                                                        <td class="ps-4" data-utc-date="{{ $report->created_at->toIso8601String() }}" title="Fecha de solicitud (UTC)">
+                                                            {{ $report->created_at->format('d/m/Y H:i') }}
+                                                        </td>
                                                         <td>{{ $report->file_name }}</td>
                                                         <td>
                                                             @if($report->status == 'completed')
@@ -1101,6 +1103,28 @@ foreach ($allowedEmails as $email) {
                 }
             })
             .catch(error => console.error('Error al cargar fechas:', error));
+
+        // Convertir fechas de reportes a la zona horaria local del usuario
+        document.querySelectorAll('[data-utc-date]').forEach(function(element) {
+            const utcDateString = element.dataset.utcDate;
+            if (utcDateString) {
+                try {
+                    const localDate = new Date(utcDateString);
+                    
+                    // Formatear la fecha al estilo 'dd/mm/yyyy HH:MM'
+                    const day = String(localDate.getDate()).padStart(2, '0');
+                    const month = String(localDate.getMonth() + 1).padStart(2, '0'); // Enero es 0
+                    const year = localDate.getFullYear();
+                    const hours = String(localDate.getHours()).padStart(2, '0');
+                    const minutes = String(localDate.getMinutes()).padStart(2, '0');
+
+                    element.textContent = `${day}/${month}/${year} ${hours}:${minutes}`;
+                    element.title = `Fecha y hora en su zona horaria local.`;
+                } catch (e) { 
+                    console.error("Error al convertir la fecha UTC a local: ", utcDateString, e); 
+                }
+            }
+        });
     });
 
     function actualizarPeriodosDocentes() {
